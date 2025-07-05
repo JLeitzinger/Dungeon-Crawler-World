@@ -187,13 +187,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Rules/Combat/Free Action.md",
+                "file": "Rules/Resources/Health Points.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Free Action"
+              "title": "Outline of Health Points"
             }
           },
           {
@@ -224,7 +224,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ab707a0e4dfd50b9",
+  "active": "47f9afca0101c56e",
   "lastOpenFiles": [
     "Notes.md",
     "Rules/Status Effects/Rules.md",
