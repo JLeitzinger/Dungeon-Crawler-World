@@ -57,12 +57,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Rules/Status Effects/Rules.md",
+                "file": "Rules/Intro/Description.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Rules"
+              "title": "Description"
             }
           }
         ],
@@ -187,13 +187,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Rules/Resources/Health Points.md",
+                "file": "Rules/Status Effects/Rules.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Health Points"
+              "title": "Outline of Rules"
             }
           },
           {
@@ -224,11 +224,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "47f9afca0101c56e",
+  "active": "ab707a0e4dfd50b9",
   "lastOpenFiles": [
-    "Notes.md",
     "Rules/Status Effects/Rules.md",
+    "Rules/Intro/Description.md",
+    "Rules/Intro",
     "Rules/Resources/Health Points.md",
+    "Notes.md",
     "Rules/Core Rules.md",
     "Rules/Status Effects/Bleeding.md",
     "Rules/Status Effects",
@@ -257,10 +259,8 @@
     "Rules/Combat/Combat Stages.md",
     "Rules/Combat/Combat Stages 1.md",
     "Rules/Combat/Move.md",
-    "Rules/Combat/Free Action.md",
     "Rules/Stats",
     "Rules/Combat",
-    "Rules/Skills",
-    "Rules"
+    "Rules/Skills"
   ]
 }
