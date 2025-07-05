@@ -1,0 +1,1 @@
+any action that does not directly result in an attack or movement.

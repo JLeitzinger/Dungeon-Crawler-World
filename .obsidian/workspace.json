@@ -1,0 +1,266 @@
+{
+  "main": {
+    "id": "533d921039f0150a",
+    "type": "split",
+    "children": [
+      {
+        "id": "8be0572448dbf78d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1f0b531756d72f8c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Rules/Resources/Health Points.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Health Points"
+            }
+          }
+        ]
+      },
+      {
+        "id": "f7c8eebd726db46e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "38a62e61875de981",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          },
+          {
+            "id": "58d43e0eaf9740a2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Rules/Stats/LUK.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "LUK"
+            }
+          },
+          {
+            "id": "ab707a0e4dfd50b9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Rules/Status Effects/Rules.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Rules"
+            }
+          }
+        ],
+        "currentTab": 2
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "520aeb09893ee1ed",
+    "type": "split",
+    "children": [
+      {
+        "id": "cde700e1ac1bb730",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c38684ef99deced3",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "252bf77e989587c2",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "e52406f0cefb5e9e",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "6a59da9666615eee",
+    "type": "split",
+    "children": [
+      {
+        "id": "383cdcef80490ee2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a5db6564aac5dc8a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Rules/Combat/Free Action.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Free Action"
+            }
+          },
+          {
+            "id": "a5ee0d1d591ba139",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Rules/Combat/Free Action.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Free Action"
+            }
+          },
+          {
+            "id": "cda086e268782983",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "2413454b3fd01025",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Rules/Combat/Free Action.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Free Action"
+            }
+          },
+          {
+            "id": "47f9afca0101c56e",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "ab707a0e4dfd50b9",
+  "lastOpenFiles": [
+    "Notes.md",
+    "Rules/Status Effects/Rules.md",
+    "Rules/Resources/Health Points.md",
+    "Rules/Core Rules.md",
+    "Rules/Status Effects/Bleeding.md",
+    "Rules/Status Effects",
+    "Rules/Stats/STR.md",
+    "Rules/Stats/INT.md",
+    "Rules/Stats/DEX.md",
+    "Rules/Stats/CON.md",
+    "Rules/Stats/CHA.md",
+    "Rules.md",
+    "Rules/Magic/Levels.md",
+    "Rules/Magic/Untitled",
+    "Rules/Magic",
+    "Rules/Resources/Mana Points.md",
+    "Rules/Stats/WIS.md",
+    "Rules/Feats/Untitled.md",
+    "Rules/Resources",
+    "Rules/Feats/Untitled",
+    "Rules/Feats",
+    "CON.md",
+    "CHA.md",
+    "WIS.md",
+    "STR.md",
+    "LUK.md",
+    "INT.md",
+    "DEX.md",
+    "Rules/Combat/Combat Stages.md",
+    "Rules/Combat/Combat Stages 1.md",
+    "Rules/Combat/Move.md",
+    "Rules/Combat/Free Action.md",
+    "Rules/Stats",
+    "Rules/Combat",
+    "Rules/Skills",
+    "Rules"
+  ]
+}

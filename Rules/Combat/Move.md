@@ -1,0 +1,1 @@
+A player may move up to their movement speed each round. This can be split between different actions as long as the total movement per round does not exceed this amount.
