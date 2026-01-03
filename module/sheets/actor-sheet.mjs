@@ -18,7 +18,7 @@ export class dccworldActorSheet extends ActorSheet {
         {
           navSelector: '.sheet-tabs',
           contentSelector: '.sheet-body',
-          initial: 'features',
+          initial: 'skills',
         },
       ],
     });
@@ -184,6 +184,14 @@ export class dccworldActorSheet extends ActorSheet {
     // Rollable abilities.
     html.on('click', '.rollable', this._onRoll.bind(this));
 
+    // Skill rolls
+    html.on('click', '.skill-roll', this._onSkillRoll.bind(this));
+
+    // Skill management
+    html.on('click', '.skill-create', this._onSkillCreate.bind(this));
+    html.on('click', '.skill-edit', this._onSkillEdit.bind(this));
+    html.on('click', '.skill-delete', this._onSkillDelete.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = (ev) => this._onDragStart(ev);
@@ -251,6 +259,208 @@ export class dccworldActorSheet extends ActorSheet {
         rollMode: game.settings.get('core', 'rollMode'),
       });
       return roll;
+    }
+  }
+
+  /**
+   * Handle skill rolls
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onSkillRoll(event) {
+    event.preventDefault();
+    const skillId = $(event.currentTarget).closest('.skill').data('skillId');
+    if (skillId) {
+      await this.actor.rollSkill(skillId);
+    }
+  }
+
+  /**
+   * Handle creating a new skill
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onSkillCreate(event) {
+    event.preventDefault();
+
+    // Simple dialog to create a new skill
+    new Dialog({
+      title: "Create New Skill",
+      content: `
+        <form>
+          <div class="form-group">
+            <label>Skill Name:</label>
+            <input type="text" name="skillName" placeholder="e.g., Melee Combat" />
+          </div>
+          <div class="form-group">
+            <label>Parent Skill:</label>
+            <select name="parentSkill">
+              <option value="">None</option>
+              ${Object.entries(this.actor.system.skills).map(([id, skill]) =>
+                `<option value="${id}">${skill.name}</option>`
+              ).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Category:</label>
+            <select name="category">
+              <option value="general">General</option>
+              <option value="combat">Combat</option>
+              <option value="magic">Magic</option>
+              <option value="utility">Utility</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Related Stat:</label>
+            <select name="relatedStat">
+              <option value="">None</option>
+              <option value="str">STR</option>
+              <option value="dex">DEX</option>
+              <option value="con">CON</option>
+              <option value="int">INT</option>
+              <option value="wis">WIS</option>
+              <option value="cha">CHA</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Starting Level:</label>
+            <input type="number" name="level" value="1" min="1" />
+          </div>
+        </form>
+      `,
+      buttons: {
+        create: {
+          label: "Create",
+          callback: async (html) => {
+            const formData = new FormData(html[0].querySelector('form'));
+            const skillName = formData.get('skillName');
+            const parentSkill = formData.get('parentSkill') || null;
+            const category = formData.get('category');
+            const relatedStat = formData.get('relatedStat') || null;
+            const level = parseInt(formData.get('level')) || 1;
+
+            if (!skillName) {
+              ui.notifications.warn("Skill name is required.");
+              return;
+            }
+
+            // Generate skill ID from name
+            const skillId = skillName.toLowerCase().replace(/\s+/g, '-');
+
+            // Create the skill
+            const newSkill = {
+              id: skillId,
+              name: skillName,
+              level,
+              parent: parentSkill,
+              category,
+              relatedStat
+            };
+
+            // Update actor with new skill
+            const skills = foundry.utils.duplicate(this.actor.system.skills);
+            skills[skillId] = newSkill;
+            await this.actor.update({ 'system.skills': skills });
+
+            ui.notifications.info(`Created skill: ${skillName}`);
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "create"
+    }).render(true);
+  }
+
+  /**
+   * Handle editing a skill
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onSkillEdit(event) {
+    event.preventDefault();
+    const skillId = $(event.currentTarget).closest('.skill').data('skillId');
+    const skill = this.actor.system.skills[skillId];
+
+    if (!skill) return;
+
+    // Simple dialog to edit the skill
+    new Dialog({
+      title: `Edit Skill: ${skill.name}`,
+      content: `
+        <form>
+          <div class="form-group">
+            <label>Skill Name:</label>
+            <input type="text" name="skillName" value="${skill.name}" />
+          </div>
+          <div class="form-group">
+            <label>Level:</label>
+            <input type="number" name="level" value="${skill.level}" min="1" />
+          </div>
+          <div class="form-group">
+            <label>Related Stat:</label>
+            <select name="relatedStat">
+              <option value="" ${!skill.relatedStat ? 'selected' : ''}>None</option>
+              <option value="str" ${skill.relatedStat === 'str' ? 'selected' : ''}>STR</option>
+              <option value="dex" ${skill.relatedStat === 'dex' ? 'selected' : ''}>DEX</option>
+              <option value="con" ${skill.relatedStat === 'con' ? 'selected' : ''}>CON</option>
+              <option value="int" ${skill.relatedStat === 'int' ? 'selected' : ''}>INT</option>
+              <option value="wis" ${skill.relatedStat === 'wis' ? 'selected' : ''}>WIS</option>
+              <option value="cha" ${skill.relatedStat === 'cha' ? 'selected' : ''}>CHA</option>
+            </select>
+          </div>
+        </form>
+      `,
+      buttons: {
+        save: {
+          label: "Save",
+          callback: async (html) => {
+            const formData = new FormData(html[0].querySelector('form'));
+            const skillName = formData.get('skillName');
+            const level = parseInt(formData.get('level')) || 1;
+            const relatedStat = formData.get('relatedStat') || null;
+
+            // Update the skill
+            const skills = foundry.utils.duplicate(this.actor.system.skills);
+            skills[skillId].name = skillName;
+            skills[skillId].level = level;
+            skills[skillId].relatedStat = relatedStat;
+
+            await this.actor.update({ 'system.skills': skills });
+          }
+        },
+        cancel: {
+          label: "Cancel"
+        }
+      },
+      default: "save"
+    }).render(true);
+  }
+
+  /**
+   * Handle deleting a skill
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onSkillDelete(event) {
+    event.preventDefault();
+    const skillId = $(event.currentTarget).closest('.skill').data('skillId');
+    const skill = this.actor.system.skills[skillId];
+
+    if (!skill) return;
+
+    const confirmed = await Dialog.confirm({
+      title: "Delete Skill",
+      content: `<p>Are you sure you want to delete the skill "<strong>${skill.name}</strong>"?</p>`,
+      defaultYes: false
+    });
+
+    if (confirmed) {
+      const skills = foundry.utils.duplicate(this.actor.system.skills);
+      delete skills[skillId];
+      await this.actor.update({ 'system.skills': skills });
+      ui.notifications.info(`Deleted skill: ${skill.name}`);
     }
   }
 }

@@ -6,6 +6,7 @@
 export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
     // Actor partials.
+    'systems/dungeon-crawler-world/templates/actor/parts/actor-skills.hbs',
     'systems/dungeon-crawler-world/templates/actor/parts/actor-features.hbs',
     'systems/dungeon-crawler-world/templates/actor/parts/actor-items.hbs',
     'systems/dungeon-crawler-world/templates/actor/parts/actor-spells.hbs',

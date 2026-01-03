@@ -79,6 +79,13 @@ export default class dccworldClass extends dccworldItemBase {
       initial: ""
     });
 
+    // Starting skills granted by this class
+    // Stored as an object where keys are skill IDs
+    schema.startingSkills = new fields.ObjectField({
+      required: true,
+      initial: {}
+    });
+
     return schema;
   }
 }

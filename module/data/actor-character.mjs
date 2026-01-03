@@ -47,6 +47,22 @@ export default class dccworldCharacter extends dccworldActorBase {
       return obj;
     }, {}));
 
+    // Skills system - stores all learned skills
+    // Skills are stored as an object with skill IDs as keys
+    schema.skills = new fields.ObjectField({
+      required: true,
+      initial: {
+        "do-something": {
+          id: "do-something",
+          name: "Do Something",
+          level: 1,
+          parent: null,
+          category: "base",
+          relatedStat: null
+        }
+      }
+    });
+
     return schema;
   }
 
@@ -54,6 +70,11 @@ export default class dccworldCharacter extends dccworldActorBase {
     // Find class and race items on this actor
     const classItem = this.parent?.items?.find(i => i.type === 'class');
     const raceItem = this.parent?.items?.find(i => i.type === 'race');
+
+    // Initialize skills from class if character is new (only has "do-something")
+    if (classItem?.system?.startingSkills && Object.keys(this.skills).length === 1) {
+      this._initializeClassSkills(classItem.system.startingSkills);
+    }
 
     // Apply racial ability bonuses first (before calculating modifiers)
     if (raceItem?.system?.abilityBonuses) {
@@ -121,6 +142,58 @@ export default class dccworldCharacter extends dccworldActorBase {
     this.raceItem = raceItem;
   }
 
+  /**
+   * Initialize starting skills from a class
+   * @param {Object} startingSkills - Skills granted by the class
+   * @private
+   */
+  _initializeClassSkills(startingSkills) {
+    if (!startingSkills || typeof startingSkills !== 'object') return;
+
+    for (const [skillId, skillData] of Object.entries(startingSkills)) {
+      if (!this.skills[skillId]) {
+        this.skills[skillId] = {
+          id: skillId,
+          name: skillData.name,
+          level: skillData.level || 1,
+          parent: skillData.parent || null,
+          category: skillData.category || 'general',
+          relatedStat: skillData.relatedStat || null
+        };
+      }
+    }
+  }
+
+  /**
+   * Get a skill by ID
+   * @param {string} skillId - The skill identifier
+   * @returns {Object|null} The skill object or null
+   */
+  getSkill(skillId) {
+    return this.skills[skillId] || null;
+  }
+
+  /**
+   * Get all skills in a category
+   * @param {string} category - The category to filter by
+   * @returns {Array} Array of skills in that category
+   */
+  getSkillsByCategory(category) {
+    return Object.values(this.skills).filter(skill => skill.category === category);
+  }
+
+  /**
+   * Get the stat modifier that applies to a skill
+   * @param {Object} skill - The skill object
+   * @returns {number} The stat modifier
+   */
+  getSkillStatModifier(skill) {
+    if (!skill.relatedStat || !this.abilities[skill.relatedStat]) {
+      return 0;
+    }
+    return this.abilities[skill.relatedStat].mod || 0;
+  }
+
   getRollData() {
     const data = {};
 
@@ -133,6 +206,9 @@ export default class dccworldCharacter extends dccworldActorBase {
     }
 
     data.lvl = this.attributes.level.value;
+
+    // Add skills to roll data
+    data.skills = this.skills;
 
     return data
   }

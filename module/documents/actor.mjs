@@ -1,3 +1,5 @@
+import { rollSkillCheck, contestedRoll, sendSkillRollToChat, sendContestedRollToChat } from '../helpers/dice.mjs';
+
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
  * @extends {Actor}
@@ -44,11 +46,11 @@ export class dccworldActor extends Actor {
 
   /**
    * Convert the actor document to a plain object.
-   * 
+   *
    * The built in `toObject()` method will ignore derived data when using Data Models.
    * This additional method will instead use the spread operator to return a simplified
    * version of the data.
-   * 
+   *
    * @returns {object} Plain object either via deepClone or the spread operator.
    */
   toPlainObject() {
@@ -64,6 +66,143 @@ export class dccworldActor extends Actor {
     result.effects = this.effects?.size > 0 ? this.effects.contents : [];
 
     return result;
+  }
+
+  /**
+   * Roll a skill check for this actor
+   * @param {string} skillId - The ID of the skill to roll
+   * @param {Object} options - Additional options for the roll
+   * @returns {Promise<Object>} The roll result
+   */
+  async rollSkill(skillId, options = {}) {
+    // Only characters have skills
+    if (this.type !== 'character') {
+      ui.notifications.warn("Only characters can use skill checks.");
+      return null;
+    }
+
+    const skill = this.system.getSkill(skillId);
+    if (!skill) {
+      ui.notifications.error(`Skill "${skillId}" not found.`);
+      return null;
+    }
+
+    const statModifier = this.system.getSkillStatModifier(skill);
+
+    const rollResult = await rollSkillCheck({
+      skillLevel: skill.level,
+      statModifier,
+      skillName: skill.name,
+      actor: this
+    });
+
+    // Send to chat unless explicitly disabled
+    if (options.sendToChat !== false) {
+      await sendSkillRollToChat(rollResult, options.chatOptions);
+    }
+
+    // Check for skill improvement (all 6s)
+    if (rollResult.allSixes && options.checkImprovement !== false) {
+      await this._promptSkillImprovement(skill);
+    }
+
+    return rollResult;
+  }
+
+  /**
+   * Perform a contested roll between this actor and another
+   * @param {string} attackSkillId - This actor's skill
+   * @param {Actor} defender - The defending actor
+   * @param {string} defenseSkillId - Defender's skill
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} The contest result
+   */
+  async rollContested(attackSkillId, defender, defenseSkillId, options = {}) {
+    if (this.type !== 'character' || defender.type !== 'character') {
+      ui.notifications.warn("Only characters can use contested rolls.");
+      return null;
+    }
+
+    const attackSkill = this.system.getSkill(attackSkillId);
+    const defenseSkill = defender.system.getSkill(defenseSkillId);
+
+    if (!attackSkill || !defenseSkill) {
+      ui.notifications.error("One or both skills not found.");
+      return null;
+    }
+
+    const contestResult = await contestedRoll(
+      {
+        skillLevel: attackSkill.level,
+        statModifier: this.system.getSkillStatModifier(attackSkill),
+        skillName: attackSkill.name,
+        actor: this
+      },
+      {
+        skillLevel: defenseSkill.level,
+        statModifier: defender.system.getSkillStatModifier(defenseSkill),
+        skillName: defenseSkill.name,
+        actor: defender
+      }
+    );
+
+    // Send to chat unless explicitly disabled
+    if (options.sendToChat !== false) {
+      await sendContestedRollToChat(contestResult, options.chatOptions);
+    }
+
+    // Apply damage if this is an attack
+    if (options.isAttack && contestResult.attackerWins) {
+      await defender.applyDamage(contestResult.difference);
+    }
+
+    // Check for skill improvements
+    if (options.checkImprovement !== false) {
+      if (contestResult.attackRoll.allSixes) {
+        await this._promptSkillImprovement(attackSkill);
+      }
+      if (contestResult.defenseRoll.allSixes) {
+        await defender._promptSkillImprovement(defenseSkill);
+      }
+    }
+
+    return contestResult;
+  }
+
+  /**
+   * Apply damage to this actor
+   * @param {number} amount - Amount of damage to apply
+   * @returns {Promise<Actor>} Updated actor
+   */
+  async applyDamage(amount) {
+    const currentHP = this.system.hp.value;
+    const newHP = Math.max(0, currentHP - amount);
+
+    await this.update({ 'system.hp.value': newHP });
+
+    ui.notifications.info(`${this.name} takes ${amount} damage! (${newHP}/${this.system.hp.max} HP)`);
+
+    return this;
+  }
+
+  /**
+   * Prompt the user about skill improvement
+   * @param {Object} skill - The skill that can be improved
+   * @private
+   */
+  async _promptSkillImprovement(skill) {
+    // For now, just notify the user
+    // TODO: Create a dialog for choosing to improve existing skill or learn new one
+    ui.notifications.info(`⚡ ${skill.name} rolled all 6s! Skill can be improved.`);
+
+    // If it's "Do Something", create a new skill
+    if (skill.id === 'do-something') {
+      // TODO: Prompt for new skill name and details
+      console.log("Do Something improvement - create new skill");
+    } else {
+      // TODO: Prompt to improve skill or create new related skill
+      console.log("Skill improvement available");
+    }
   }
 
 }

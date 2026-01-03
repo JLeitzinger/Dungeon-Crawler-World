@@ -1,0 +1,44 @@
+{{!-- Skills List --}}
+<ol class="skills-list">
+  {{#each system.skills as |skill skillId|}}
+  <li class="skill item flexrow" data-skill-id="{{skillId}}">
+    <div class="skill-name">
+      <h4>{{skill.name}}</h4>
+      {{#if skill.parent}}
+        <span class="skill-parent">← {{lookup (lookup @root.system.skills skill.parent) 'name'}}</span>
+      {{/if}}
+    </div>
+
+    <div class="skill-info flexrow">
+      <div class="skill-level">
+        <label>Level</label>
+        <span class="level-value">{{skill.level}}</span>
+        <span class="dice-pool">({{skill.level}}d6{{#if skill.relatedStat}}+{{lookup (lookup @root.system.abilities skill.relatedStat) 'mod'}}{{/if}})</span>
+      </div>
+
+      {{#if skill.relatedStat}}
+      <div class="skill-stat">
+        <label>Stat</label>
+        <span>{{lookup @root.config.abilityAbbreviations skill.relatedStat}}</span>
+      </div>
+      {{/if}}
+
+      <div class="skill-category">
+        <span class="category-tag">{{skill.category}}</span>
+      </div>
+    </div>
+
+    <div class="skill-controls flexrow">
+      <a class="skill-roll" title="Roll Skill"><i class="fas fa-dice-d6"></i> Roll</a>
+      <a class="skill-edit" title="Edit Skill"><i class="fas fa-edit"></i></a>
+      {{#unless (eq skillId "do-something")}}
+        <a class="skill-delete" title="Delete Skill"><i class="fas fa-trash"></i></a>
+      {{/unless}}
+    </div>
+  </li>
+  {{/each}}
+</ol>
+
+<div class="skills-footer">
+  <a class="skill-create" data-action="create-skill"><i class="fas fa-plus"></i> Add Skill</a>
+</div>
