@@ -12,6 +12,19 @@
       "Actor": "dccworld Actor Sheet",
       "Item": "dccworld Item Sheet"
     },
+    "CharacterDetails": {
+      "Race": "Race",
+      "Class": "Class",
+      "Subclass": "Subclass",
+      "Level": "Level",
+      "XP": "Experience Points"
+    },
+    "Resources": {
+      "HP": "Hit Points",
+      "Stamina": "Stamina",
+      "Mana": "Mana",
+      "TempHP": "Temporary HP"
+    },
     "Item": {
       "Spell": {
         "SpellLVL": "Level {level} Spells",
