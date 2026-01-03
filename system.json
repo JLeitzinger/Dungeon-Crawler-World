@@ -4,18 +4,14 @@
   "description": "The Dungeon Crawler World system for FoundryVTT!",
   "authors": [
     {
-      "name": "Asacolips",
-      "discord": "asacolips"
-    },
-    {
-      "name": "Lee Talman",
-      "discord": ".pizzaWizard"
+      "name": "JLeitzinger",
+      "url": "https://github.com/JLeitzinger"
     }
   ],
-  "url": "Replace this with a link to your public repository",
+  "url": "https://github.com/JLeitzinger/Dungeon-Crawler-World",
   "license": "LICENSE.txt",
   "readme": "README.md",
-  "bugs": "Replace this with a link to file issues or tickets",
+  "bugs": "https://github.com/JLeitzinger/Dungeon-Crawler-World/issues",
   "changelog": "CHANGELOG.md",
   "media": [
     {
@@ -24,7 +20,7 @@
       "thumbnail": "systems/dungeon-crawler-world/assets/anvil-impact.png"
     }
   ],
-  "version": "2.0.0",
+  "version": "0.1.0",
   "compatibility": {
     "minimum": 13,
     "verified": "13"
@@ -42,7 +38,7 @@
   "packFolders": [],
   "socket": false,
   "manifest": "https://raw.githubusercontent.com/JLeitzinger/Dungeon-Crawler-World/main/system.json",
-  "download": "https://github.com/JLeitzinger/Dungeon-Crawler-World/releases/download/v0.0.1/v0.0.1.zip",
+  "download": "https://github.com/JLeitzinger/Dungeon-Crawler-World/archive/refs/heads/main.zip",
   "background": "systems/dungeon-crawler-world/assets/anvil-impact.png",
   "gridDistance": 5,
   "gridUnits": "ft",
