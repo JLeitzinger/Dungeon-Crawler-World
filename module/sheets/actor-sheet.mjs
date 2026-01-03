@@ -6,6 +6,13 @@ import {
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
+ *
+ * TODO: Migrate to ApplicationV2 framework
+ * This uses the legacy ActorSheet class. Should be migrated to ApplicationV2 for:
+ * - Better performance and reactivity
+ * - Modern component architecture
+ * - Future compatibility (v1 may be deprecated in Foundry v14+)
+ * See: https://foundryvtt.com/article/application-v2-migration/
  */
 export class dccworldActorSheet extends ActorSheet {
   /** @override */

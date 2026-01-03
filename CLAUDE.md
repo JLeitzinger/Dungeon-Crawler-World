@@ -117,3 +117,25 @@ Template preloading handled by `module/helpers/templates.mjs`
 - Ability score modifiers use D&D 5e formula: `Math.floor((score - 10) / 2)`
 - Data models must call `super.defineSchema()` to inherit parent fields
 - Use `toPlainObject()` instead of `toObject()` when you need derived data
+
+## Future Improvements
+
+### ⚠️ ApplicationV2 Migration (High Priority)
+This system currently uses the legacy ActorSheet and ItemSheet classes. Foundry VTT has a newer **ApplicationV2** framework that should be migrated to:
+
+**Why migrate:**
+- Better performance and reactivity
+- Modern component-based architecture
+- Improved accessibility
+- Future-proof (v1 sheets may be deprecated)
+
+**Files that need updating:**
+- `module/sheets/actor-sheet.mjs` - Extend ApplicationV2 instead of ActorSheet
+- `module/sheets/item-sheet.mjs` - Extend ApplicationV2 instead of ItemSheet
+- Templates may need restructuring for v2's template parts system
+
+**Resources:**
+- [ApplicationV2 Documentation](https://foundryvtt.com/article/v2-applications/)
+- [Migration Guide](https://foundryvtt.com/article/application-v2-migration/)
+
+**Priority:** Medium - Current implementation works, but plan migration before Foundry v14+
