@@ -49,7 +49,9 @@ Hooks.once('init', function () {
   CONFIG.Item.dataModels = {
     item: models.dccworldItem,
     feature: models.dccworldFeature,
-    spell: models.dccworldSpell
+    spell: models.dccworldSpell,
+    class: models.dccworldClass,
+    race: models.dccworldRace
   }
 
   // Active Effects are never copied to the Actor,
@@ -80,6 +82,11 @@ Hooks.once('init', function () {
 // If you need to add Handlebars helpers, here is a useful example:
 Handlebars.registerHelper('toLowerCase', function (str) {
   return str.toLowerCase();
+});
+
+// Equality comparison helper for select dropdowns
+Handlebars.registerHelper('eq', function (a, b) {
+  return a === b;
 });
 
 /* -------------------------------------------- */

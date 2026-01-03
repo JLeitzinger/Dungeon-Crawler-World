@@ -1,0 +1,156 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <header class='sheet-header'>
+    <img
+      class='profile-img'
+      src='{{item.img}}'
+      data-edit='img'
+      title='{{item.name}}'
+    />
+    <div class='header-fields'>
+      <h1 class='charname'><input
+          name='name'
+          type='text'
+          value='{{item.name}}'
+          placeholder='Class Name'
+        /></h1>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class='sheet-tabs tabs' data-group='primary'>
+    <a class='item' data-tab='description'>Description</a>
+    <a class='item' data-tab='attributes'>Attributes</a>
+    <a class='item' data-tab='features'>Features</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class='sheet-body'>
+
+    {{! Description Tab }}
+    <div class='tab' data-group='primary' data-tab='description'>
+      {{editor
+        enrichedDescription
+        target='system.description'
+        engine='prosemirror'
+        button=true
+        editable=editable
+      }}
+    </div>
+
+    {{! Attributes Tab }}
+    <div class='tab attributes' data-group='primary' data-tab='attributes'>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Hit Die</label>
+          <select name='system.hitDie' data-dtype='String'>
+            <option value='d6' {{#if (eq system.hitDie 'd6')}}selected{{/if}}>d6</option>
+            <option value='d8' {{#if (eq system.hitDie 'd8')}}selected{{/if}}>d8</option>
+            <option value='d10' {{#if (eq system.hitDie 'd10')}}selected{{/if}}>d10</option>
+            <option value='d12' {{#if (eq system.hitDie 'd12')}}selected{{/if}}>d12</option>
+          </select>
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Primary Ability</label>
+          <select name='system.primaryAbility' data-dtype='String'>
+            <option value='str' {{#if (eq system.primaryAbility 'str')}}selected{{/if}}>Strength</option>
+            <option value='dex' {{#if (eq system.primaryAbility 'dex')}}selected{{/if}}>Dexterity</option>
+            <option value='con' {{#if (eq system.primaryAbility 'con')}}selected{{/if}}>Constitution</option>
+            <option value='int' {{#if (eq system.primaryAbility 'int')}}selected{{/if}}>Intelligence</option>
+            <option value='wis' {{#if (eq system.primaryAbility 'wis')}}selected{{/if}}>Wisdom</option>
+            <option value='cha' {{#if (eq system.primaryAbility 'cha')}}selected{{/if}}>Charisma</option>
+          </select>
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Secondary Ability</label>
+          <select name='system.secondaryAbility' data-dtype='String'>
+            <option value='' {{#if (eq system.secondaryAbility '')}}selected{{/if}}>None</option>
+            <option value='str' {{#if (eq system.secondaryAbility 'str')}}selected{{/if}}>Strength</option>
+            <option value='dex' {{#if (eq system.secondaryAbility 'dex')}}selected{{/if}}>Dexterity</option>
+            <option value='con' {{#if (eq system.secondaryAbility 'con')}}selected{{/if}}>Constitution</option>
+            <option value='int' {{#if (eq system.secondaryAbility 'int')}}selected{{/if}}>Intelligence</option>
+            <option value='wis' {{#if (eq system.secondaryAbility 'wis')}}selected{{/if}}>Wisdom</option>
+            <option value='cha' {{#if (eq system.secondaryAbility 'cha')}}selected{{/if}}>Charisma</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>Hit Points & Resources</h3>
+      <div class='grid grid-3col'>
+        <div class='resource'>
+          <label class='resource-label'>Base HP (Level 1)</label>
+          <input
+            type='text'
+            name='system.baseHP'
+            value='{{system.baseHP}}'
+            data-dtype='Number'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>HP per Level</label>
+          <input
+            type='text'
+            name='system.hpPerLevel'
+            value='{{system.hpPerLevel}}'
+            data-dtype='Number'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Stamina per Level</label>
+          <input
+            type='text'
+            name='system.staminaPerLevel'
+            value='{{system.staminaPerLevel}}'
+            data-dtype='Number'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Mana per Level</label>
+          <input
+            type='text'
+            name='system.manaPerLevel'
+            value='{{system.manaPerLevel}}'
+            data-dtype='Number'
+          />
+        </div>
+      </div>
+
+      <h3>Saving Throw Proficiencies</h3>
+      <div class='grid grid-3col'>
+        {{#each system.saves as |value key|}}
+        <label class='checkbox'>
+          <input type='checkbox' name='system.saves.{{key}}' {{checked value}} />
+          {{lookup @root.config.abilities key}}
+        </label>
+        {{/each}}
+      </div>
+
+      <h3>Subclasses</h3>
+      <div class='resource'>
+        <label class='resource-label'>Available Subclasses (comma separated)</label>
+        <input
+          type='text'
+          name='system.subclasses'
+          value='{{system.subclasses}}'
+          placeholder='e.g., Champion, Battle Master, Eldritch Knight'
+        />
+      </div>
+    </div>
+
+    {{! Features Tab }}
+    <div class='tab' data-group='primary' data-tab='features'>
+      <div class='resource'>
+        <label class='resource-label'>Class Features by Level</label>
+        <textarea
+          name='system.features'
+          rows='15'
+          placeholder='List class features gained at each level...'
+        >{{system.features}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

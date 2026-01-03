@@ -1,0 +1,190 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <header class='sheet-header'>
+    <img
+      class='profile-img'
+      src='{{item.img}}'
+      data-edit='img'
+      title='{{item.name}}'
+    />
+    <div class='header-fields'>
+      <h1 class='charname'><input
+          name='name'
+          type='text'
+          value='{{item.name}}'
+          placeholder='Race Name'
+        /></h1>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class='sheet-tabs tabs' data-group='primary'>
+    <a class='item' data-tab='description'>Description</a>
+    <a class='item' data-tab='attributes'>Attributes</a>
+    <a class='item' data-tab='traits'>Traits</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class='sheet-body'>
+
+    {{! Description Tab }}
+    <div class='tab' data-group='primary' data-tab='description'>
+      {{editor
+        enrichedDescription
+        target='system.description'
+        engine='prosemirror'
+        button=true
+        editable=editable
+      }}
+    </div>
+
+    {{! Attributes Tab }}
+    <div class='tab attributes' data-group='primary' data-tab='attributes'>
+      <h3>Ability Score Bonuses</h3>
+      <div class='grid grid-3col'>
+        {{#each system.abilityBonuses as |bonus key|}}
+        <div class='resource'>
+          <label class='resource-label'>{{lookup @root.config.abilities key}}</label>
+          <input
+            type='text'
+            name='system.abilityBonuses.{{key}}'
+            value='{{bonus}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+        {{/each}}
+      </div>
+
+      <h3>Physical Attributes</h3>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Size</label>
+          <select name='system.size' data-dtype='String'>
+            <option value='tiny' {{#if (eq system.size 'tiny')}}selected{{/if}}>Tiny</option>
+            <option value='small' {{#if (eq system.size 'small')}}selected{{/if}}>Small</option>
+            <option value='medium' {{#if (eq system.size 'medium')}}selected{{/if}}>Medium</option>
+            <option value='large' {{#if (eq system.size 'large')}}selected{{/if}}>Large</option>
+            <option value='huge' {{#if (eq system.size 'huge')}}selected{{/if}}>Huge</option>
+            <option value='gargantuan' {{#if (eq system.size 'gargantuan')}}selected{{/if}}>Gargantuan</option>
+          </select>
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Speed (ft)</label>
+          <input
+            type='text'
+            name='system.speed'
+            value='{{system.speed}}'
+            data-dtype='Number'
+          />
+        </div>
+      </div>
+
+      <h3>Special Senses (in feet, 0 = none)</h3>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Darkvision</label>
+          <input
+            type='text'
+            name='system.senses.darkvision'
+            value='{{system.senses.darkvision}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Blindsight</label>
+          <input
+            type='text'
+            name='system.senses.blindsight'
+            value='{{system.senses.blindsight}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Tremorsense</label>
+          <input
+            type='text'
+            name='system.senses.tremorsense'
+            value='{{system.senses.tremorsense}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Truesight</label>
+          <input
+            type='text'
+            name='system.senses.truesight'
+            value='{{system.senses.truesight}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+      </div>
+
+      <h3>Languages</h3>
+      <div class='resource'>
+        <label class='resource-label'>Languages Known</label>
+        <input
+          type='text'
+          name='system.languages'
+          value='{{system.languages}}'
+          placeholder='e.g., Common, Elvish, Dwarvish'
+        />
+      </div>
+
+      <h3>Resource Bonuses</h3>
+      <div class='grid grid-3col'>
+        <div class='resource'>
+          <label class='resource-label'>HP Bonus</label>
+          <input
+            type='text'
+            name='system.bonuses.hp'
+            value='{{system.bonuses.hp}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Stamina Bonus</label>
+          <input
+            type='text'
+            name='system.bonuses.stamina'
+            value='{{system.bonuses.stamina}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Mana Bonus</label>
+          <input
+            type='text'
+            name='system.bonuses.mana'
+            value='{{system.bonuses.mana}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+      </div>
+    </div>
+
+    {{! Traits Tab }}
+    <div class='tab' data-group='primary' data-tab='traits'>
+      <div class='resource'>
+        <label class='resource-label'>Racial Traits</label>
+        <textarea
+          name='system.traits'
+          rows='15'
+          placeholder='Describe special racial abilities and traits...'
+        >{{system.traits}}</textarea>
+      </div>
+    </div>
+  </section>
+</form>

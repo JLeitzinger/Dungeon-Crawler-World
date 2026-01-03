@@ -48,7 +48,9 @@
     "Item": {
       "item": "Item",
       "feature": "Feature",
-      "spell": "Spell"
+      "spell": "Spell",
+      "class": "Class",
+      "race": "Race"
     }
   }
 }

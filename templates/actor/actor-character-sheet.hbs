@@ -9,15 +9,31 @@
       {{!-- Character Details --}}
       <div class="details grid grid-3col">
         <div class="detail flex-group-center">
-          <label for="system.details.race" class="resource-label">Race</label>
-          <input type="text" name="system.details.race" value="{{system.details.race}}" placeholder="Race"/>
+          <label class="resource-label">Race</label>
+          {{#if system.raceItem}}
+            <div class="equipped-item" data-item-id="{{system.raceItem._id}}">
+              <img src="{{system.raceItem.img}}" width="20" height="20" title="{{system.raceItem.name}}" />
+              <span class="item-name">{{system.raceItem.name}}</span>
+              <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+            </div>
+          {{else}}
+            <input type="text" name="system.details.race" value="{{system.details.race}}" placeholder="Drag race item or type name"/>
+          {{/if}}
         </div>
         <div class="detail flex-group-center">
-          <label for="system.details.class" class="resource-label">Class</label>
-          <input type="text" name="system.details.class" value="{{system.details.class}}" placeholder="Class"/>
+          <label class="resource-label">Class</label>
+          {{#if system.classItem}}
+            <div class="equipped-item" data-item-id="{{system.classItem._id}}">
+              <img src="{{system.classItem.img}}" width="20" height="20" title="{{system.classItem.name}}" />
+              <span class="item-name">{{system.classItem.name}}</span>
+              <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+            </div>
+          {{else}}
+            <input type="text" name="system.details.class" value="{{system.details.class}}" placeholder="Drag class item or type name"/>
+          {{/if}}
         </div>
         <div class="detail flex-group-center">
-          <label for="system.details.subclass" class="resource-label">Subclass</label>
+          <label class="resource-label">Subclass</label>
           <input type="text" name="system.details.subclass" value="{{system.details.subclass}}" placeholder="Subclass"/>
         </div>
       </div>
@@ -106,6 +122,9 @@
             <div class="ability flexrow flex-group-center">
               <label for="system.abilities.{{key}}.value" class="resource-label rollable flexlarge align-left" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
               <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
+              {{#if ability.racial}}
+                <span class="ability-racial" title="Racial bonus: +{{ability.racial}}">{{ability.total}}</span>
+              {{/if}}
               <span class="ability-mod rollable" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
             </div>
             {{/each}}
