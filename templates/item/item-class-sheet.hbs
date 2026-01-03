@@ -143,8 +143,42 @@
 
     {{! Features Tab }}
     <div class='tab' data-group='primary' data-tab='features'>
+      <h3>Starting Skills</h3>
+      <p class="hint">These skills are granted to characters when they select this class.</p>
+
+      {{#if system.startingSkills}}
+      <ol class="starting-skills-list">
+        {{#each system.startingSkills as |skill skillId|}}
+        <li class="starting-skill">
+          <strong>{{skill.name}}</strong> (Level {{skill.level}})
+          <span class="skill-category">{{skill.category}}</span>
+          {{#if skill.relatedStat}}
+          <span class="skill-stat">Stat: {{skill.relatedStat}}</span>
+          {{/if}}
+        </li>
+        {{/each}}
+      </ol>
+      {{else}}
+      <p class="no-skills">No starting skills configured. Edit the class JSON to add skills.</p>
+      {{/if}}
+
+      <div class="hint-box">
+        <h4>How to Configure Starting Skills:</h4>
+        <p>Starting skills are stored in the <code>system.startingSkills</code> field. You can configure them by editing the item's data directly or through code.</p>
+        <p><strong>Example structure:</strong></p>
+        <pre>{
+  "combat": {
+    "name": "Combat",
+    "level": 2,
+    "parent": "do-something",
+    "category": "combat",
+    "relatedStat": "str"
+  }
+}</pre>
+      </div>
+
+      <h3>Class Features by Level</h3>
       <div class='resource'>
-        <label class='resource-label'>Class Features by Level</label>
         <textarea
           name='system.features'
           rows='15'

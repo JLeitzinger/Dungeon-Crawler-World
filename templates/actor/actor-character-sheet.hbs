@@ -93,6 +93,22 @@
           <span class="xp-text">{{system.attributes.xp.value}} / {{system.attributes.xp.max}}</span>
         </div>
       </div>
+
+      {{!-- Failure XP --}}
+      <div class="failure-xp">
+        <label for="system.attributes.failureXP">Failure XP:</label>
+        <input type="text" name="system.attributes.failureXP" value="{{system.attributes.failureXP}}" data-dtype="Number" readonly />
+        <span class="failure-xp-hint">(Spend to turn dice to 6s for skill advancement)</span>
+      </div>
+
+      {{!-- Stat Increases --}}
+      {{#if system.attributes.statIncreases}}
+      <div class="stat-increases">
+        <button type="button" class="stat-increase-button" data-action="spend-stat-increase">
+          <i class="fas fa-arrow-up"></i> Spend Stat Increase ({{system.attributes.statIncreases}} available)
+        </button>
+      </div>
+      {{/if}}
     </div>
   </header>
 

@@ -192,6 +192,9 @@ export class dccworldActorSheet extends ActorSheet {
     html.on('click', '.skill-edit', this._onSkillEdit.bind(this));
     html.on('click', '.skill-delete', this._onSkillDelete.bind(this));
 
+    // Stat increases
+    html.on('click', '.stat-increase-button', this._onStatIncrease.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = (ev) => this._onDragStart(ev);
@@ -462,5 +465,15 @@ export class dccworldActorSheet extends ActorSheet {
       await this.actor.update({ 'system.skills': skills });
       ui.notifications.info(`Deleted skill: ${skill.name}`);
     }
+  }
+
+  /**
+   * Handle spending stat increases
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onStatIncrease(event) {
+    event.preventDefault();
+    await this.actor.promptStatIncrease();
   }
 }

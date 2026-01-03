@@ -156,6 +156,14 @@ export class dccworldActor extends Actor {
       await defender.applyDamage(contestResult.difference);
     }
 
+    // Award failure XP (1 XP per failed roll)
+    if (this.type === 'character' && !contestResult.attackerWins && !contestResult.tie) {
+      await this._awardFailureXP(1);
+    }
+    if (defender.type === 'character' && contestResult.attackerWins) {
+      await defender._awardFailureXP(1);
+    }
+
     // Check for skill improvements
     if (options.checkImprovement !== false) {
       if (contestResult.attackRoll.allSixes) {
@@ -191,18 +199,356 @@ export class dccworldActor extends Actor {
    * @private
    */
   async _promptSkillImprovement(skill) {
-    // For now, just notify the user
-    // TODO: Create a dialog for choosing to improve existing skill or learn new one
-    ui.notifications.info(`⚡ ${skill.name} rolled all 6s! Skill can be improved.`);
-
-    // If it's "Do Something", create a new skill
+    // If it's "Do Something", must create a new skill
     if (skill.id === 'do-something') {
-      // TODO: Prompt for new skill name and details
-      console.log("Do Something improvement - create new skill");
-    } else {
-      // TODO: Prompt to improve skill or create new related skill
-      console.log("Skill improvement available");
+      return this._createNewSkillDialog(skill);
     }
+
+    // For other skills, offer choice to improve or create new
+    return this._skillImprovementChoiceDialog(skill);
+  }
+
+  /**
+   * Show dialog to create a new skill (for "Do Something" improvements)
+   * @param {Object} parentSkill - The parent skill
+   * @private
+   */
+  async _createNewSkillDialog(parentSkill) {
+    new Dialog({
+      title: "⚡ Skill Breakthrough!",
+      content: `
+        <p>You rolled all 6s with <strong>${parentSkill.name}</strong>!</p>
+        <p>You've discovered a new skill. What were you trying to do?</p>
+        <form>
+          <div class="form-group">
+            <label>New Skill Name:</label>
+            <input type="text" name="skillName" placeholder="e.g., Melee Combat, Arcane Magic" autofocus />
+          </div>
+          <div class="form-group">
+            <label>Category:</label>
+            <select name="category">
+              <option value="combat">Combat</option>
+              <option value="magic">Magic</option>
+              <option value="utility">Utility</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Related Stat:</label>
+            <select name="relatedStat">
+              <option value="">None</option>
+              <option value="str">STR (Strength)</option>
+              <option value="dex">DEX (Dexterity)</option>
+              <option value="con">CON (Constitution)</option>
+              <option value="int">INT (Intelligence)</option>
+              <option value="wis">WIS (Wisdom)</option>
+              <option value="cha">CHA (Charisma)</option>
+            </select>
+          </div>
+        </form>
+      `,
+      buttons: {
+        create: {
+          icon: '<i class="fas fa-star"></i>',
+          label: "Create Skill",
+          callback: async (html) => {
+            const formData = new FormData(html[0].querySelector('form'));
+            const skillName = formData.get('skillName')?.trim();
+            const category = formData.get('category');
+            const relatedStat = formData.get('relatedStat') || null;
+
+            if (!skillName) {
+              ui.notifications.warn("Skill name is required.");
+              return;
+            }
+
+            const skillId = skillName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+            // Create new skill at level 1
+            const skills = foundry.utils.duplicate(this.system.skills);
+            skills[skillId] = {
+              id: skillId,
+              name: skillName,
+              level: 1,
+              parent: parentSkill.id,
+              category,
+              relatedStat
+            };
+
+            await this.update({ 'system.skills': skills });
+            ui.notifications.info(`⚡ New skill learned: ${skillName}!`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "create"
+    }).render(true);
+  }
+
+  /**
+   * Show dialog to choose between improving skill or creating new one
+   * @param {Object} skill - The skill that can be improved
+   * @private
+   */
+  async _skillImprovementChoiceDialog(skill) {
+    new Dialog({
+      title: "⚡ Skill Mastery!",
+      content: `
+        <p>You rolled all 6s with <strong>${skill.name} (Level ${skill.level})</strong>!</p>
+        <p>Choose how to improve:</p>
+        <div class="skill-improvement-options">
+          <div class="option">
+            <h4>📈 Improve ${skill.name}</h4>
+            <p>Increase to Level ${skill.level + 1} (roll ${skill.level + 1}d6)</p>
+          </div>
+          <div class="option">
+            <h4>✨ Learn New Skill</h4>
+            <p>Create a new related skill at Level 1</p>
+          </div>
+        </div>
+      `,
+      buttons: {
+        improve: {
+          icon: '<i class="fas fa-arrow-up"></i>',
+          label: "Improve Skill",
+          callback: async () => {
+            const skills = foundry.utils.duplicate(this.system.skills);
+            skills[skill.id].level += 1;
+            await this.update({ 'system.skills': skills });
+            ui.notifications.info(`⚡ ${skill.name} improved to Level ${skills[skill.id].level}!`);
+          }
+        },
+        newSkill: {
+          icon: '<i class="fas fa-plus"></i>',
+          label: "New Skill",
+          callback: async () => {
+            // Show create new skill dialog
+            this._createRelatedSkillDialog(skill);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Decide Later"
+        }
+      },
+      default: "improve"
+    }).render(true);
+  }
+
+  /**
+   * Prompt to increase a stat
+   */
+  async promptStatIncrease() {
+    if (this.type !== 'character') return;
+
+    const available = this.system.attributes.statIncreases || 0;
+
+    if (available <= 0) {
+      ui.notifications.warn("No stat increases available.");
+      return;
+    }
+
+    new Dialog({
+      title: "Increase Ability Score",
+      content: `
+        <p>You have <strong>${available}</strong> stat increase${available > 1 ? 's' : ''} available.</p>
+        <p>Choose an ability score to increase by 1:</p>
+        <form>
+          <div class="form-group">
+            <label>Ability Score:</label>
+            <select name="ability" autofocus>
+              <option value="str">STR (${this.system.abilities.str.value})</option>
+              <option value="dex">DEX (${this.system.abilities.dex.value})</option>
+              <option value="con">CON (${this.system.abilities.con.value})</option>
+              <option value="int">INT (${this.system.abilities.int.value})</option>
+              <option value="wis">WIS (${this.system.abilities.wis.value})</option>
+              <option value="cha">CHA (${this.system.abilities.cha.value})</option>
+            </select>
+          </div>
+        </form>
+      `,
+      buttons: {
+        increase: {
+          icon: '<i class="fas fa-arrow-up"></i>',
+          label: "Increase",
+          callback: async (html) => {
+            const formData = new FormData(html[0].querySelector('form'));
+            const ability = formData.get('ability');
+
+            const currentValue = this.system.abilities[ability].value;
+            const newValue = currentValue + 1;
+
+            await this.update({
+              [`system.abilities.${ability}.value`]: newValue,
+              'system.attributes.statIncreases': available - 1
+            });
+
+            ui.notifications.info(`${ability.toUpperCase()} increased to ${newValue}!`);
+
+            // Prompt again if more increases are available
+            if (available > 1) {
+              setTimeout(() => this.promptStatIncrease(), 500);
+            }
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Later"
+        }
+      },
+      default: "increase"
+    }).render(true);
+  }
+
+  /**
+   * Grant stat increases (typically on level up)
+   * @param {number} amount - Number of stat increases to grant
+   */
+  async grantStatIncreases(amount = 1) {
+    if (this.type !== 'character') return;
+
+    const current = this.system.attributes.statIncreases || 0;
+    await this.update({ 'system.attributes.statIncreases': current + amount });
+
+    ui.notifications.info(`Gained ${amount} stat increase${amount > 1 ? 's' : ''}!`);
+
+    // Auto-prompt if they want to spend it now
+    setTimeout(() => {
+      new Dialog({
+        title: "Stat Increases Available",
+        content: `<p>You have stat increases available. Would you like to spend them now?</p>`,
+        buttons: {
+          yes: {
+            label: "Yes",
+            callback: () => this.promptStatIncrease()
+          },
+          no: {
+            label: "Later"
+          }
+        },
+        default: "yes"
+      }).render(true);
+    }, 500);
+  }
+
+  /**
+   * Award failure XP to this character
+   * @param {number} amount - Amount of XP to award
+   * @private
+   */
+  async _awardFailureXP(amount) {
+    if (this.type !== 'character') return;
+
+    const currentXP = this.system.attributes.failureXP || 0;
+    const newXP = currentXP + amount;
+
+    await this.update({ 'system.attributes.failureXP': newXP });
+    ui.notifications.info(`+${amount} Failure XP! (Total: ${newXP})`);
+  }
+
+  /**
+   * Spend failure XP to turn dice into 6s for skill improvement
+   * @param {number} numDice - Number of dice to convert to 6s
+   * @returns {boolean} Whether the XP was successfully spent
+   */
+  async spendFailureXP(numDice) {
+    if (this.type !== 'character') return false;
+
+    const currentXP = this.system.attributes.failureXP || 0;
+    const cost = numDice; // 1 XP per die
+
+    if (currentXP < cost) {
+      ui.notifications.warn(`Not enough Failure XP! Need ${cost}, have ${currentXP}.`);
+      return false;
+    }
+
+    await this.update({ 'system.attributes.failureXP': currentXP - cost });
+    ui.notifications.info(`Spent ${cost} Failure XP. (Remaining: ${currentXP - cost})`);
+    return true;
+  }
+
+  /**
+   * Show dialog to create a skill related to an existing one
+   * @param {Object} parentSkill - The parent skill
+   * @private
+   */
+  async _createRelatedSkillDialog(parentSkill) {
+    new Dialog({
+      title: `Create Skill Related to ${parentSkill.name}`,
+      content: `
+        <p>Create a new skill branching from <strong>${parentSkill.name}</strong>.</p>
+        <form>
+          <div class="form-group">
+            <label>New Skill Name:</label>
+            <input type="text" name="skillName" placeholder="e.g., Sword Fighting, Dodge" autofocus />
+          </div>
+          <div class="form-group">
+            <label>Category:</label>
+            <select name="category">
+              <option value="${parentSkill.category}" selected>${parentSkill.category}</option>
+              <option value="combat">Combat</option>
+              <option value="magic">Magic</option>
+              <option value="utility">Utility</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Related Stat:</label>
+            <select name="relatedStat">
+              ${parentSkill.relatedStat ? `<option value="${parentSkill.relatedStat}" selected>${parentSkill.relatedStat.toUpperCase()}</option>` : ''}
+              <option value="">None</option>
+              <option value="str">STR</option>
+              <option value="dex">DEX</option>
+              <option value="con">CON</option>
+              <option value="int">INT</option>
+              <option value="wis">WIS</option>
+              <option value="cha">CHA</option>
+            </select>
+          </div>
+        </form>
+      `,
+      buttons: {
+        create: {
+          icon: '<i class="fas fa-star"></i>',
+          label: "Create Skill",
+          callback: async (html) => {
+            const formData = new FormData(html[0].querySelector('form'));
+            const skillName = formData.get('skillName')?.trim();
+            const category = formData.get('category');
+            const relatedStat = formData.get('relatedStat') || null;
+
+            if (!skillName) {
+              ui.notifications.warn("Skill name is required.");
+              return;
+            }
+
+            const skillId = skillName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+            // Create new skill at level 1
+            const skills = foundry.utils.duplicate(this.system.skills);
+            skills[skillId] = {
+              id: skillId,
+              name: skillName,
+              level: 1,
+              parent: parentSkill.id,
+              category,
+              relatedStat
+            };
+
+            await this.update({ 'system.skills': skills });
+            ui.notifications.info(`⚡ New skill learned: ${skillName}!`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "create"
+    }).render(true);
   }
 
 }

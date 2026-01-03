@@ -15,6 +15,10 @@ export default class dccworldCharacter extends dccworldActorBase {
         value: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
         max: new fields.NumberField({ ...requiredInteger, initial: 300, min: 0 })
       }),
+      // Failure XP - earned from failed rolls, spent to make dice 6s for skill improvement
+      failureXP: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      // Available stat increases (gained on level up)
+      statIncreases: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
     });
 
     // Character details
