@@ -89,6 +89,12 @@ Handlebars.registerHelper('eq', function (a, b) {
   return a === b;
 });
 
+// Division helper for XP bar percentage
+Handlebars.registerHelper('divide', function (a, b) {
+  if (b === 0) return 0;
+  return a / b;
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
