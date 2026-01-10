@@ -197,7 +197,37 @@ export class dccworldActorSheet extends ActorSheet {
     // Skill management
     html.on('click', '.skill-create', this._onSkillCreate.bind(this));
     html.on('click', '.skill-edit', this._onSkillEdit.bind(this));
-    html.on('click', '.skill-delete', this._onSkillDelete.bind(this));
+
+    // Delete Skill (inline handler matching item-delete pattern)
+    html.on('click', '.skill-delete', async (ev) => {
+      const li = $(ev.currentTarget).closest('.skill');
+      const skillId = li.data('skillId');
+      const skill = this.actor.system.skills[skillId];
+
+      if (!skill) return;
+
+      const confirmed = await Dialog.confirm({
+        title: "Delete Skill",
+        content: `<p>Are you sure you want to delete the skill "<strong>${skill.name}</strong>"?</p>`,
+        defaultYes: false
+      });
+
+      if (confirmed) {
+        // Get the current skills object and create a copy
+        const currentSkills = this.actor.system.skills;
+        const newSkills = { ...currentSkills };
+
+        // Delete the skill from the copy
+        delete newSkills[skillId];
+
+        // Update the entire skills object
+        await this.actor.update({ 'system.skills': newSkills });
+        ui.notifications.info(`Deleted skill: ${skill.name}`);
+
+        // Animate removal and re-render (matching item-delete pattern)
+        li.slideUp(200, () => this.render(false));
+      }
+    });
 
     // Skill category filters
     html.on('click', '.skill-filter', this._onSkillFilter.bind(this));
@@ -449,39 +479,6 @@ export class dccworldActorSheet extends ActorSheet {
       },
       default: "save"
     }).render(true);
-  }
-
-  /**
-   * Handle deleting a skill
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onSkillDelete(event) {
-    event.preventDefault();
-    const li = $(event.currentTarget).closest('.skill');
-    const skillId = li.data('skillId');
-    const skill = this.actor.system.skills[skillId];
-
-    if (!skill) return;
-
-    const confirmed = await Dialog.confirm({
-      title: "Delete Skill",
-      content: `<p>Are you sure you want to delete the skill "<strong>${skill.name}</strong>"?</p>`,
-      defaultYes: false
-    });
-
-    if (confirmed) {
-      // Get the current skills object and create a copy
-      const currentSkills = this.actor.system.skills;
-      const newSkills = { ...currentSkills };
-
-      // Delete the skill from the copy
-      delete newSkills[skillId];
-
-      // Update the entire skills object
-      await this.actor.update({ 'system.skills': newSkills });
-      ui.notifications.info(`Deleted skill: ${skill.name}`);
-    }
   }
 
   /**
