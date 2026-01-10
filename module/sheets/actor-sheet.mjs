@@ -220,8 +220,11 @@ export class dccworldActorSheet extends ActorSheet {
         // Delete the skill from the copy
         delete newSkills[skillId];
 
-        // Update the entire skills object
+        // Use updateSource to directly modify the source data
+        // This ensures the change actually persists in DataModel
+        this.actor.updateSource({ 'system.skills': newSkills });
         await this.actor.update({ 'system.skills': newSkills });
+
         const skillNames = Object.values(newSkills).map(s => s.name).join(', ');
         ui.notifications.info(`Deleted skill: ${skill.name}. Current Skills List: ${skillNames}`);
 
