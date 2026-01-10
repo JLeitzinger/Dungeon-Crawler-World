@@ -1,3 +1,321 @@
+// Futuristic Resource Styling
 .resource-label {
-  font-weight: bold;
+  font-family: $font-secondary;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: $c-faint;
+}
+
+// Resource containers
+.resource {
+  position: relative;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  border-radius: $border-radius-tech;
+  transition: all $transition-fast;
+
+  // Tech corner accents
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+    transition: opacity $transition-normal;
+  }
+
+  &::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid $c-cyan;
+    border-left: 2px solid $c-cyan;
+  }
+
+  &::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid $c-cyan;
+    border-right: 2px solid $c-cyan;
+  }
+
+  &:hover {
+    border-color: rgba(0, 247, 255, 0.4);
+    background: rgba(0, 0, 0, 0.4);
+
+    &::before,
+    &::after {
+      opacity: 1;
+    }
+  }
+}
+
+// Resource content inputs
+.resource-content {
+  input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    color: $c-white;
+    font-family: $font-mono;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    padding: 5px;
+    border-radius: $border-radius-tech;
+    transition: all $transition-fast;
+
+    &:focus {
+      border-color: $c-cyan;
+      box-shadow: $glow-cyan;
+      color: $c-cyan;
+    }
+
+    &:read-only {
+      background: transparent;
+      border: none;
+      color: $c-faint;
+    }
+  }
+
+  span {
+    color: $c-faint;
+    font-family: $font-secondary;
+  }
+
+  .max {
+    color: $c-cyan;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
+  }
+}
+
+// Temporary resource display
+.resource-temp {
+  color: $c-green;
+  font-family: $font-secondary;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  text-shadow: $glow-green;
+  margin-top: 5px;
+}
+
+// XP Bar styling
+.xp-bar {
+  margin: 10px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  border-radius: $border-radius-tech;
+
+  label {
+    font-family: $font-secondary;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: $c-cyan;
+    display: block;
+    margin-bottom: 8px;
+  }
+}
+
+.xp-progress {
+  position: relative;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: $border-radius-tech;
+  overflow: hidden;
+
+  .xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $c-cyan 0%, $c-magenta 50%, $c-green 100%);
+    border-radius: $border-radius-tech;
+    transition: width $transition-normal;
+    position: relative;
+    overflow: hidden;
+
+    // Animated glow effect
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: xp-shine 2s infinite;
+    }
+  }
+
+  .xp-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: $font-secondary;
+    font-size: 11px;
+    font-weight: 600;
+    color: $c-white;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+@keyframes xp-shine {
+  0% {
+    left: -100%;
+  }
+  50%, 100% {
+    left: 100%;
+  }
+}
+
+// Failure XP styling
+.failure-xp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  padding: 8px 12px;
+  background: rgba(255, 0, 255, 0.05);
+  border: 1px solid rgba(255, 0, 255, 0.2);
+  border-radius: $border-radius-tech;
+
+  label {
+    font-family: $font-secondary;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: $c-magenta;
+    margin: 0;
+  }
+
+  input {
+    flex: 0 0 60px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 0, 255, 0.3);
+    color: $c-magenta;
+    font-family: $font-mono;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 8px;
+    border-radius: $border-radius-tech;
+
+    &:focus {
+      border-color: $c-magenta;
+      box-shadow: $glow-magenta;
+    }
+  }
+
+  .failure-xp-hint {
+    font-size: 11px;
+    color: $c-faint;
+    font-style: italic;
+  }
+}
+
+// Stat increases button
+.stat-increases {
+  margin: 10px 0;
+
+  .stat-increase-button {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 179, 95, 0.1) 100%);
+    border: 1px solid $c-green;
+    color: $c-green;
+    padding: 10px;
+    font-family: $font-secondary;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: $border-radius-tech;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 179, 95, 0.2) 100%);
+      box-shadow: $glow-green;
+    }
+  }
+}
+
+// Ability score containers
+.abilities {
+  gap: 8px;
+
+  .ability {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    border-radius: $border-radius-tech;
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: rgba(0, 247, 255, 0.4);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .resource-label {
+      flex: 1;
+      font-size: 12px;
+    }
+
+    input {
+      flex: 0 0 40px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      color: $c-white;
+      font-family: $font-mono;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      padding: 4px;
+      border-radius: $border-radius-tech;
+
+      &:focus {
+        border-color: $c-cyan;
+        box-shadow: $glow-cyan;
+        color: $c-cyan;
+      }
+    }
+
+    .ability-racial {
+      flex: 0 0 30px;
+      font-family: $font-mono;
+      font-size: 14px;
+      font-weight: 600;
+      color: $c-green;
+      text-align: center;
+      text-shadow: $glow-green;
+    }
+
+    .ability-mod {
+      flex: 0 0 35px;
+      font-family: $font-mono;
+      font-size: 14px;
+      font-weight: 600;
+      color: $c-cyan;
+      text-align: center;
+      border: 1px solid rgba(0, 247, 255, 0.2);
+      border-radius: $border-radius-tech;
+      padding: 4px;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: rgba(0, 247, 255, 0.1);
+        border-color: $c-cyan;
+        box-shadow: $glow-cyan;
+      }
+    }
+  }
 }
