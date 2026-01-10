@@ -13,11 +13,15 @@ DCC_WORLD.abilities = {
   cha: 'DCC_WORLD.Ability.Cha.long',
 };
 
+/**
+ * Ability score abbreviations for display
+ * @type {Object}
+ */
 DCC_WORLD.abilityAbbreviations = {
-  str: 'DCC_WORLD.Ability.Str.abbr',
-  dex: 'DCC_WORLD.Ability.Dex.abbr',
-  con: 'DCC_WORLD.Ability.Con.abbr',
-  int: 'DCC_WORLD.Ability.Int.abbr',
-  wis: 'DCC_WORLD.Ability.Wis.abbr',
-  cha: 'DCC_WORLD.Ability.Cha.abbr',
+  str: 'STR',
+  dex: 'DEX',
+  con: 'CON',
+  int: 'INT',
+  wis: 'WIS',
+  cha: 'CHA',
 };

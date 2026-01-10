@@ -458,7 +458,8 @@ export class dccworldActorSheet extends ActorSheet {
    */
   async _onSkillDelete(event) {
     event.preventDefault();
-    const skillId = $(event.currentTarget).closest('.skill').data('skillId');
+    const li = $(event.currentTarget).closest('.skill');
+    const skillId = li.data('skillId');
     const skill = this.actor.system.skills[skillId];
 
     if (!skill) return;
@@ -481,6 +482,9 @@ export class dccworldActorSheet extends ActorSheet {
 
       await this.actor.update({ 'system.skills': newSkills });
       ui.notifications.info(`Deleted skill: ${skill.name}`);
+
+      // Animate removal and re-render
+      li.slideUp(200, () => this.render(false));
     }
   }
 
