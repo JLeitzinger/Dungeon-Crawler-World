@@ -1275,6 +1275,228 @@
   border: 1px dashed rgba(0, 247, 255, 0.2);
   border-radius: 4px;
 }
+.dungeon-crawler-world .skills-container {
+  margin-bottom: 15px;
+}
+.dungeon-crawler-world .skills-header {
+  min-height: 36px;
+  margin-bottom: 5px;
+  padding: 8px 12px;
+  background: linear-gradient(90deg, rgba(0, 247, 255, 0.12) 0%, rgba(255, 0, 255, 0.08) 100%);
+  border: 1px solid rgba(0, 247, 255, 0.4);
+  border-radius: 2px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #00f7ff;
+  text-shadow: 0 0 8px rgba(0, 247, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.1);
+}
+.dungeon-crawler-world .skills-header > * {
+  display: flex;
+  align-items: center;
+}
+.dungeon-crawler-world .skills-header .skill-name-header {
+  flex: 2;
+  padding-left: 5px;
+}
+.dungeon-crawler-world .skills-header .skill-info-header {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 15px;
+}
+.dungeon-crawler-world .skills-header .skill-info-header > * {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+.dungeon-crawler-world .skills-header .skill-info-header .skill-level-header {
+  flex: 0 0 80px;
+}
+.dungeon-crawler-world .skills-header .skill-info-header .skill-stat-header {
+  flex: 0 0 50px;
+}
+.dungeon-crawler-world .skills-header .skill-info-header .skill-category-header {
+  flex: 0 0 100px;
+}
+.dungeon-crawler-world .skills-header .skill-controls-header {
+  flex: 0 0 120px;
+  justify-content: center;
+}
+.dungeon-crawler-world .skills-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #00a8b3 #12121a;
+}
+.dungeon-crawler-world .skills-list::-webkit-scrollbar {
+  width: 6px;
+}
+.dungeon-crawler-world .skills-list::-webkit-scrollbar-track {
+  background: #12121a;
+  border-radius: 3px;
+}
+.dungeon-crawler-world .skills-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f7ff 0%, #00a8b3 100%);
+  border-radius: 3px;
+}
+.dungeon-crawler-world .skills-list .skill {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 247, 255, 0.15);
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.dungeon-crawler-world .skills-list .skill::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #00f7ff;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+}
+.dungeon-crawler-world .skills-list .skill:hover {
+  background: rgba(0, 247, 255, 0.08);
+  border-color: rgba(0, 247, 255, 0.35);
+  transform: translateX(2px);
+}
+.dungeon-crawler-world .skills-list .skill:hover::before {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+}
+.dungeon-crawler-world .skills-list .skill .skill-name {
+  flex: 2;
+  padding-right: 15px;
+  min-width: 0;
+}
+.dungeon-crawler-world .skills-list .skill .skill-name h4 {
+  margin: 0;
+  font-family: "Rajdhani", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dungeon-crawler-world .skills-list .skill .skill-name .skill-parent {
+  font-family: "Orbitron", sans-serif;
+  font-size: 11px;
+  color: #8899aa;
+  font-style: italic;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info > * {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-level {
+  flex: 0 0 80px;
+  text-align: center;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-level .level-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-level .dice-pool {
+  font-size: 11px;
+  color: #8899aa;
+  font-family: "Courier New", monospace;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-stat {
+  flex: 0 0 50px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #00f7ff;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-stat .no-stat {
+  color: #445566;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-category {
+  flex: 0 0 100px;
+}
+.dungeon-crawler-world .skills-list .skill .skill-info .skill-category .category-tag {
+  padding: 3px 8px;
+  background: rgba(0, 247, 255, 0.15);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 2px;
+  color: #00a8b3;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls {
+  flex: 0 0 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: rgba(0, 247, 255, 0.1);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 2px;
+  color: #00f7ff;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls a:hover {
+  background: rgba(0, 247, 255, 0.25);
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+  transform: scale(1.1);
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls .skill-roll {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.3);
+  color: #00ff88;
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls .skill-roll:hover {
+  background: rgba(0, 255, 136, 0.25);
+  border-color: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls .skill-delete {
+  background: rgba(255, 0, 255, 0.1);
+  border-color: rgba(255, 0, 255, 0.3);
+  color: #ff00ff;
+}
+.dungeon-crawler-world .skills-list .skill .skill-controls .skill-delete:hover {
+  background: rgba(255, 0, 255, 0.25);
+  border-color: #ff00ff;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
+}
 .dungeon-crawler-world .effects .item {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(0, 247, 255, 0.15);
