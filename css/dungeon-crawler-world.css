@@ -478,6 +478,62 @@
 .dungeon-crawler-world .tox .tox-tbtn:hover {
   color: #00f7ff !important;
 }
+.dungeon-crawler-world .tox .tox-edit-area__iframe {
+  background: transparent !important;
+}
+.dungeon-crawler-world .tox .ProseMirror {
+  color: #ffffff !important;
+  background: transparent !important;
+  min-height: 200px;
+}
+.dungeon-crawler-world .tox .ProseMirror p {
+  color: #ffffff !important;
+}
+.dungeon-crawler-world .tox .ProseMirror a {
+  color: #00f7ff !important;
+  text-decoration: underline;
+}
+.dungeon-crawler-world .tox .ProseMirror a:hover {
+  color: #00a8b3 !important;
+}
+.dungeon-crawler-world .tox .ProseMirror h1, .dungeon-crawler-world .tox .ProseMirror h2, .dungeon-crawler-world .tox .ProseMirror h3, .dungeon-crawler-world .tox .ProseMirror h4, .dungeon-crawler-world .tox .ProseMirror h5, .dungeon-crawler-world .tox .ProseMirror h6 {
+  color: #00f7ff !important;
+}
+.dungeon-crawler-world .tox .ProseMirror ul, .dungeon-crawler-world .tox .ProseMirror ol {
+  color: #ffffff !important;
+}
+.dungeon-crawler-world .tox .ProseMirror strong, .dungeon-crawler-world .tox .ProseMirror b {
+  color: #00f7ff !important;
+}
+.dungeon-crawler-world .tox .ProseMirror em, .dungeon-crawler-world .tox .ProseMirror i {
+  color: #f0f0f5 !important;
+}
+.dungeon-crawler-world .prose-mirror,
+.dungeon-crawler-world .editor-content {
+  color: #ffffff !important;
+}
+.dungeon-crawler-world .prose-mirror p,
+.dungeon-crawler-world .editor-content p {
+  color: #ffffff !important;
+}
+.dungeon-crawler-world .prose-mirror h1, .dungeon-crawler-world .prose-mirror h2, .dungeon-crawler-world .prose-mirror h3, .dungeon-crawler-world .prose-mirror h4, .dungeon-crawler-world .prose-mirror h5, .dungeon-crawler-world .prose-mirror h6,
+.dungeon-crawler-world .editor-content h1,
+.dungeon-crawler-world .editor-content h2,
+.dungeon-crawler-world .editor-content h3,
+.dungeon-crawler-world .editor-content h4,
+.dungeon-crawler-world .editor-content h5,
+.dungeon-crawler-world .editor-content h6 {
+  color: #00f7ff !important;
+}
+.dungeon-crawler-world .prose-mirror a,
+.dungeon-crawler-world .editor-content a {
+  color: #00f7ff !important;
+}
+.dungeon-crawler-world .prose-mirror ul, .dungeon-crawler-world .prose-mirror ol,
+.dungeon-crawler-world .editor-content ul,
+.dungeon-crawler-world .editor-content ol {
+  color: #ffffff !important;
+}
 .dungeon-crawler-world .detail {
   position: relative;
   padding: 10px;

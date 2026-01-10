@@ -205,6 +205,74 @@ label {
       color: $c-cyan !important;
     }
   }
+
+  // Editor content styling
+  .tox-edit-area__iframe {
+    background: transparent !important;
+  }
+
+  // ProseMirror editor content
+  .ProseMirror {
+    color: $c-bright !important;
+    background: transparent !important;
+    min-height: 200px;
+
+    p {
+      color: $c-bright !important;
+    }
+
+    // Link styling in editor
+    a {
+      color: $c-cyan !important;
+      text-decoration: underline;
+
+      &:hover {
+        color: $c-cyan-dim !important;
+      }
+    }
+
+    // Heading styling
+    h1, h2, h3, h4, h5, h6 {
+      color: $c-cyan !important;
+    }
+
+    // List styling
+    ul, ol {
+      color: $c-bright !important;
+    }
+
+    // Strong/bold text
+    strong, b {
+      color: $c-cyan !important;
+    }
+
+    // Italic text
+    em, i {
+      color: $c-white !important;
+    }
+  }
+}
+
+// Foundry's prose-mirror class styling
+.prose-mirror,
+.editor-content {
+  color: $c-bright !important;
+
+  p {
+    color: $c-bright !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: $c-cyan !important;
+  }
+
+  a {
+    color: $c-cyan !important;
+  }
+
+  ul, ol {
+    color: $c-bright !important;
+  }
 }
 
 // Detail sections
