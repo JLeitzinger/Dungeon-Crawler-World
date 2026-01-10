@@ -199,6 +199,9 @@ export class dccworldActorSheet extends ActorSheet {
     html.on('click', '.skill-edit', this._onSkillEdit.bind(this));
     html.on('click', '.skill-delete', this._onSkillDelete.bind(this));
 
+    // Skill category filters
+    html.on('click', '.skill-filter', this._onSkillFilter.bind(this));
+
     // Stat increases
     html.on('click', '.stat-increase-button', this._onStatIncrease.bind(this));
 
@@ -467,10 +470,51 @@ export class dccworldActorSheet extends ActorSheet {
     });
 
     if (confirmed) {
-      const skills = foundry.utils.duplicate(this.actor.system.skills);
-      delete skills[skillId];
-      await this.actor.update({ 'system.skills': skills });
+      // Create a new skills object without the deleted skill
+      // This ensures Foundry properly detects the change
+      const newSkills = {};
+      for (const [id, s] of Object.entries(this.actor.system.skills)) {
+        if (id !== skillId) {
+          newSkills[id] = s;
+        }
+      }
+
+      await this.actor.update({ 'system.skills': newSkills });
       ui.notifications.info(`Deleted skill: ${skill.name}`);
+    }
+  }
+
+  /**
+   * Handle filtering skills by category
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  _onSkillFilter(event) {
+    event.preventDefault();
+    const button = $(event.currentTarget);
+    const category = button.data('category');
+
+    // Update active state on buttons
+    button.siblings('.skill-filter').removeClass('active');
+    button.addClass('active');
+
+    // Filter skills
+    const skillsList = button.closest('.skills-container').find('.skills-list');
+    const skillItems = skillsList.find('.skill');
+
+    if (category === 'all') {
+      // Show all skills
+      skillItems.slideDown(200);
+    } else {
+      // Show only skills of selected category
+      skillItems.each((i, elem) => {
+        const skillCategory = $(elem).data('skill-category');
+        if (skillCategory === category) {
+          $(elem).slideDown(200);
+        } else {
+          $(elem).slideUp(200);
+        }
+      });
     }
   }
 

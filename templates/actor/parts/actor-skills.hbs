@@ -1,5 +1,14 @@
 {{!-- Skills List --}}
 <div class="skills-container">
+  {{!-- Category Filters --}}
+  <div class="skills-filters flexrow">
+    <button class="skill-filter active" data-category="all">All</button>
+    <button class="skill-filter" data-category="general">General</button>
+    <button class="skill-filter" data-category="combat">Combat</button>
+    <button class="skill-filter" data-category="magic">Magic</button>
+    <button class="skill-filter" data-category="utility">Utility</button>
+  </div>
+
   <div class="skills-header items-header flexrow">
     <div class="skill-name-header">Skill Name</div>
     <div class="skill-info-header flexrow">
@@ -12,7 +21,7 @@
 
   <ol class="skills-list">
     {{#each system.skills as |skill skillId|}}
-    <li class="skill item flexrow" data-skill-id="{{skillId}}">
+    <li class="skill item flexrow" data-skill-id="{{skillId}}" data-skill-category="{{skill.category}}">
       <div class="skill-name">
         <h4>{{skill.name}}</h4>
         {{#if skill.parent}}
