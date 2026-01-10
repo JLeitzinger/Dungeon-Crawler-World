@@ -200,11 +200,23 @@ export class dccworldActorSheet extends ActorSheet {
 
     // Delete Skill (inline handler matching item-delete pattern)
     html.on('click', '.skill-delete', async (ev) => {
+      console.log('=== SKILL DELETE CLICKED ===');
+      console.log('Event:', ev);
+      console.log('Current target:', ev.currentTarget);
+
       const li = $(ev.currentTarget).closest('.skill');
       const skillId = li.data('skillId');
-      const skill = this.actor.system.skills[skillId];
+      console.log('Skill ID from DOM:', skillId);
 
-      if (!skill) return;
+      const skill = this.actor.system.skills[skillId];
+      console.log('Skill from actor.system.skills:', skill);
+
+      if (!skill) {
+        console.log('EARLY RETURN: skill not found!');
+        return;
+      }
+
+      console.log('Showing confirmation dialog...');
 
       const confirmed = await Dialog.confirm({
         title: "Delete Skill",
@@ -212,18 +224,30 @@ export class dccworldActorSheet extends ActorSheet {
         defaultYes: false
       });
 
+      console.log('Dialog confirmed:', confirmed);
+
       if (confirmed) {
+        console.log('Confirmed - proceeding with deletion...');
+
         // Get the current skills object and create a copy
         const currentSkills = this.actor.system.skills;
-        const newSkills = { ...currentSkills };
+        console.log('BEFORE - currentSkills:', currentSkills);
+        console.log('BEFORE - this.actor.system:', this.actor.system);
 
-        // Delete the skill from the copy
+        const newSkills = { ...currentSkills };
         delete newSkills[skillId];
+
+        console.log('AFTER - newSkills:', newSkills);
 
         // Use updateSource to directly modify the source data
         // This ensures the change actually persists in DataModel
+        console.log('Calling updateSource...');
         this.actor.updateSource({ 'system.skills': newSkills });
+        console.log('AFTER updateSource - this.actor.system:', this.actor.system);
+
+        console.log('Calling update...');
         await this.actor.update({ 'system.skills': newSkills });
+        console.log('AFTER update - this.actor.system:', this.actor.system);
 
         const skillNames = Object.values(newSkills).map(s => s.name).join(', ');
         ui.notifications.info(`Deleted skill: ${skill.name}. Current Skills List: ${skillNames}`);
