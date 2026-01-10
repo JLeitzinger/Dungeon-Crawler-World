@@ -1,7 +1,38 @@
-$c-white: #fff;
-$c-black: #000;
+// Futuristic Color Palette - Cyberpunk/Sci-Fi Theme
+$c-white: #e0e0e0;
+$c-black: #0a0a0f;
 
-$c-dark: #191813;
-$c-faint: #c9c7b8;
-$c-beige: #b5b3a4;
-$c-tan: #444;
+// Background colors - dark theme
+$c-dark: #0a0a0f;
+$c-dark-alt: #12121a;
+$c-panel: #0f0f16;
+
+// Accent colors - neon/cyberpunk
+$c-cyan: #00f7ff;
+$c-cyan-dim: #00a8b3;
+$c-magenta: #ff00ff;
+$c-magenta-dim: #b300b3;
+$c-green: #00ff88;
+$c-green-dim: #00b35f;
+$c-orange: #ff6600;
+$c-orange-dim: #b34700;
+
+// Text colors
+$c-faint: #8899aa;
+$c-beige: #667788;
+$c-tan: #445566;
+
+// Gradients
+$grad-primary: linear-gradient(135deg, #00f7ff 0%, #0088ff 100%);
+$grad-secondary: linear-gradient(135deg, #ff00ff 0%, #8800ff 100%);
+$grad-dark: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
+
+// Glow effects
+$glow-cyan: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+$glow-magenta: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
+$glow-green: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+
+// Border styles
+$border-tech: 1px solid rgba(0, 247, 255, 0.3);
+$border-tech-accent: 1px solid rgba(255, 0, 255, 0.3);
+$border-glow: 1px solid rgba(0, 247, 255, 0.5);

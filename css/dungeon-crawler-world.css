@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 /* Global styles */
 .window-app {
-  font-family: "Roboto", sans-serif;
+  font-family: "Rajdhani", sans-serif;
 }
 
 .rollable:hover, .rollable:focus {
@@ -205,7 +205,7 @@
 
 /* Styles limited to dungeon-crawler-world sheets */
 .dungeon-crawler-world .item-form {
-  font-family: "Roboto", sans-serif;
+  font-family: "Rajdhani", sans-serif;
 }
 .dungeon-crawler-world .sheet-header {
   flex: 0 auto;
@@ -244,7 +244,7 @@
   height: 100%;
 }
 .dungeon-crawler-world .tox .tox-editor-container {
-  background: #fff;
+  background: #e0e0e0;
 }
 .dungeon-crawler-world .tox .tox-edit-area {
   padding: 0 8px;
@@ -253,16 +253,18 @@
   font-weight: bold;
 }
 .dungeon-crawler-world .items-header {
-  height: 28px;
+  min-height: 32px;
+  height: auto;
   margin: 2px 0;
-  padding: 0;
+  padding: 4px 5px;
   align-items: center;
   background: rgba(0, 0, 0, 0.05);
-  border: 2px groove #eeede0;
+  border: 1px solid rgba(0, 247, 255, 0.3);
   font-weight: bold;
+  display: flex;
 }
 .dungeon-crawler-world .items-header > * {
-  font-size: 14px;
+  font-size: 12px;
   text-align: center;
 }
 .dungeon-crawler-world .items-header .item-name {
@@ -270,6 +272,11 @@
   padding-left: 5px;
   text-align: left;
   display: flex;
+  flex: 1;
+}
+.dungeon-crawler-world .items-header .item-controls {
+  flex: 0 0 auto;
+  min-width: 90px;
 }
 .dungeon-crawler-world .items-list {
   list-style: none;
@@ -277,7 +284,7 @@
   padding: 0;
   overflow-y: auto;
   scrollbar-width: thin;
-  color: #444;
+  color: #445566;
 }
 .dungeon-crawler-world .items-list .item-list {
   list-style: none;
@@ -302,22 +309,32 @@
   display: flex;
   flex: 0 0 100px;
   justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
 }
 .dungeon-crawler-world .items-list .item-controls a {
   font-size: 12px;
   text-align: center;
-  margin: 0 6px;
+  white-space: nowrap;
+  padding: 2px 6px;
+}
+.dungeon-crawler-world .items-list .item-controls .item-create {
+  flex: 0 0 auto;
+  min-width: 80px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 .dungeon-crawler-world .items-list .item {
   align-items: center;
   padding: 0 2px;
-  border-bottom: 1px solid #c9c7b8;
+  border-bottom: 1px solid #8899aa;
 }
 .dungeon-crawler-world .items-list .item:last-child {
   border-bottom: none;
 }
 .dungeon-crawler-world .items-list .item .item-name {
-  color: #191813;
+  color: #e0e0e0;
 }
 .dungeon-crawler-world .items-list .item .item-name .item-image {
   flex: 0 0 30px;
@@ -333,13 +350,15 @@
   font-size: 12px;
 }
 .dungeon-crawler-world .items-list .items-header {
-  height: 28px;
+  min-height: 32px;
+  height: auto;
   margin: 2px 0;
-  padding: 0;
+  padding: 4px 5px;
   align-items: center;
   background: rgba(0, 0, 0, 0.05);
-  border: 2px groove #eeede0;
+  border: 1px solid rgba(0, 247, 255, 0.3);
   font-weight: bold;
+  display: flex;
 }
 .dungeon-crawler-world .items-list .items-header > * {
   font-size: 12px;
@@ -348,6 +367,35 @@
 .dungeon-crawler-world .items-list .items-header .item-name {
   padding-left: 5px;
   text-align: left;
+  flex: 1;
+}
+.dungeon-crawler-world .skills-footer {
+  margin-top: 10px;
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 247, 255, 0.15);
+}
+.dungeon-crawler-world .skills-footer .skill-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  background: rgba(0, 247, 255, 0.1);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 2px;
+  color: #00f7ff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.dungeon-crawler-world .skills-footer .skill-create:hover {
+  background: rgba(0, 247, 255, 0.2);
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
 }
 .dungeon-crawler-world .item-formula {
   flex: 0 0 200px;
