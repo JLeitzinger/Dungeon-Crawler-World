@@ -222,7 +222,8 @@ export class dccworldActorSheet extends ActorSheet {
 
         // Update the entire skills object
         await this.actor.update({ 'system.skills': newSkills });
-        ui.notifications.info(`Deleted skill: ${skill.name}. Current Skills List: ${newSkills}`);
+        const skillNames = Object.values(newSkills).map(s => s.name).join(', ');
+        ui.notifications.info(`Deleted skill: ${skill.name}. Current Skills List: ${skillNames}`);
 
         // Animate removal and re-render (matching item-delete pattern)
         li.slideUp(200, () => this.render(false));
