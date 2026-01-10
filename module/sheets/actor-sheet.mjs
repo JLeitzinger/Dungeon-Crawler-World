@@ -229,38 +229,23 @@ export class dccworldActorSheet extends ActorSheet {
       if (confirmed) {
         console.log('Confirmed - proceeding with deletion...');
 
-        // Get the current skills object
-        const currentSkills = this.actor.system.skills;
-        console.log('BEFORE - currentSkills:', currentSkills);
-        console.log('BEFORE - this.actor.system:', this.actor.system);
-
-        // Build update data using dot notation
-        // This is required for Foundry v11+ DataModel ObjectField updates
-        const updateData = {};
-
-        // Keep all existing skills
-        for (const [id, skill] of Object.entries(currentSkills)) {
-          if (id !== skillId) {
-            updateData[`system.skills.${id}`] = skill;
-          }
-        }
-
-        // Explicitly set the deleted skill to null
-        updateData[`system.skills.${skillId}`] = null;
+        // 1. Prepare the update object using Foundry's deletion operator
+        const updateData = {
+          // This syntax tells Foundry to "unset" or delete this specific key
+          [`system.skills.-=${skillId}`]: null
+        };
 
         console.log('Update data:', updateData);
-        console.log('Calling update...');
+
+        // 2. Perform the update
+        // No need to loop through and re-add all other skills;
+        // Foundry will keep them as they are and only delete the one targeted.
         await this.actor.update(updateData);
 
-        const newSkills = { ...currentSkills };
-        delete newSkills[skillId];
-        console.log('Expected newSkills:', newSkills);
-        console.log('AFTER update - this.actor.system:', this.actor.system);
+        console.log('AFTER update:', this.actor.system.skills);
 
-        const skillNames = Object.values(newSkills).map(s => s.name).join(', ');
-        ui.notifications.info(`Deleted skill: ${skill.name}. Current Skills List: ${skillNames}`);
-
-        // Animate removal and re-render (matching item-delete pattern)
+        // 3. UI Notification & Re-render
+        ui.notifications.info(`Skill removed successfully.`);
         li.slideUp(200, () => this.render(false));
       }
     });
