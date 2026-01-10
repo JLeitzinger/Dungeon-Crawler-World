@@ -2,34 +2,17 @@
 
 // Section Header
 .items-header {
-  height: 32px;
-  margin: 10px 0 5px 0;
-  padding: 0 10px;
+  min-height: 32px;
+  height: auto;
+  margin: 2px 0;
+  padding: 4px 5px;
   align-items: center;
-  background: linear-gradient(90deg, rgba(0, 247, 255, 0.08) 0%, rgba(255, 0, 255, 0.05) 100%);
-  border: 1px solid rgba(0, 247, 255, 0.3);
-  border-radius: $border-radius-tech;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  overflow: hidden;
-
-  // Scanline effect
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.1), transparent);
-    animation: scanline 3s linear infinite;
-  }
-
+  background: rgba(0, 0, 0, 0.05);
+  border: $border-groove;
+  font-weight: bold;
+  display: flex;
   > * {
-    font-family: $font-secondary;
-    font-size: 11px;
+    font-size: 12px;
     text-align: center;
     color: $c-cyan;
     text-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
@@ -40,7 +23,13 @@
     padding-left: 10px;
     text-align: left;
     display: flex;
-    color: $c-cyan;
+    flex: 1;
+  }
+
+  // Give controls more space when in header
+  .item-controls {
+    flex: 0 0 auto;
+    min-width: 90px;
   }
 }
 
@@ -104,21 +93,22 @@
     display: flex;
     flex: 0 0 100px;
     justify-content: flex-end;
-    gap: 5px;
-
+    align-items: center;
+    gap: 4px;
     a {
       font-size: 11px;
       text-align: center;
-      color: $c-faint;
-      transition: all $transition-fast;
-      padding: 3px 6px;
-      border-radius: $border-radius-tech;
+      white-space: nowrap;
+      padding: 2px 6px;
+    }
 
-      &:hover {
-        color: $c-cyan;
-        text-shadow: $glow-cyan;
-        background: rgba(0, 247, 255, 0.1);
-      }
+    // Give more space for buttons with text (like "Add LVL", "Add Skill")
+    .item-create {
+      flex: 0 0 auto;
+      min-width: 80px;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
     }
   }
 
@@ -159,16 +149,6 @@
 
     .item-name {
       color: $c-white;
-
-      h3, h4 {
-        transition: color $transition-fast;
-      }
-
-      &:hover h3,
-      &:hover h4 {
-        color: $c-cyan;
-      }
-
       .item-image {
         flex: 0 0 30px;
         height: 30px;
@@ -248,39 +228,64 @@
     transition: all $transition-fast;
   }
 
-  .item-name {
+  // Section Header
+  .items-header {
+    min-height: 32px;
+    height: auto;
+    margin: 2px 0;
+    padding: 4px 5px;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: $border-groove;
+    font-weight: bold;
+    display: flex;
+    > * {
+      font-size: 12px;
+      text-align: center;
+    }
+    .item-name {
+      padding-left: 5px;
+      text-align: left;
+      flex: 1;
+    }
+  }
+}
+
+// Skills footer with Add Skill button
+.skills-footer {
+  margin-top: 10px;
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid rgba(0, 247, 255, 0.15);
+
+  .skill-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    background: rgba(0, 247, 255, 0.1);
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    border-radius: $border-radius-tech;
     color: $c-cyan;
     font-family: $font-secondary;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    flex: 1;
-  }
-
-  .item-edit {
-    color: $c-faint;
+    cursor: pointer;
     transition: all $transition-fast;
 
     &:hover {
-      color: $c-cyan;
-      text-shadow: $glow-cyan;
-    }
-  }
-
-  &:hover {
-    background: rgba(0, 247, 255, 0.1);
-    border-color: $c-cyan;
-    box-shadow: 0 0 10px rgba(0, 247, 255, 0.2);
-
-    img {
+      background: rgba(0, 247, 255, 0.2);
       border-color: $c-cyan;
-      box-shadow: $glow-cyan;
+      box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
     }
   }
 }
 
 // Item formula styling
 .item-formula {
+
   flex: 0 0 200px;
   padding: 0 8px;
 
