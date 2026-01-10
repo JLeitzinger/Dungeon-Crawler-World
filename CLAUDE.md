@@ -118,6 +118,42 @@ Template preloading handled by `module/helpers/templates.mjs`
 - Data models must call `super.defineSchema()` to inherit parent fields
 - Use `toPlainObject()` instead of `toObject()` when you need derived data
 
+## Version Management
+
+**"Bump version"** means incrementing the version number in `system.json`.
+
+### Version Number Format
+- Uses semantic versioning: `MAJOR.MINOR.PATCH` (e.g., `0.2.1`)
+- Increment PATCH for bugfixes
+- Increment MINOR for new features
+- Increment MAJOR for breaking changes
+
+### When to Bump Version
+Always bump the version after making changes that will be released, including:
+- Bug fixes
+- New features
+- UI/UX improvements
+- Data model changes
+- Configuration changes
+
+### Version Bump + Commit/Push Workflow
+When asked to "bump version and commit/push":
+1. Increment the version in `system.json`
+2. Stage all modified files: `git add <files>`
+3. Create a commit with descriptive message
+4. Push to remote: `git push`
+
+**Commit message format:**
+```
+Brief description of changes
+
+- Detail 1
+- Detail 2
+- Detail 3
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
 ## Future Improvements
 
 ### ⚠️ ApplicationV2 Migration (High Priority)

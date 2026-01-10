@@ -471,27 +471,16 @@ export class dccworldActorSheet extends ActorSheet {
     });
 
     if (confirmed) {
-      // Get the current skills object
-      const currentSkills = this.actor.system.skills;
+      // For Foundry v11 DataModel, we need to set the specific property to null
+      // to properly trigger change detection on ObjectFields
+      const updateData = {};
+      updateData[`system.skills.${skillId}`] = null;
 
-      // Create a new skills object without the deleted skill
-      const newSkills = {};
-      for (const [id, s] of Object.entries(currentSkills)) {
-        if (id !== skillId) {
-          newSkills[id] = s;
-        }
-      }
-
-      // Use updateSource for direct modification, then commit
-      this.actor.updateSource({ 'system.skills': newSkills });
-      await this.actor.update({ 'system.skills': newSkills });
-
+      await this.actor.update(updateData);
       ui.notifications.info(`Deleted skill: ${skill.name}`);
 
-      // Wait a moment for Foundry to process the update, then re-render
-      setTimeout(() => {
-        this.render(true);
-      }, 50);
+      // Force a complete re-render of the sheet
+      this.render(true);
     }
   }
 
