@@ -229,24 +229,32 @@ export class dccworldActorSheet extends ActorSheet {
       if (confirmed) {
         console.log('Confirmed - proceeding with deletion...');
 
-        // Get the current skills object and create a copy
+        // Get the current skills object
         const currentSkills = this.actor.system.skills;
         console.log('BEFORE - currentSkills:', currentSkills);
         console.log('BEFORE - this.actor.system:', this.actor.system);
 
+        // Build update data using dot notation
+        // This is required for Foundry v11+ DataModel ObjectField updates
+        const updateData = {};
+
+        // Keep all existing skills
+        for (const [id, skill] of Object.entries(currentSkills)) {
+          if (id !== skillId) {
+            updateData[`system.skills.${id}`] = skill;
+          }
+        }
+
+        // Explicitly set the deleted skill to null
+        updateData[`system.skills.${skillId}`] = null;
+
+        console.log('Update data:', updateData);
+        console.log('Calling update...');
+        await this.actor.update(updateData);
+
         const newSkills = { ...currentSkills };
         delete newSkills[skillId];
-
-        console.log('AFTER - newSkills:', newSkills);
-
-        // Use updateSource to directly modify the source data
-        // This ensures the change actually persists in DataModel
-        console.log('Calling updateSource...');
-        this.actor.updateSource({ 'system.skills': newSkills });
-        console.log('AFTER updateSource - this.actor.system:', this.actor.system);
-
-        console.log('Calling update...');
-        await this.actor.update({ 'system.skills': newSkills });
+        console.log('Expected newSkills:', newSkills);
         console.log('AFTER update - this.actor.system:', this.actor.system);
 
         const skillNames = Object.values(newSkills).map(s => s.name).join(', ');
