@@ -55,9 +55,9 @@
 // Resource content inputs
 .resource-content {
   input {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(0, 247, 255, 0.3);
-    color: $c-white;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 247, 255, 0.4);
+    color: $c-bright;
     font-family: $font-mono;
     font-size: 16px;
     font-weight: 600;
@@ -161,8 +161,8 @@
     font-family: $font-secondary;
     font-size: 11px;
     font-weight: 600;
-    color: $c-white;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+    color: $c-bright;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
     text-transform: uppercase;
     letter-spacing: 1px;
   }
@@ -272,9 +272,9 @@
 
     input {
       flex: 0 0 40px;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(0, 247, 255, 0.3);
-      color: $c-white;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 247, 255, 0.4);
+      color: $c-bright;
       font-family: $font-mono;
       font-size: 14px;
       font-weight: 600;

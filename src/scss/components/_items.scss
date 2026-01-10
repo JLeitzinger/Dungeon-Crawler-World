@@ -75,7 +75,7 @@
     text-align: left;
     align-items: center;
     display: flex;
-    color: $c-white;
+    color: $c-bright;
 
     h3, h4 {
       margin: 0;
@@ -148,7 +148,7 @@
     }
 
     .item-name {
-      color: $c-white;
+      color: $c-bright;
       .item-image {
         flex: 0 0 30px;
         height: 30px;
@@ -363,10 +363,10 @@
     }
 
     .item-name h3 {
-      color: $c-magenta-dim;
+      color: $c-magenta;
 
       &:hover {
-        color: $c-magenta;
+        color: $c-bright;
       }
     }
   }
@@ -379,10 +379,10 @@
     }
 
     .item-name h3 {
-      color: $c-green-dim;
+      color: $c-green;
 
       &:hover {
-        color: $c-green;
+        color: $c-bright;
       }
     }
   }
@@ -393,10 +393,10 @@
   border-left: 3px solid $c-orange;
 
   .item-name h3 {
-    color: $c-orange-dim;
+    color: $c-orange;
 
     &:hover {
-      color: $c-orange;
+      color: $c-bright;
     }
   }
 }
