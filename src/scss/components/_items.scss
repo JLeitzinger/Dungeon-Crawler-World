@@ -1,22 +1,46 @@
+// Futuristic Items List Styling
+
 // Section Header
 .items-header {
-  height: 28px;
-  margin: 2px 0;
-  padding: 0;
+  height: 32px;
+  margin: 10px 0 5px 0;
+  padding: 0 10px;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
-  border: $border-groove;
-  font-weight: bold;
-  > * {
-    font-size: 14px;
-    text-align: center;
+  background: linear-gradient(90deg, rgba(0, 247, 255, 0.08) 0%, rgba(255, 0, 255, 0.05) 100%);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: $border-radius-tech;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+
+  // Scanline effect
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 247, 255, 0.1), transparent);
+    animation: scanline 3s linear infinite;
   }
+
+  > * {
+    font-family: $font-secondary;
+    font-size: 11px;
+    text-align: center;
+    color: $c-cyan;
+    text-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
+  }
+
   .item-name {
-    font-weight: bold;
-    padding-left: 5px;
+    font-weight: 700;
+    padding-left: 10px;
     text-align: left;
     display: flex;
-    // font-size: 16px;
+    color: $c-cyan;
   }
 }
 
@@ -30,7 +54,21 @@
   padding: 0;
   overflow-y: auto;
   scrollbar-width: thin;
-  color: $c-tan;
+  scrollbar-color: $c-cyan-dim $c-dark-alt;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $c-dark-alt;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, $c-cyan 0%, $c-cyan-dim 100%);
+    border-radius: 3px;
+  }
 
   // Child lists
   .item-list {
@@ -48,10 +86,16 @@
     text-align: left;
     align-items: center;
     display: flex;
+    color: $c-white;
+
     h3, h4 {
       margin: 0;
       white-space: nowrap;
       overflow-x: hidden;
+      font-family: $font-primary;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
   }
 
@@ -60,62 +104,309 @@
     display: flex;
     flex: 0 0 100px;
     justify-content: flex-end;
+    gap: 5px;
+
     a {
-      font-size: 12px;
+      font-size: 11px;
       text-align: center;
-      margin: 0 6px;
+      color: $c-faint;
+      transition: all $transition-fast;
+      padding: 3px 6px;
+      border-radius: $border-radius-tech;
+
+      &:hover {
+        color: $c-cyan;
+        text-shadow: $glow-cyan;
+        background: rgba(0, 247, 255, 0.1);
+      }
     }
   }
 
   // Individual Item
   .item {
     align-items: center;
-    padding: 0 2px; // to align with the header border
-    border-bottom: 1px solid $c-faint;
-    &:last-child { border-bottom: none; }
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0, 247, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+    transition: all $transition-fast;
+    position: relative;
+
+    // Left accent border
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: transparent;
+      transition: all $transition-fast;
+    }
+
+    &:hover {
+      background: rgba(0, 247, 255, 0.05);
+      border-bottom-color: rgba(0, 247, 255, 0.2);
+
+      &::before {
+        background: $c-cyan;
+        box-shadow: $glow-cyan;
+      }
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
     .item-name {
-      color: $c-dark;
+      color: $c-white;
+
+      h3, h4 {
+        transition: color $transition-fast;
+      }
+
+      &:hover h3,
+      &:hover h4 {
+        color: $c-cyan;
+      }
+
       .item-image {
         flex: 0 0 30px;
         height: 30px;
         background-size: 30px;
-        border: none;
-        margin-right: 5px;
+        background-size: cover;
+        border: 1px solid rgba(0, 247, 255, 0.3);
+        margin-right: 10px;
+        border-radius: $border-radius-tech;
+        transition: all $transition-fast;
+
+        &:hover {
+          border-color: $c-cyan;
+          box-shadow: $glow-cyan;
+        }
       }
     }
-  }
 
-  .item-prop {
-    text-align: center;
-    border-left: 1px solid #c9c7b8;
-    border-right: 1px solid #c9c7b8;
-    font-size: 12px;
-  }
-
-  // Section Header
-  .items-header {
-    height: 28px;
-    margin: 2px 0;
-    padding: 0;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.05);
-    border: $border-groove;
-    font-weight: bold;
-    > * {
-      font-size: 12px;
+    // Item properties
+    .item-prop {
       text-align: center;
+      border-left: 1px solid rgba(0, 247, 255, 0.15);
+      border-right: 1px solid rgba(0, 247, 255, 0.15);
+      font-size: 12px;
+      font-family: $font-secondary;
+      color: $c-faint;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+
+      &:hover {
+        color: $c-cyan;
+        border-color: rgba(0, 247, 255, 0.3);
+      }
     }
-    .item-name {
-      padding-left: 5px;
-      text-align: left;
-      // font-size: 16px;
+
+    // Nested items-header styling
+    .items-header {
+      height: 28px;
+      margin: 5px 0;
+      padding: 0 10px;
+      align-items: center;
+      background: linear-gradient(90deg, rgba(0, 247, 255, 0.08) 0%, rgba(255, 0, 255, 0.05) 100%);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      border-radius: $border-radius-tech;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+
+      > * {
+        font-size: 11px;
+        text-align: center;
+        color: $c-cyan;
+      }
+
+      .item-name {
+        padding-left: 10px;
+        text-align: left;
+      }
     }
   }
 }
 
-// Example style for dccworld (can be removed if not needed).
+// Equipped item styling
+.equipped-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  background: rgba(0, 247, 255, 0.05);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  border-radius: $border-radius-tech;
+  transition: all $transition-fast;
+  cursor: pointer;
+
+  img {
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    border-radius: $border-radius-tech;
+    transition: all $transition-fast;
+  }
+
+  .item-name {
+    color: $c-cyan;
+    font-family: $font-secondary;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex: 1;
+  }
+
+  .item-edit {
+    color: $c-faint;
+    transition: all $transition-fast;
+
+    &:hover {
+      color: $c-cyan;
+      text-shadow: $glow-cyan;
+    }
+  }
+
+  &:hover {
+    background: rgba(0, 247, 255, 0.1);
+    border-color: $c-cyan;
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.2);
+
+    img {
+      border-color: $c-cyan;
+      box-shadow: $glow-cyan;
+    }
+  }
+}
+
+// Item formula styling
 .item-formula {
-  
   flex: 0 0 200px;
   padding: 0 8px;
+
+  input {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    color: $c-green;
+    font-family: $font-mono;
+    font-size: 12px;
+    text-align: center;
+
+    &:focus {
+      border-color: $c-green;
+      box-shadow: $glow-green;
+      color: $c-green;
+    }
+  }
+}
+
+// Item tags/badges
+.item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+
+  .tag {
+    padding: 2px 8px;
+    font-family: $font-secondary;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(0, 247, 255, 0.1);
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    border-radius: $border-radius-tech;
+    color: $c-cyan;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: rgba(0, 247, 255, 0.2);
+      border-color: $c-cyan;
+      box-shadow: $glow-cyan;
+    }
+  }
+}
+
+// Spell level indicators
+.spell-level {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-family: $font-secondary;
+  font-size: 10px;
+  font-weight: 700;
+  color: $c-dark;
+  background: $c-cyan;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: $glow-cyan;
+}
+
+// Feature/Ability item special styling
+.item.feature,
+.item.spell {
+  border-left: 3px solid transparent;
+
+  &.feature {
+    border-left-color: $c-magenta;
+
+    &:hover {
+      background: rgba(255, 0, 255, 0.05);
+    }
+
+    .item-name h3 {
+      color: $c-magenta-dim;
+
+      &:hover {
+        color: $c-magenta;
+      }
+    }
+  }
+
+  &.spell {
+    border-left-color: $c-green;
+
+    &:hover {
+      background: rgba(0, 255, 136, 0.05);
+    }
+
+    .item-name h3 {
+      color: $c-green-dim;
+
+      &:hover {
+        color: $c-green;
+      }
+    }
+  }
+}
+
+// Inventory item special styling
+.item.item {
+  border-left: 3px solid $c-orange;
+
+  .item-name h3 {
+    color: $c-orange-dim;
+
+    &:hover {
+      color: $c-orange;
+    }
+  }
+}
+
+// Empty state styling
+.items-list:empty::after {
+  content: 'No Items - Drag items here to add them';
+  display: block;
+  padding: 40px 20px;
+  text-align: center;
+  font-family: $font-secondary;
+  font-size: 12px;
+  color: $c-faint;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px dashed rgba(0, 247, 255, 0.2);
+  border-radius: $border-radius-lg;
 }

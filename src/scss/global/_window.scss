@@ -1,12 +1,132 @@
-.window-app {
+// Futuristic Window Styling
+.window-app.dungeon-crawler-world {
   font-family: $font-primary;
+  background: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
+  color: $c-white;
+
+  // Window header styling
+  .window-header {
+    background: linear-gradient(90deg, rgba(0, 247, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+    border-bottom: 1px solid rgba(0, 247, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.1);
+
+    .window-title {
+      font-family: $font-secondary;
+      font-weight: 600;
+      color: $c-cyan;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+    }
+  }
+
+  // Window content
+  .window-content {
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: $c-cyan-dim $c-dark-alt;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $c-dark-alt;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, $c-cyan 0%, $c-cyan-dim 100%);
+      border-radius: 4px;
+    }
+  }
 }
 
+// Futuristic Rollable Elements
 .rollable {
+  transition: all $transition-fast;
+  cursor: pointer;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: $grad-primary;
+    transition: width $transition-normal;
+  }
+
   &:hover,
   &:focus {
-    color: #000;
-    text-shadow: 0 0 10px red;
-    cursor: pointer;
+    color: $c-cyan;
+    text-shadow: $glow-cyan;
+
+    &::before {
+      width: 100%;
+    }
+  }
+}
+
+// Rollable with magenta accent (for secondary rolls)
+.rollable-accent {
+  @extend .rollable;
+
+  &:hover,
+  &:focus {
+    color: $c-magenta;
+    text-shadow: $glow-magenta;
+
+    &::before {
+      background: $grad-secondary;
+    }
+  }
+}
+
+// Scanline animation
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+// Pulse animation
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 247, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.6);
+  }
+}
+
+// Glitch animation for hover effects
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
   }
 }
