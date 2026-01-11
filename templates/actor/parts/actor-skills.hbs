@@ -1,4 +1,4 @@
-{{!-- Skills List --}}
+{{!-- Skills & Spells List --}}
 <div class="skills-container">
   {{!-- Category Filters --}}
   <div class="skills-filters flexrow">
@@ -10,7 +10,7 @@
   </div>
 
   <div class="skills-header items-header flexrow">
-    <div class="skill-name-header">Skill Name</div>
+    <div class="skill-name-header">Name</div>
     <div class="skill-info-header flexrow">
       <div class="skill-level-header">Level</div>
       <div class="skill-stat-header">Stat</div>
@@ -20,6 +20,7 @@
   </div>
 
   <ol class="skills-list">
+    {{!-- Skills --}}
     {{#each system.skills as |skill skillId|}}
     <li class="skill item flexrow" data-skill-id="{{skillId}}" data-skill-category="{{skill.category}}">
       <div class="skill-name">
@@ -58,6 +59,38 @@
         {{/unless}}
       </div>
     </li>
+    {{/each}}
+
+    {{!-- Spells --}}
+    {{#each spells as |spells spellLevel|}}
+      {{#each spells as |item id|}}
+      <li class="skill item flexrow spell-item" data-item-id="{{item._id}}" data-skill-category="magic">
+        <div class="skill-name">
+          <h4>{{item.name}}</h4>
+          <span class="skill-parent">Spell</span>
+        </div>
+
+        <div class="skill-info flexrow">
+          <div class="skill-level">
+            <span class="level-value">{{spellLevel}}</span>
+          </div>
+
+          <div class="skill-stat">
+            <span class="no-stat">—</span>
+          </div>
+
+          <div class="skill-category">
+            <span class="category-tag">Magic</span>
+          </div>
+        </div>
+
+        <div class="skill-controls flexrow">
+          <a class="rollable" data-roll-type="item" title="Cast Spell"><i class="fas fa-magic"></i></a>
+          <a class="item-edit" title="Edit Spell"><i class="fas fa-edit"></i></a>
+          <a class="item-delete" title="Delete Spell"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{/each}}
     {{/each}}
   </ol>
 </div>
