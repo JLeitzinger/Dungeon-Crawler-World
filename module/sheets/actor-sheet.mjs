@@ -194,6 +194,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Skill rolls
     html.on('click', '.skill-roll', this._onSkillRoll.bind(this));
 
+    // Spell rolls
+    html.on('click', '.spell-roll', this._onSpellRoll.bind(this));
+
     // Skill management
     html.on('click', '.skill-create', this._onSkillCreate.bind(this));
     html.on('click', '.skill-edit', this._onSkillEdit.bind(this));
@@ -336,6 +339,19 @@ export class dccworldActorSheet extends ActorSheet {
     const skillId = $(event.currentTarget).closest('.skill').data('skillId');
     if (skillId) {
       await this.actor.rollSkill(skillId);
+    }
+  }
+
+  /**
+   * Handle spell rolls
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onSpellRoll(event) {
+    event.preventDefault();
+    const itemId = $(event.currentTarget).closest('.skill').data('itemId');
+    if (itemId) {
+      await this.actor.rollSpell(itemId);
     }
   }
 

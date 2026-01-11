@@ -551,4 +551,76 @@ export class dccworldActor extends Actor {
     }).render(true);
   }
 
+  /**
+   * Roll a spell check for this actor
+   * @param {string} itemId - The ID of the spell item to roll
+   * @param {Object} options - Additional options for the roll
+   * @returns {Promise<Object>} The roll result
+   */
+  async rollSpell(itemId, options = {}) {
+    const spell = this.items.get(itemId);
+    if (!spell) {
+      ui.notifications.error(`Spell "${itemId}" not found.`);
+      return null;
+    }
+
+    const diceCount = spell.system.diceCount || 1;
+    let statModifier = 0;
+
+    if (spell.system.castStat && this.system.abilities[spell.system.castStat]) {
+      statModifier = this.system.abilities[spell.system.castStat].mod || 0;
+    }
+
+    const rollResult = await rollSkillCheck({
+      skillLevel: diceCount,
+      statModifier,
+      skillName: spell.name,
+      actor: this
+    });
+
+    // Send to chat unless explicitly disabled
+    if (options.sendToChat !== false) {
+      await sendSkillRollToChat(rollResult, options.chatOptions);
+    }
+
+    // Check for spell improvement (all 6s)
+    if (rollResult.allSixes && options.checkImprovement !== false) {
+      await this._promptSpellImprovement(spell);
+    }
+
+    return rollResult;
+  }
+
+  /**
+   * Prompt the user about spell improvement
+   * @param {Item} spell - The spell item that can be improved
+   * @private
+   */
+  async _promptSpellImprovement(spell) {
+    const currentDiceCount = spell.system.diceCount || 1;
+
+    new Dialog({
+      title: "⚡ Spell Mastery!",
+      content: `
+        <p>You rolled all 6s with <strong>${spell.name}</strong> (${currentDiceCount}d6)!</p>
+        <p>Your understanding of this spell deepens. Increase its power?</p>
+      `,
+      buttons: {
+        improve: {
+          icon: '<i class="fas fa-arrow-up"></i>',
+          label: "Improve Spell",
+          callback: async () => {
+            await spell.update({ 'system.diceCount': currentDiceCount + 1 });
+            ui.notifications.info(`⚡ ${spell.name} improved to ${currentDiceCount + 1}d6!`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Later"
+        }
+      },
+      default: "improve"
+    }).render(true);
+  }
+
 }
