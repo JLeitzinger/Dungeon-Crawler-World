@@ -70,6 +70,16 @@
           <option value="cha" {{#if (eq system.castStat "cha")}}selected{{/if}}>CHA</option>
         </select>
       </div>
+      <div class='resource'>
+        <label class='resource-label'>Prowess (Mana Cost)</label>
+        <input
+          type='text'
+          name='system.prowess'
+          value='{{system.prowess}}'
+          data-dtype='Number'
+        />
+        <p class='notes'>Amount of mana spent when casting this spell.</p>
+      </div>
     </div>
   </section>
 </form>

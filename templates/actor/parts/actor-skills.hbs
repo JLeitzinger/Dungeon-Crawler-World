@@ -34,6 +34,9 @@
         <div class="skill-level">
           <span class="level-value">{{skill.level}}</span>
           <span class="dice-pool">({{skill.level}}d6{{#if skill.relatedStat}}+{{lookup (lookup @root.system.abilities skill.relatedStat) 'mod'}}{{/if}})</span>
+          {{#if skill.effort}}
+            <span class="effort-cost">{{skill.effort}} stamina</span>
+          {{/if}}
         </div>
 
         {{#if skill.relatedStat}}
@@ -74,6 +77,9 @@
           <div class="skill-level">
             <span class="level-value">{{spellLevel}}</span>
             <span class="dice-pool">({{item.system.diceCount}}d6{{#if item.system.castStat}}+{{lookup (lookup @root.system.abilities item.system.castStat) 'mod'}}{{/if}})</span>
+            {{#if item.system.prowess}}
+              <span class="prowess-cost">{{item.system.prowess}} mana</span>
+            {{/if}}
           </div>
 
           {{#if item.system.castStat}}
