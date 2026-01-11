@@ -9,6 +9,7 @@ export default class dccworldSpell extends dccworldItemBase {
     schema.spellLevel = new fields.NumberField({ required: true, nullable: false, integer: true, initial: 1, min: 1, max: 9 });
     schema.castStat = new fields.StringField({ required: false, nullable: true, blank: true, initial: null });
     schema.diceCount = new fields.NumberField({ required: true, nullable: false, integer: true, initial: 1, min: 1 });
+    schema.prowess = new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0, min: 0 });
 
     return schema;
   }

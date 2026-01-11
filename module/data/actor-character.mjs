@@ -62,7 +62,8 @@ export default class dccworldCharacter extends dccworldActorBase {
           level: 1,
           parent: null,
           category: "base",
-          relatedStat: null
+          relatedStat: null,
+          effort: 0
         }
       }
     });
@@ -162,7 +163,8 @@ export default class dccworldCharacter extends dccworldActorBase {
           level: skillData.level || 1,
           parent: skillData.parent || null,
           category: skillData.category || 'general',
-          relatedStat: skillData.relatedStat || null
+          relatedStat: skillData.relatedStat || null,
+          effort: skillData.effort || 0
         };
       }
     }

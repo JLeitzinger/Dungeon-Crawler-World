@@ -406,6 +406,11 @@ export class dccworldActorSheet extends ActorSheet {
             <label>Starting Level:</label>
             <input type="number" name="level" value="1" min="1" />
           </div>
+          <div class="form-group">
+            <label>Effort (Stamina Cost):</label>
+            <input type="number" name="effort" value="0" min="0" />
+            <p class="notes">Amount of stamina spent when using this skill.</p>
+          </div>
         </form>
       `,
       buttons: {
@@ -418,6 +423,7 @@ export class dccworldActorSheet extends ActorSheet {
             const category = formData.get('category');
             const relatedStat = formData.get('relatedStat') || null;
             const level = parseInt(formData.get('level')) || 1;
+            const effort = parseInt(formData.get('effort')) || 0;
 
             if (!skillName) {
               ui.notifications.warn("Skill name is required.");
@@ -434,7 +440,8 @@ export class dccworldActorSheet extends ActorSheet {
               level,
               parent: parentSkill,
               category,
-              relatedStat
+              relatedStat,
+              effort
             };
 
             // Update actor with new skill
@@ -490,6 +497,11 @@ export class dccworldActorSheet extends ActorSheet {
               <option value="cha" ${skill.relatedStat === 'cha' ? 'selected' : ''}>CHA</option>
             </select>
           </div>
+          <div class="form-group">
+            <label>Effort (Stamina Cost):</label>
+            <input type="number" name="effort" value="${skill.effort || 0}" min="0" />
+            <p class="notes">Amount of stamina spent when using this skill.</p>
+          </div>
         </form>
       `,
       buttons: {
@@ -500,12 +512,14 @@ export class dccworldActorSheet extends ActorSheet {
             const skillName = formData.get('skillName');
             const level = parseInt(formData.get('level')) || 1;
             const relatedStat = formData.get('relatedStat') || null;
+            const effort = parseInt(formData.get('effort')) || 0;
 
             // Update the skill
             const skills = foundry.utils.duplicate(this.actor.system.skills);
             skills[skillId].name = skillName;
             skills[skillId].level = level;
             skills[skillId].relatedStat = relatedStat;
+            skills[skillId].effort = effort;
 
             await this.actor.update({ 'system.skills': skills });
           }

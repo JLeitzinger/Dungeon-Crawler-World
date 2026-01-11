@@ -87,6 +87,13 @@ export class dccworldActor extends Actor {
       return null;
     }
 
+    // Check if character has enough stamina
+    const effortCost = skill.effort || 0;
+    if (effortCost > 0 && this.system.stamina.value < effortCost) {
+      ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
+      return null;
+    }
+
     const statModifier = this.system.getSkillStatModifier(skill);
 
     const rollResult = await rollSkillCheck({
@@ -95,6 +102,15 @@ export class dccworldActor extends Actor {
       skillName: skill.name,
       actor: this
     });
+
+    // Deduct stamina after successful roll
+    if (effortCost > 0) {
+      const newStamina = Math.max(0, this.system.stamina.value - effortCost);
+      await this.update({ 'system.stamina.value': newStamina });
+      if (effortCost > 0) {
+        ui.notifications.info(`-${effortCost} Stamina (${newStamina}/${this.system.stamina.max})`);
+      }
+    }
 
     // Send to chat unless explicitly disabled
     if (options.sendToChat !== false) {
@@ -564,6 +580,13 @@ export class dccworldActor extends Actor {
       return null;
     }
 
+    // Check if character has enough mana
+    const prowessCost = spell.system.prowess || 0;
+    if (prowessCost > 0 && this.system.mana.value < prowessCost) {
+      ui.notifications.warn(`Not enough mana! Need ${prowessCost}, have ${this.system.mana.value}.`);
+      return null;
+    }
+
     const diceCount = spell.system.diceCount || 1;
     let statModifier = 0;
 
@@ -577,6 +600,13 @@ export class dccworldActor extends Actor {
       skillName: spell.name,
       actor: this
     });
+
+    // Deduct mana after successful cast
+    if (prowessCost > 0) {
+      const newMana = Math.max(0, this.system.mana.value - prowessCost);
+      await this.update({ 'system.mana.value': newMana });
+      ui.notifications.info(`-${prowessCost} Mana (${newMana}/${this.system.mana.max})`);
+    }
 
     // Send to chat unless explicitly disabled
     if (options.sendToChat !== false) {
