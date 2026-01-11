@@ -62,12 +62,12 @@
         <label class='resource-label'>Cast Stat</label>
         <select name='system.castStat' data-dtype='String'>
           <option value="">None</option>
-          <option value="str" {{selected system.castStat "str"}}>STR</option>
-          <option value="dex" {{selected system.castStat "dex"}}>DEX</option>
-          <option value="con" {{selected system.castStat "con"}}>CON</option>
-          <option value="int" {{selected system.castStat "int"}}>INT</option>
-          <option value="wis" {{selected system.castStat "wis"}}>WIS</option>
-          <option value="cha" {{selected system.castStat "cha"}}>CHA</option>
+          <option value="str" {{#if (eq system.castStat "str")}}selected{{/if}}>STR</option>
+          <option value="dex" {{#if (eq system.castStat "dex")}}selected{{/if}}>DEX</option>
+          <option value="con" {{#if (eq system.castStat "con")}}selected{{/if}}>CON</option>
+          <option value="int" {{#if (eq system.castStat "int")}}selected{{/if}}>INT</option>
+          <option value="wis" {{#if (eq system.castStat "wis")}}selected{{/if}}>WIS</option>
+          <option value="cha" {{#if (eq system.castStat "cha")}}selected{{/if}}>CHA</option>
         </select>
       </div>
     </div>
