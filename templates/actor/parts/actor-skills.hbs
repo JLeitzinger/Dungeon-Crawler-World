@@ -73,11 +73,18 @@
         <div class="skill-info flexrow">
           <div class="skill-level">
             <span class="level-value">{{spellLevel}}</span>
+            <span class="dice-pool">({{item.system.diceCount}}d6{{#if item.system.castStat}}+{{lookup (lookup @root.system.abilities item.system.castStat) 'mod'}}{{/if}})</span>
           </div>
 
+          {{#if item.system.castStat}}
+          <div class="skill-stat">
+            <span>{{lookup @root.config.abilityAbbreviations item.system.castStat}}</span>
+          </div>
+          {{else}}
           <div class="skill-stat">
             <span class="no-stat">—</span>
           </div>
+          {{/if}}
 
           <div class="skill-category">
             <span class="category-tag">Magic</span>
@@ -85,7 +92,7 @@
         </div>
 
         <div class="skill-controls flexrow">
-          <a class="rollable" data-roll-type="item" title="Cast Spell"><i class="fas fa-magic"></i></a>
+          <a class="rollable" data-roll-type="item" title="Cast Spell"><i class="fas fa-dice-d6"></i></a>
           <a class="item-edit" title="Edit Spell"><i class="fas fa-edit"></i></a>
           <a class="item-delete" title="Delete Spell"><i class="fas fa-trash"></i></a>
         </div>

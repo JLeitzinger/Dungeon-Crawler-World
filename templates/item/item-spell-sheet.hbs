@@ -49,6 +49,27 @@
           data-dtype='Number'
         />
       </div>
+      <div class='resource'>
+        <label class='resource-label'>Dice Count</label>
+        <input
+          type='text'
+          name='system.diceCount'
+          value='{{system.diceCount}}'
+          data-dtype='Number'
+        />
+      </div>
+      <div class='resource'>
+        <label class='resource-label'>Cast Stat</label>
+        <select name='system.castStat' data-dtype='String'>
+          <option value="">None</option>
+          <option value="str" {{selected system.castStat "str"}}>STR</option>
+          <option value="dex" {{selected system.castStat "dex"}}>DEX</option>
+          <option value="con" {{selected system.castStat "con"}}>CON</option>
+          <option value="int" {{selected system.castStat "int"}}>INT</option>
+          <option value="wis" {{selected system.castStat "wis"}}>WIS</option>
+          <option value="cha" {{selected system.castStat "cha"}}>CHA</option>
+        </select>
+      </div>
     </div>
   </section>
 </form>
