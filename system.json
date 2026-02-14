@@ -89,13 +89,24 @@
         "PLAYER": "LIMITED",
         "ASSISTANT": "OWNER"
       }
+    },
+    {
+      "name": "skills",
+      "label": "Skills",
+      "type": "Item",
+      "system": "dungeon-crawler-world",
+      "path": "packs/skills",
+      "ownership": {
+        "PLAYER": "LIMITED",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
   "packFolders": [
     {
       "name": "Dungeon Crawler World",
       "sorting": "m",
-      "packs": ["items", "spells", "features", "classes", "races"]
+      "packs": ["items", "spells", "features", "classes", "races", "skills"]
     }
   ],
   "socket": false,
