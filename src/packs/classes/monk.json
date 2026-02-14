@@ -14,7 +14,14 @@
       "wis": 0.5
     },
     "levelAcquired": 1,
-    "saveProficiency": ["str", "dex"],
+    "saves": {
+      "str": true,
+      "con": false,
+      "dex": true,
+      "int": false,
+      "wis": false,
+      "cha": false
+    },
     "grantedSkills": [
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Blunt", "level": 3},
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Acrobatics", "level": 2},

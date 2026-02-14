@@ -71,6 +71,24 @@ export default class dccworldClass extends dccworldItemBase {
       min: 0
     });
 
+    // Ability score bonuses per level (stat boost progression)
+    schema.abilityBonuses = new fields.SchemaField({
+      str: new fields.NumberField({ required: false, initial: 0, min: 0 }),
+      dex: new fields.NumberField({ required: false, initial: 0, min: 0 }),
+      con: new fields.NumberField({ required: false, initial: 0, min: 0 }),
+      int: new fields.NumberField({ required: false, initial: 0, min: 0 }),
+      wis: new fields.NumberField({ required: false, initial: 0, min: 0 }),
+      cha: new fields.NumberField({ required: false, initial: 0, min: 0 })
+    });
+
+    // Level at which this class was acquired (for multiclassing)
+    schema.levelAcquired = new fields.NumberField({
+      required: true,
+      initial: 1,
+      integer: true,
+      min: 1
+    });
+
     // Saving throw proficiencies
     schema.saves = new fields.SchemaField({
       str: new fields.BooleanField({ initial: false }),
@@ -80,6 +98,12 @@ export default class dccworldClass extends dccworldItemBase {
       wis: new fields.BooleanField({ initial: false }),
       cha: new fields.BooleanField({ initial: false })
     });
+
+    // Granted features (array of feature UUIDs)
+    schema.grantedFeatures = new fields.ArrayField(
+      new fields.StringField({ required: false, blank: false }),
+      { required: true, initial: [] }
+    );
 
     // Class features by level (stored as text for now)
     schema.features = new fields.StringField({

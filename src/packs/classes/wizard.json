@@ -13,7 +13,14 @@
       "int": 1.0
     },
     "levelAcquired": 1,
-    "saveProficiency": ["int", "wis"],
+    "saves": {
+      "str": false,
+      "con": false,
+      "dex": false,
+      "int": true,
+      "wis": true,
+      "cha": false
+    },
     "grantedSkills": [
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Cast", "level": 3},
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore", "level": 2},

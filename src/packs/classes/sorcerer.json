@@ -13,7 +13,14 @@
       "cha": 1.0
     },
     "levelAcquired": 1,
-    "saveProficiency": ["con", "cha"],
+    "saves": {
+      "str": false,
+      "con": true,
+      "dex": false,
+      "int": false,
+      "wis": false,
+      "cha": true
+    },
     "grantedSkills": [
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Cast", "level": 3},
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Focus", "level": 2},

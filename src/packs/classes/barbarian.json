@@ -14,7 +14,14 @@
       "con": 0.4
     },
     "levelAcquired": 1,
-    "saveProficiency": ["str", "con"],
+    "saves": {
+      "str": true,
+      "con": true,
+      "dex": false,
+      "int": false,
+      "wis": false,
+      "cha": false
+    },
     "grantedSkills": [
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 3},
       {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics", "level": 2},
