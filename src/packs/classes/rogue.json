@@ -10,8 +10,12 @@
     "staminaPerLevel": 3,
     "manaPerLevel": 1,
     "abilityBonuses": {
+      "str": 0,
       "dex": 0.7,
-      "int": 0.3
+      "con": 0,
+      "int": 0.3,
+      "wis": 0,
+      "cha": 0
     },
     "levelAcquired": 1,
     "saves": {
@@ -23,16 +27,36 @@
       "cha": false
     },
     "grantedSkills": [
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Pierce", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Stealth", "level": 3},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Thievery", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Acrobatics", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Deception", "level": 1}
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Pierce",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Stealth",
+        "level": 3
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Thievery",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Acrobatics",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Deception",
+        "level": 1
+      }
     ],
     "grantedFeatures": [
       "Compendium.dungeon-crawler-world.features.Item.Sneak-Attack",
       "Compendium.dungeon-crawler-world.features.Item.Cunning-Action"
-    ]
+    ],
+    "hitDie": "d10",
+    "primaryAbility": "dex",
+    "secondaryAbility": "",
+    "features": "",
+    "subclasses": ""
   },
   "effects": [],
   "folder": null,

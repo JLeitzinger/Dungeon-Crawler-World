@@ -10,8 +10,12 @@
     "staminaPerLevel": 2,
     "manaPerLevel": 3,
     "abilityBonuses": {
+      "str": 0.5,
+      "dex": 0,
+      "con": 0,
       "int": 0.5,
-      "str": 0.5
+      "wis": 0,
+      "cha": 0
     },
     "levelAcquired": 1,
     "saves": {
@@ -23,15 +27,32 @@
       "cha": false
     },
     "grantedSkills": [
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Cast", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Focus", "level": 3},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics", "level": 1}
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Cast",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Focus",
+        "level": 3
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics",
+        "level": 1
+      }
     ],
     "grantedFeatures": [
       "Compendium.dungeon-crawler-world.features.Item.Psionic-Strike",
       "Compendium.dungeon-crawler-world.features.Item.Telekinetic-Shield"
-    ]
+    ],
+    "hitDie": "d10",
+    "primaryAbility": "int",
+    "secondaryAbility": "",
+    "features": "",
+    "subclasses": ""
   },
   "effects": [],
   "folder": null,
