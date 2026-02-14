@@ -15,6 +15,7 @@
               <img src="{{system.raceItem.img}}" width="20" height="20" title="{{system.raceItem.name}}" />
               <span class="item-name">{{system.raceItem.name}}</span>
               <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+              <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
             </div>
           {{else}}
             <input type="text" name="system.details.race" value="{{system.details.race}}" placeholder="Drag race item or type name"/>
@@ -27,6 +28,7 @@
               <img src="{{system.classItem.img}}" width="20" height="20" title="{{system.classItem.name}}" />
               <span class="item-name">{{system.classItem.name}}</span>
               <a class="item-control item-edit" title="Edit"><i class="fas fa-edit"></i></a>
+              <a class="item-control item-delete" title="Delete"><i class="fas fa-trash"></i></a>
             </div>
           {{else}}
             <input type="text" name="system.details.class" value="{{system.details.class}}" placeholder="Drag class item or type name"/>

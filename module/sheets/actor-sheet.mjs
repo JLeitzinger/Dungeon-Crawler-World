@@ -152,34 +152,38 @@ export class dccworldActorSheet extends ActorSheet {
     // Add features from race item
     if (context.system.raceItem) {
       const raceFeatures = context.system.raceItem.system?.features || [];
-      for (const featureRef of raceFeatures) {
-        // Extract feature name from UUID: "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience" -> "Dwarven-resilience"
-        let featureName = null;
-        if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
-          featureName = featureRef.featureUuid.split('.').pop();
-        }
+      const compendium = game.packs.get('dungeon-crawler-world.features');
 
-        if (!featureName) continue;
+      if (compendium && compendium.index) {
+        for (const featureRef of raceFeatures) {
+          // Extract feature name from UUID: "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience" -> "Dwarven-resilience"
+          let featureName = null;
+          if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
+            featureName = featureRef.featureUuid.split('.').pop();
+          }
 
-        // Try to get the feature from compendium (case-insensitive lookup)
-        const compendium = game.packs.get('dungeon-crawler-world.features');
-        if (compendium) {
+          if (!featureName) continue;
+
           // Use index to find the feature (case-insensitive)
-          const index = compendium.index.find(i => i._id.toLowerCase() === featureName.toLowerCase());
-          if (index) {
+          const indexEntry = compendium.index.find(i => i._id.toLowerCase() === featureName.toLowerCase());
+          if (indexEntry) {
             // Add to features list if not already present
-            if (!features.find(f => f._id === index._id)) {
+            if (!features.find(f => f._id === indexEntry._id)) {
               features.push({
-                _id: index._id,
-                name: index.name,
+                _id: indexEntry._id,
+                name: indexEntry.name,
                 type: 'feature',
-                img: index.img || 'icons/svg/shield.svg',
-                system: { description: index.system?.description || '' },
+                img: indexEntry.img || 'icons/svg/shield.svg',
+                system: { description: indexEntry.system?.description || '' },
                 source: 'race'
               });
             }
+          } else {
+            console.warn(`DCC World: Feature "${featureName}" not found in compendium for race ${context.system.raceItem.name}`);
           }
         }
+      } else if (raceFeatures.length > 0) {
+        console.warn('DCC World: Features compendium or index not available, cannot load race features');
       }
     }
 
