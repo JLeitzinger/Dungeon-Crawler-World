@@ -110,14 +110,14 @@ export default class dccworldClass extends dccworldItemBase {
 
     // Class features by level (stored as text for now)
     schema.features = new fields.StringField({
-      required: true,
+      required: false,
       blank: true,
       initial: ""
     });
 
     // Subclass options
     schema.subclasses = new fields.StringField({
-      required: true,
+      required: false,
       blank: true,
       initial: ""
     });
