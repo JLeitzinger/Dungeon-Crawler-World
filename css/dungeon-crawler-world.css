@@ -3,6 +3,7 @@
 /* Global styles */
 .window-app.dungeon-crawler-world {
   font-family: "Rajdhani", sans-serif;
+  font-weight: 500;
   background: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
   color: #f0f0f5;
 }
@@ -391,6 +392,7 @@
   padding: 5px 10px;
   font-family: "Rajdhani", sans-serif;
   font-size: 14px;
+  font-weight: 500;
   border-radius: 2px;
   transition: all 0.15s ease;
 }
@@ -412,7 +414,7 @@
 .dungeon-crawler-world label {
   font-family: "Orbitron", sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #99aabb;
@@ -656,7 +658,7 @@
 }
 .dungeon-crawler-world .resource-label {
   font-family: "Orbitron", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #99aabb;
@@ -986,6 +988,7 @@
   align-items: flex-start;
   display: flex;
   color: #ffffff;
+  font-weight: 500;
 }
 .dungeon-crawler-world .items-list .item-name .item-details {
   display: flex;
@@ -997,7 +1000,7 @@
   white-space: nowrap;
   overflow-x: hidden;
   font-family: "Rajdhani", sans-serif;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -1008,6 +1011,7 @@
   line-height: 1.4;
   font-style: italic;
   opacity: 0.8;
+  font-weight: 400;
 }
 .dungeon-crawler-world .items-list .item-source {
   flex: 0 0 100px;
@@ -1024,10 +1028,36 @@
   gap: 4px;
 }
 .dungeon-crawler-world .items-list .item-controls a {
-  font-size: 11px;
+  font-size: 12px;
   text-align: center;
   white-space: nowrap;
-  padding: 2px 6px;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 4px;
+  color: #99aabb;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.dungeon-crawler-world .items-list .item-controls a:hover {
+  background: rgba(0, 247, 255, 0.15);
+  border-color: #00f7ff;
+  color: #00f7ff;
+  box-shadow: 0 0 8px rgba(0, 247, 255, 0.3);
+}
+.dungeon-crawler-world .items-list .item-controls a.item-edit:hover {
+  background: rgba(0, 255, 136, 0.15);
+  border-color: #00ff88;
+  color: #00ff88;
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+.dungeon-crawler-world .items-list .item-controls a.item-delete:hover {
+  background: rgba(255, 0, 255, 0.15);
+  border-color: #ff00ff;
+  color: #ff00ff;
+  box-shadow: 0 0 8px rgba(255, 0, 255, 0.3);
 }
 .dungeon-crawler-world .items-list .item-controls .item-create {
   flex: 0 0 auto;
@@ -1637,7 +1667,7 @@
 .dungeon-crawler-world .effects .item .effect-name {
   font-family: "Orbitron", sans-serif;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #00f7ff;
