@@ -152,8 +152,9 @@ export default class dccworldCharacter extends dccworldActorBase {
       if (item.uuid && item.uuid.includes('Compendium.dungeon-crawler-world.skills.Item.')) {
         return item.uuid.split('.').pop();
       }
-      // For actor items, use the _id field which should match the skill name
-      return item.id || item._id;
+      // For actor items, use the _id field (document ID) which matches the skill name
+      // item.id returns the embedded collection ID, item._id returns the document ID
+      return item._id || item.id;
     };
 
     // Helper function to extract skill ID from a granted skill UUID
