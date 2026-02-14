@@ -9,6 +9,15 @@
     <div class="header-fields">
       <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
 
+      {{!-- Collapsed View: Text-only Race/Class/Subclass --}}
+      <div class="collapsed-identity">
+        <span class="identity-text">
+          {{#if system.raceItem}}{{system.raceItem.name}}{{else}}{{system.details.race}}{{/if}}
+          {{#if system.classItem}} • {{system.classItem.name}}{{else}}{{#if system.details.class}} • {{system.details.class}}{{/if}}{{/if}}
+          {{#if system.details.subclass}} • {{system.details.subclass}}{{/if}}
+        </span>
+      </div>
+
       {{!-- Character Details --}}
       <div class="details grid grid-3col">
         <div class="detail flex-group-center">

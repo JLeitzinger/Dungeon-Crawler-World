@@ -118,6 +118,25 @@
     }
   }
 
+  // Collapsed identity display (only visible when collapsed)
+  .collapsed-identity {
+    display: none;
+    margin: 5px 0 10px 0;
+    padding: 8px 12px;
+    background: rgba(0, 247, 255, 0.05);
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    border-radius: $border-radius-tech;
+
+    .identity-text {
+      font-family: $font-secondary;
+      font-size: 13px;
+      font-weight: 500;
+      color: $c-cyan;
+      letter-spacing: 0.5px;
+      text-transform: capitalize;
+    }
+  }
+
   // Collapsed state
   &.collapsed {
     padding: 10px;
@@ -127,6 +146,16 @@
     }
 
     .header-fields {
+      // Show condensed identity
+      .collapsed-identity {
+        display: block;
+      }
+
+      // Hide full details section
+      .details {
+        display: none;
+      }
+
       .xp-bar,
       .failure-xp,
       .stat-increases {
