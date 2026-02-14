@@ -9,14 +9,12 @@ import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DCC_WORLD } from './helpers/config.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
-// Import skills manifest
-import skillsManifest from '../data/skills-manifest.json';
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once('init', function () {
+Hooks.once('init', async function () {
   // Add utility classes to the global game object so that they're more easily
   // accessible in global contexts.
   game.dungeoncrawlerworld = {
@@ -28,8 +26,20 @@ Hooks.once('init', function () {
   // Add custom constants for configuration.
   CONFIG.DCC_WORLD = DCC_WORLD;
 
-  // Add skills manifest for synchronous skill metadata lookups
-  CONFIG.DCC_WORLD.skillsManifest = skillsManifest;
+  // Load skills manifest for skill metadata lookups
+  try {
+    const manifestResponse = await fetch('systems/dungeon-crawler-world/data/skills-manifest.json');
+    if (manifestResponse.ok) {
+      CONFIG.DCC_WORLD.skillsManifest = await manifestResponse.json();
+      console.log('DCC World: Skills manifest loaded successfully');
+    } else {
+      console.warn('DCC World: Could not load skills manifest');
+      CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
+    }
+  } catch (error) {
+    console.error('DCC World: Error loading skills manifest:', error);
+    CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
+  }
 
   /**
    * Set an initiative formula for the system
