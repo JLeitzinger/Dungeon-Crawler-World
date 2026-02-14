@@ -25,14 +25,16 @@ export default class dccworldClass extends dccworldItemBase {
 
     // Hit die type for HP calculation
     schema.hitDie = new fields.StringField({
-      required: true,
+      required: false,
+      blank: true,
       initial: "d8",
       choices: ["d6", "d8", "d10", "d12"]
     });
 
     // Primary ability for the class (used for class features)
     schema.primaryAbility = new fields.StringField({
-      required: true,
+      required: false,
+      blank: true,
       initial: "str",
       choices: ["str", "dex", "con", "int", "wis", "cha"]
     });
