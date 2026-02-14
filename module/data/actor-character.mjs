@@ -138,18 +138,41 @@ export default class dccworldCharacter extends dccworldActorBase {
    * @private
    */
   _aggregateSkills() {
-    // Map to store aggregated skills by skill UUID
+    // Map to store aggregated skills by skill ID (not UUID, since UUID changes when imported)
     const skillsMap = new Map();
 
     // Get all items on this actor
     const items = this.parent?.items || [];
 
+    // Helper function to extract skill ID from UUID
+    // UUIDs can be "Compendium.dungeon-crawler-world.skills.Item.Slash" or "Actor.abc123"
+    // We want to extract "Slash" from the first format, or use item._id for actor items
+    const getSkillId = (item) => {
+      // For compendium UUIDs, extract the skill name from the end
+      if (item.uuid && item.uuid.includes('Compendium.dungeon-crawler-world.skills.Item.')) {
+        return item.uuid.split('.').pop();
+      }
+      // For actor items, use the _id field which should match the skill name
+      return item.id || item._id;
+    };
+
+    // Helper function to extract skill ID from a granted skill UUID
+    const getGrantedSkillId = (skillUuid) => {
+      if (!skillUuid) return null;
+      // Extract skill name from compendium UUID format
+      if (skillUuid.includes('Compendium.dungeon-crawler-world.skills.Item.')) {
+        return skillUuid.split('.').pop();
+      }
+      // If it's already just a skill ID, return it
+      return skillUuid;
+    };
+
     // First pass: collect all skill items and their base levels
     for (const item of items) {
       if (item.type === 'skill') {
-        const skillUuid = item.uuid;
-        skillsMap.set(skillUuid, {
-          uuid: skillUuid,
+        const skillId = getSkillId(item);
+        skillsMap.set(skillId, {
+          uuid: item.uuid,
           id: item.id,
           name: item.name,
           level: item.system.level || 0,
@@ -170,12 +193,14 @@ export default class dccworldCharacter extends dccworldActorBase {
       for (const granted of grantedSkills) {
         if (!granted.skillUuid) continue;
 
-        const skillUuid = granted.skillUuid;
+        const skillId = getGrantedSkillId(granted.skillUuid);
         const grantedLevel = granted.level || 0;
 
-        if (skillsMap.has(skillUuid)) {
+        if (!skillId) continue;
+
+        if (skillsMap.has(skillId)) {
           // Skill exists, add to its sources
-          const skill = skillsMap.get(skillUuid);
+          const skill = skillsMap.get(skillId);
           skill.sources.push({
             type: item.type,
             name: item.name,
@@ -186,11 +211,12 @@ export default class dccworldCharacter extends dccworldActorBase {
         } else {
           // Skill doesn't exist as an item yet - create a placeholder
           // This can happen if an item grants a skill that hasn't been added to the actor yet
-          // We'll need to look up the skill from world items
-          skillsMap.set(skillUuid, {
-            uuid: skillUuid,
+          // Try to look up the skill name from the UUID
+          const skillName = skillId.charAt(0).toUpperCase() + skillId.slice(1);
+          skillsMap.set(skillId, {
+            uuid: granted.skillUuid,
             id: null, // Will be resolved
-            name: 'Unknown Skill',
+            name: skillName,
             level: grantedLevel,
             category: 'general',
             relatedStat: null,
@@ -205,11 +231,13 @@ export default class dccworldCharacter extends dccworldActorBase {
       }
     }
 
-    // Try to resolve missing skills from world items
-    for (const [skillUuid, skill] of skillsMap.entries()) {
+    // Try to resolve missing skills from compendium or world items
+    for (const [skillId, skill] of skillsMap.entries()) {
       if (skill.missing) {
-        // Try to find this skill in world items
-        const worldSkill = game.items?.find(i => i.uuid === skillUuid && i.type === 'skill');
+        // First try to find this skill in world items (in case someone created it manually)
+        const worldSkill = game.items?.find(i => i.type === 'skill' && (
+          i.id === skillId || i._id === skillId
+        ));
         if (worldSkill) {
           skill.name = worldSkill.name;
           skill.category = worldSkill.system.category || 'general';
@@ -217,6 +245,21 @@ export default class dccworldCharacter extends dccworldActorBase {
           skill.effort = worldSkill.system.effort || 0;
           skill.description = worldSkill.system.description || '';
           skill.missing = false;
+          continue;
+        }
+
+        // Try to find in compendium
+        const compendium = game.packs.get('dungeon-crawler-world.skills');
+        if (compendium) {
+          const compendiumSkill = compendium.find(i => i._id === skillId);
+          if (compendiumSkill) {
+            skill.name = compendiumSkill.name;
+            skill.category = compendiumSkill.system.category || 'general';
+            skill.relatedStat = compendiumSkill.system.relatedStat || null;
+            skill.effort = compendiumSkill.system.effort || 0;
+            skill.description = compendiumSkill.system.description || '';
+            skill.missing = false;
+          }
         }
       }
     }
