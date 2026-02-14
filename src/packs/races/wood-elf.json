@@ -20,12 +20,14 @@
     },
     "size": "medium",
     "speed": 35,
-    "senses": ["darkvision", "low-light"],
-    "traits": [
-      "Fey Ancestry: Advantage on saves against being charmed or magically put to sleep.",
-      "Mask of the Wild: You can attempt to hide even when only lightly obscured by natural phenomena.",
-      "Trance: You meditate for 4 hours instead of sleeping for 8 hours."
-    ],
+    "senses": {
+      "darkvision": 60,
+      "blindsight": 0,
+      "tremorsense": 0,
+      "truesight": 0
+    },
+    "languages": "Common, Elvish",
+    "traits": "Fey Ancestry: Advantage on saves against being charmed or magically put to sleep. Mask of the Wild: You can attempt to hide even when only lightly obscured by natural phenomena. Trance: You meditate for 4 hours instead of sleeping for 8 hours.",
     "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Survival",

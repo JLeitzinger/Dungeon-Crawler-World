@@ -20,12 +20,14 @@
     },
     "size": "medium",
     "speed": 25,
-    "senses": ["darkvision"],
-    "traits": [
-      "Mountain Born: You're acclimated to high altitude and cold environments.",
-      "Stone Endurance: When you take damage, you can reduce it by 1d10 + your CON modifier (minimum 1). Once per short rest.",
-      "Sure-Footed: You have advantage on ability checks to avoid being knocked prone or pushed."
-    ],
+    "senses": {
+      "darkvision": 60,
+      "blindsight": 0,
+      "tremorsense": 0,
+      "truesight": 0
+    },
+    "languages": "Common, Giant",
+    "traits": "Mountain Born: You're acclimated to high altitude and cold environments. Stone Endurance: When you take damage, you can reduce it by 1d10 + your CON modifier (minimum 1). Once per short rest. Sure-Footed: You have advantage on ability checks to avoid being knocked prone or pushed.",
     "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics",

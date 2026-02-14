@@ -20,12 +20,14 @@
     },
     "size": "medium",
     "speed": 30,
-    "senses": ["darkvision (superior)"],
-    "traits": [
-      "Shadow Touched: You have advantage on Stealth checks in dim light or darkness.",
-      "Shadow Step: As a bonus action, you can teleport up to 30 feet to an unoccupied space you can see that is in dim light or darkness. Once per short rest.",
-      "Chilling Presence: When you hit a creature with an attack, you can reduce its speed by 10 feet until the start of your next turn. Once per short rest."
-    ],
+    "senses": {
+      "darkvision": 120,
+      "blindsight": 0,
+      "tremorsense": 0,
+      "truesight": 0
+    },
+    "languages": "Common, Undercommon",
+    "traits": "Shadow Touched: You have advantage on Stealth checks in dim light or darkness. Shadow Step: As a bonus action, you can teleport up to 30 feet to an unoccupied space you can see that is in dim light or darkness. Once per short rest. Chilling Presence: When you hit a creature with an attack, you can reduce its speed by 10 feet until the start of your next turn. Once per short rest.",
     "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Stealth",
