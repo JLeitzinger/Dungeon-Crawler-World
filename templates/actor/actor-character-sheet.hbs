@@ -1,7 +1,10 @@
 <form class="{{cssClass}} {{actor.type}} flexcol" autocomplete="off">
 
   {{!-- Sheet Header --}}
-  <header class="sheet-header">
+  <header class="sheet-header{{#if actor.flags.dungeon-crawler-world.headerCollapsed}} collapsed{{/if}}" data-header-state="{{#if actor.flags.dungeon-crawler-world.headerCollapsed}}collapsed{{else}}expanded{{/if}}">
+    <div class="header-collapse-toggle" title="Toggle Header">
+      <i class="fas fa-chevron-{{#if actor.flags.dungeon-crawler-world.headerCollapsed}}down{{else}}up{{/if}}"></i>
+    </div>
     <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
     <div class="header-fields">
       <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>

@@ -290,6 +290,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Stat increases
     html.on('click', '.stat-increase-button', this._onStatIncrease.bind(this));
 
+    // Header collapse toggle
+    html.on('click', '.header-collapse-toggle', this._onHeaderCollapseToggle.bind(this));
+
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = (ev) => this._onDragStart(ev);
@@ -428,5 +431,19 @@ export class dccworldActorSheet extends ActorSheet {
   async _onStatIncrease(event) {
     event.preventDefault();
     await this.actor.promptStatIncrease();
+  }
+
+  /**
+   * Handle header collapse toggle
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onHeaderCollapseToggle(event) {
+    event.preventDefault();
+    const currentState = this.actor.flags['dungeon-crawler-world']?.headerCollapsed || false;
+    await this.actor.update({
+      'flags.dungeon-crawler-world.headerCollapsed': !currentState
+    });
+    this.render(false);
   }
 }
