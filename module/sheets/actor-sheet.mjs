@@ -152,7 +152,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Add features from race item
     if (context.system.raceItem) {
       const raceFeatures = context.system.raceItem.system?.features || [];
-      const manifest = game.packs.get('dungeon-crawler-world.features');
+
+      console.log('DCC World: Loading features for race:', context.system.raceItem.name);
+      console.log('DCC World: Race features array:', raceFeatures);
 
       // Build a map of features from manifest for quick lookup
       const featuresMap = {};
@@ -166,6 +168,8 @@ export class dccworldActorSheet extends ActorSheet {
         }
       }
 
+      console.log('DCC World: Features map loaded:', Object.keys(featuresMap));
+
       for (const featureRef of raceFeatures) {
         // Extract feature name from UUID
         let featureId = null;
@@ -174,6 +178,9 @@ export class dccworldActorSheet extends ActorSheet {
         }
 
         if (!featureId) continue;
+
+        console.log('DCC World: Looking up feature:', featureId);
+        console.log('DCC World: Found in map:', !!featuresMap[featureId]);
 
         // Look up in manifest
         const featureData = featuresMap[featureId];
@@ -188,11 +195,14 @@ export class dccworldActorSheet extends ActorSheet {
               system: { description: featureData.description || '' },
               source: 'race'
             });
+            console.log('DCC World: Added feature:', featureData.name);
           }
         } else {
           console.warn(`DCC World: Feature "${featureId}" not found in manifest for race ${context.system.raceItem.name}`);
         }
       }
+
+      console.log('DCC World: Total features after adding race features:', features.length);
     }
 
     // Assign and return
