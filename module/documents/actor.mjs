@@ -65,6 +65,14 @@ export class dccworldActor extends Actor {
     // Add effects.
     result.effects = this.effects?.size > 0 ? this.effects.contents : [];
 
+    // Add derived data references
+    if (this.system.raceItem) {
+      result.system.raceItem = this.system.raceItem;
+    }
+    if (this.system.classItem) {
+      result.system.classItem = this.system.classItem;
+    }
+
     return result;
   }
 

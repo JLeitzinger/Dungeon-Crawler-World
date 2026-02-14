@@ -152,38 +152,46 @@ export class dccworldActorSheet extends ActorSheet {
     // Add features from race item
     if (context.system.raceItem) {
       const raceFeatures = context.system.raceItem.system?.features || [];
-      const compendium = game.packs.get('dungeon-crawler-world.features');
+      const manifest = game.packs.get('dungeon-crawler-world.features');
 
-      if (compendium && compendium.index) {
-        for (const featureRef of raceFeatures) {
-          // Extract feature name from UUID: "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience" -> "Dwarven-resilience"
-          let featureName = null;
-          if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
-            featureName = featureRef.featureUuid.split('.').pop();
-          }
-
-          if (!featureName) continue;
-
-          // Use index to find the feature (case-insensitive)
-          const indexEntry = compendium.index.find(i => i._id.toLowerCase() === featureName.toLowerCase());
-          if (indexEntry) {
-            // Add to features list if not already present
-            if (!features.find(f => f._id === indexEntry._id)) {
-              features.push({
-                _id: indexEntry._id,
-                name: indexEntry.name,
-                type: 'feature',
-                img: indexEntry.img || 'icons/svg/shield.svg',
-                system: { description: indexEntry.system?.description || '' },
-                source: 'race'
-              });
-            }
-          } else {
-            console.warn(`DCC World: Feature "${featureName}" not found in compendium for race ${context.system.raceItem.name}`);
+      // Build a map of features from manifest for quick lookup
+      const featuresMap = {};
+      if (CONFIG.DCC_WORLD?.featuresManifest?.features) {
+        for (const category of Object.values(CONFIG.DCC_WORLD.featuresManifest.features)) {
+          for (const feature of category) {
+            // Extract ID from UUID: "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience"
+            const id = feature.uuid.split('.').pop();
+            featuresMap[id] = feature;
           }
         }
-      } else if (raceFeatures.length > 0) {
-        console.warn('DCC World: Features compendium or index not available, cannot load race features');
+      }
+
+      for (const featureRef of raceFeatures) {
+        // Extract feature name from UUID
+        let featureId = null;
+        if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
+          featureId = featureRef.featureUuid.split('.').pop();
+        }
+
+        if (!featureId) continue;
+
+        // Look up in manifest
+        const featureData = featuresMap[featureId];
+        if (featureData) {
+          // Add to features list if not already present
+          if (!features.find(f => f._id === featureId)) {
+            features.push({
+              _id: featureId,
+              name: featureData.name,
+              type: 'feature',
+              img: 'icons/svg/shield.svg',
+              system: { description: featureData.description || '' },
+              source: 'race'
+            });
+          }
+        } else {
+          console.warn(`DCC World: Feature "${featureId}" not found in manifest for race ${context.system.raceItem.name}`);
+        }
       }
     }
 
@@ -222,12 +230,13 @@ export class dccworldActorSheet extends ActorSheet {
 
     // Delete Inventory Item
     html.on('click', '.item-delete', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const itemId = $(ev.currentTarget).data('itemId');
+      const button = $(ev.currentTarget);
+      const container = button.closest('.item, .equipped-item');
+      const itemId = button.data('itemId') || container.data('itemId');
       const item = this.actor.items.get(itemId);
       if (item) {
         item.delete();
-        li.slideUp(200, () => this.render(false));
+        container.slideUp(200, () => this.render(false));
       }
     });
 
