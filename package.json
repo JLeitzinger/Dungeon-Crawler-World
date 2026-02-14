@@ -6,10 +6,13 @@
     "build": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --no-source-map",
     "watch": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --source-map --watch",
     "generate:weapons": "node scripts/generators/generate-weapons.mjs",
-    "pack": "npm run pack:items",
+    "generate:skills": "node scripts/generate-skills.mjs",
+    "pack": "npm run pack:items && npm run pack:skills",
     "pack:items": "node scripts/pack-items.mjs",
+    "pack:skills": "node scripts/pack-skills.mjs",
     "unpack": "npm run unpack:items",
-    "unpack:items": "fvtt package unpack -n items --in packs --out src/packs/items --clean"
+    "unpack:items": "fvtt package unpack -n items --in packs --out src/packs/items --clean",
+    "skill-lookup": "node scripts/skill-lookup.mjs"
   },
   "browserslist": [
     "last 3 versions"
