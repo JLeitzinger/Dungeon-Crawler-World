@@ -129,16 +129,20 @@ Template preloading handled by `module/helpers/templates.mjs`
 - Increment MAJOR for breaking changes
 
 ### When to Bump Version
-Always bump the version after making changes that will be released, including:
+**CRITICAL: ALWAYS bump the version for EVERY commit**, no matter how small the change. This is a hard rule.
+
+Every commit should include:
 - Bug fixes
 - New features
 - UI/UX improvements
 - Data model changes
 - Configuration changes
+- Documentation changes
+- Anything else that gets committed
 
 ### Version Bump + Commit/Push Workflow
-When asked to "bump version and commit/push":
-1. Increment the version in `system.json`
+When asked to "bump version and commit/push" or making any commit:
+1. **ALWAYS increment the version in `system.json` first** (this is mandatory)
 2. Stage all modified files: `git add <files>`
 3. Create a commit with descriptive message
 4. Push to remote: `git push`
