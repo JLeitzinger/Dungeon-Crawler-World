@@ -734,7 +734,8 @@
       color: $c-cyan;
 
       .no-stat {
-        color: $c-tan;
+        color: $c-faint;
+        font-style: italic;
       }
     }
 

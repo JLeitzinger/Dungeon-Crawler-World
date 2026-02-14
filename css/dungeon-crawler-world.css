@@ -377,7 +377,7 @@
   text-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
 }
 .dungeon-crawler-world .sheet-header h1.charname input::placeholder {
-  color: #8899aa;
+  color: #99aabb;
   text-transform: none;
   letter-spacing: 0;
 }
@@ -407,7 +407,7 @@
 .dungeon-crawler-world input[type=number]::placeholder,
 .dungeon-crawler-world textarea::placeholder,
 .dungeon-crawler-world select::placeholder {
-  color: #8899aa;
+  color: #99aabb;
 }
 .dungeon-crawler-world label {
   font-family: "Orbitron", sans-serif;
@@ -415,7 +415,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #8899aa;
+  color: #99aabb;
   margin-bottom: 5px;
   display: block;
 }
@@ -436,7 +436,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #8899aa;
+  color: #99aabb;
   border-bottom: 2px solid transparent;
   transition: all 0.15s ease;
   position: relative;
@@ -473,7 +473,7 @@
   border-bottom: 1px solid rgba(0, 247, 255, 0.2) !important;
 }
 .dungeon-crawler-world .tox .tox-tbtn {
-  color: #8899aa !important;
+  color: #99aabb !important;
 }
 .dungeon-crawler-world .tox .tox-tbtn:hover {
   color: #00f7ff !important;
@@ -659,7 +659,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #8899aa;
+  color: #99aabb;
 }
 .dungeon-crawler-world .resource {
   position: relative;
@@ -716,10 +716,10 @@
 .dungeon-crawler-world .resource-content input:read-only {
   background: transparent;
   border: none;
-  color: #8899aa;
+  color: #99aabb;
 }
 .dungeon-crawler-world .resource-content span {
-  color: #8899aa;
+  color: #99aabb;
   font-family: "Orbitron", sans-serif;
 }
 .dungeon-crawler-world .resource-content .max {
@@ -839,7 +839,7 @@
 }
 .dungeon-crawler-world .failure-xp .failure-xp-hint {
   font-size: 11px;
-  color: #8899aa;
+  color: #99aabb;
   font-style: italic;
 }
 .dungeon-crawler-world .stat-increases {
@@ -1004,7 +1004,7 @@
 .dungeon-crawler-world .items-list .item-name .item-details .item-description {
   font-family: "Orbitron", sans-serif;
   font-size: 11px;
-  color: #8899aa;
+  color: #99aabb;
   line-height: 1.4;
   font-style: italic;
   opacity: 0.8;
@@ -1088,7 +1088,7 @@
   border-right: 1px solid rgba(0, 247, 255, 0.15);
   font-size: 12px;
   font-family: "Orbitron", sans-serif;
-  color: #8899aa;
+  color: #99aabb;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -1312,7 +1312,7 @@
   text-align: center;
   font-family: "Orbitron", sans-serif;
   font-size: 12px;
-  color: #8899aa;
+  color: #99aabb;
   text-transform: uppercase;
   letter-spacing: 2px;
   border: 1px dashed rgba(0, 247, 255, 0.2);
@@ -1338,7 +1338,7 @@
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(0, 247, 255, 0.25);
   border-radius: 2px;
-  color: #8899aa;
+  color: #99aabb;
   font-family: "Orbitron", sans-serif;
   font-size: 11px;
   font-weight: 600;
@@ -1504,7 +1504,7 @@
 .dungeon-crawler-world .skills-list .skill .skill-name .skill-parent {
   font-family: "Orbitron", sans-serif;
   font-size: 11px;
-  color: #8899aa;
+  color: #99aabb;
   font-style: italic;
 }
 .dungeon-crawler-world .skills-list .skill .skill-info {
@@ -1533,7 +1533,7 @@
 }
 .dungeon-crawler-world .skills-list .skill .skill-info .skill-level .dice-pool {
   font-size: 11px;
-  color: #8899aa;
+  color: #99aabb;
   font-family: "Courier New", monospace;
 }
 .dungeon-crawler-world .skills-list .skill .skill-info .skill-stat {
@@ -1543,7 +1543,8 @@
   color: #00f7ff;
 }
 .dungeon-crawler-world .skills-list .skill .skill-info .skill-stat .no-stat {
-  color: #445566;
+  color: #99aabb;
+  font-style: italic;
 }
 .dungeon-crawler-world .skills-list .skill .skill-info .skill-category {
   flex: 0 0 100px;
@@ -1646,10 +1647,10 @@
   opacity: 0.5;
 }
 .dungeon-crawler-world .effects .item.inactive .effect-name {
-  color: #8899aa;
+  color: #99aabb;
 }
 .dungeon-crawler-world .effects .item.inactive::before {
-  background: #445566;
+  background: #556677;
 }
 .dungeon-crawler-world .effects .item .effect-source,
 .dungeon-crawler-world .effects .item .effect-duration,
@@ -1659,7 +1660,7 @@
   border-right: 1px solid rgba(0, 247, 255, 0.15);
   font-size: 11px;
   font-family: "Orbitron", sans-serif;
-  color: #8899aa;
+  color: #99aabb;
   text-transform: uppercase;
   letter-spacing: 1px;
   padding: 0 8px;
@@ -1677,7 +1678,7 @@
   gap: 8px;
 }
 .dungeon-crawler-world .effects .item .effect-controls a {
-  color: #8899aa;
+  color: #99aabb;
   transition: all 0.15s ease;
   padding: 3px 6px;
   border-radius: 2px;
@@ -1695,7 +1696,7 @@
 .dungeon-crawler-world .effects .item .effect-description {
   font-family: "Rajdhani", sans-serif;
   font-size: 12px;
-  color: #667788;
+  color: #99aabb;
   padding: 5px 10px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 2px;
@@ -1773,7 +1774,7 @@
   right: 5px;
   width: 8px;
   height: 8px;
-  background: #445566;
+  background: #556677;
   border-radius: 50%;
 }
 .dungeon-crawler-world .effect-icon {
