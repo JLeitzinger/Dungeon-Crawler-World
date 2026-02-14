@@ -56,6 +56,16 @@ export class dccworldActorSheet extends ActorSheet {
     // Adding a pointer to CONFIG.DCC_WORLD
     context.config = CONFIG.DCC_WORLD;
 
+    console.log('DCC World: ===== Sheet getData() called =====');
+    console.log('DCC World: Actor type:', actorData.type);
+    console.log('DCC World: Has raceItem:', !!context.system.raceItem);
+    console.log('DCC World: Has classItem:', !!context.system.classItem);
+    if (context.system.raceItem) {
+      console.log('DCC World: Race item:', context.system.raceItem.name);
+      console.log('DCC World: Race features:', context.system.raceItem.system?.features);
+    }
+    console.log('DCC World: Has features manifest:', !!CONFIG.DCC_WORLD?.featuresManifest);
+
     // Prepare character data and items.
     if (actorData.type == 'character') {
       this._prepareItems(context);
@@ -150,11 +160,16 @@ export class dccworldActorSheet extends ActorSheet {
     }
 
     // Add features from race item
+    console.log('DCC World: Checking for race features...');
+    console.log('DCC World: raceItem exists:', !!context.system.raceItem);
+
     if (context.system.raceItem) {
       const raceFeatures = context.system.raceItem.system?.features || [];
 
       console.log('DCC World: Loading features for race:', context.system.raceItem.name);
       console.log('DCC World: Race features array:', raceFeatures);
+      console.log('DCC World: Race features type:', typeof raceFeatures);
+      console.log('DCC World: Race features length:', raceFeatures.length);
 
       // Build a map of features from manifest for quick lookup
       const featuresMap = {};
