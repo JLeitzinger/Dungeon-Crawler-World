@@ -1,0 +1,51 @@
+{
+  "_id": "mountain-folk",
+  "name": "Mountain Folk",
+  "type": "race",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "description": "Hardy people who make their homes in the highest peaks. Miners, climbers, and hunters known for their incredible endurance and connection to the stone.",
+    "abilityBonuses": {
+      "str": 1,
+      "dex": 0,
+      "con": 2,
+      "int": 0,
+      "wis": 0,
+      "cha": 0
+    },
+    "bonuses": {
+      "hp": 3,
+      "stamina": 2,
+      "mana": 0
+    },
+    "size": "medium",
+    "speed": 25,
+    "senses": ["darkvision"],
+    "traits": [
+      "Mountain Born: You're acclimated to high altitude and cold environments.",
+      "Stone Endurance: When you take damage, you can reduce it by 1d10 + your CON modifier (minimum 1). Once per short rest.",
+      "Sure-Footed: You have advantage on ability checks to avoid being knocked prone or pushed."
+    ],
+    "grantedSkills": [
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Craft",
+        "level": 1
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Blunt",
+        "level": 2
+      }
+    ]
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {}
+}

@@ -1,0 +1,51 @@
+{
+  "_id": "hill-dwarf",
+  "name": "Hill Dwarf",
+  "type": "race",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "description": "Stout and sturdy folk who dwell in hills and mountains. Known for their craftsmanship, resilience, and fierce loyalty to clan and kin.",
+    "abilityBonuses": {
+      "str": 0,
+      "dex": 0,
+      "con": 2,
+      "int": 0,
+      "wis": 1,
+      "cha": 0
+    },
+    "bonuses": {
+      "hp": 2,
+      "stamina": 0,
+      "mana": 0
+    },
+    "size": "medium",
+    "speed": 25,
+    "senses": ["darkvision"],
+    "traits": [
+      "Dwarven Resilience: Advantage on saves against poison and resistance to poison damage.",
+      "Stonecunning: You have advantage on Investigation checks to notice unusual stonework.",
+      "Craftsmen: You gain a +1 bonus to Craft skill checks."
+    ],
+    "grantedSkills": [
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Craft",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore",
+        "level": 1
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Defend",
+        "level": 2
+      }
+    ]
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {}
+}

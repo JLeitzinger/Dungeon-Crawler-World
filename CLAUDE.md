@@ -122,25 +122,33 @@ Races define hereditary characteristics and base abilities.
 - `size` - String: "tiny", "small", "medium", "large", "huge"
 - `speed` - Number: base movement speed in feet
 
+**Ability Score Rules:**
+- **Total ability bonuses must equal exactly 3**
+- Can distribute as: +3 to one stat, +2/+1 to two stats, or +1/+1/+1 to three stats
+- No stat can exceed +3 bonus
+
 **Skill Requirements:**
-- **Must have exactly 2-3 skills from general or utility categories**
-- **Can have 0-2 skills from magic or combat categories**
+- **Must have exactly 2 skills from general or utility categories**
+- **Must have exactly 1 skill from magic or combat categories**
 - Recommended skill levels: 1-2
 
 **Optional Fields:**
 - `senses` - Array of special senses (e.g., ["darkvision", "low-light"])
-- `traits` - Array of racial feature descriptions
+- `traits` - Array of racial feature descriptions (text descriptions, not feature items)
 
 **Example: Human**
 ```json
 {
-  "abilityBonuses": {"str": 1, "dex": 1, "con": 1, "int": 1, "wis": 1, "cha": 1},
+  "abilityBonuses": {"str": 1, "dex": 1, "con": 1, "int": 0, "wis": 0, "cha": 0},
   "bonuses": {"hp": 0, "stamina": 0, "mana": 0},
   "size": "medium",
   "speed": 30,
+  "senses": [],
+  "traits": ["Versatile: Humans can learn any skill more quickly."],
   "grantedSkills": [
     {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Diplomacy", "level": 1},
-    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore", "level": 1}
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore", "level": 1},
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 1}
   ]
 }
 ```

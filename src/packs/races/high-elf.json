@@ -1,0 +1,52 @@
+{
+  "_id": "high-elf",
+  "name": "High Elf",
+  "type": "race",
+  "img": "icons/svg/mystery-man.svg",
+  "system": {
+    "description": "Ancient and noble elves with strong ties to arcane magic. Scholars, artisans, and mages who value knowledge, magical prowess, and cultural refinement.",
+    "abilityBonuses": {
+      "str": 0,
+      "dex": 2,
+      "con": 0,
+      "int": 1,
+      "wis": 0,
+      "cha": 0
+    },
+    "bonuses": {
+      "hp": 0,
+      "stamina": 0,
+      "mana": 5
+    },
+    "size": "medium",
+    "speed": 30,
+    "senses": ["darkvision", "low-light"],
+    "traits": [
+      "Fey Ancestry: Advantage on saves against being charmed or magically put to sleep.",
+      "Arcane Training: You can cast one cantrip of your choice from any spell list.",
+      "Trance: You meditate for 4 hours instead of sleeping for 8 hours.",
+      "Keen Mind: You always know which way is north and can accurately recall anything you've seen or heard within the past month."
+    ],
+    "grantedSkills": [
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Focus",
+        "level": 2
+      },
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Cast",
+        "level": 1
+      }
+    ]
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {}
+}
