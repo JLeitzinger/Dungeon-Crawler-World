@@ -1,5 +1,22 @@
 import dccworldItemBase from "./base-item.mjs";
 
+/**
+ * Race Item Data Model
+ *
+ * Represents a character race (Human, Elf, Dwarf, etc.) that defines:
+ * - Ability score bonuses
+ * - Size and speed
+ * - Resource bonuses (HP, Stamina, Mana)
+ * - Senses and traits
+ * - Granted skills
+ *
+ * **Design Guidelines:**
+ * - **Must grant exactly 2-3 skills from general or utility categories**
+ * - **Can grant 0-2 skills from magic or combat categories**
+ * - Recommended skill levels: 1-2
+ *
+ * @extends dccworldItemBase
+ */
 export default class dccworldRace extends dccworldItemBase {
 
   static defineSchema() {

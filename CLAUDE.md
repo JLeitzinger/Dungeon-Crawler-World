@@ -107,6 +107,190 @@ Handlebars templates in `templates/`:
 
 Template preloading handled by `module/helpers/templates.mjs`
 
+## Item Type Design Guidelines
+
+When creating new items, follow these requirements and best practices for each item type:
+
+### **Race** Items
+Races define hereditary characteristics and base abilities.
+
+**Required Fields:**
+- `abilityBonuses` - Object with stat bonuses (e.g., `{str: 2, dex: 1}`)
+- `bonuses.hp` - Hit point bonus (number, can be 0)
+- `bonuses.stamina` - Stamina bonus (number, can be 0)
+- `bonuses.mana` - Mana bonus (number, can be 0)
+- `size` - String: "tiny", "small", "medium", "large", "huge"
+- `speed` - Number: base movement speed in feet
+
+**Skill Requirements:**
+- **Must have exactly 2-3 skills from general or utility categories**
+- **Can have 0-2 skills from magic or combat categories**
+- Recommended skill levels: 1-2
+
+**Optional Fields:**
+- `senses` - Array of special senses (e.g., ["darkvision", "low-light"])
+- `traits` - Array of racial feature descriptions
+
+**Example: Human**
+```json
+{
+  "abilityBonuses": {"str": 1, "dex": 1, "con": 1, "int": 1, "wis": 1, "cha": 1},
+  "bonuses": {"hp": 0, "stamina": 0, "mana": 0},
+  "size": "medium",
+  "speed": 30,
+  "grantedSkills": [
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Diplomacy", "level": 1},
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore", "level": 1}
+  ]
+}
+```
+
+---
+
+### **Class** Items
+Classes define profession-based abilities and resource scaling.
+
+**Required Fields:**
+- `baseHP` - Base hit points at level 1 (typically 8-12)
+- `hpPerLevel` - HP gained per level (formula: stat modifier + value, typically 2-4)
+- `staminaPerLevel` - Stamina gained per level (typically 1-3)
+- `manaPerLevel` - Mana gained per level (typically 1-3)
+
+**Skill Requirements:**
+- **Must have 3-5 skills from appropriate category for the class**
+  - Martial classes: combat + utility skills
+  - Magic classes: magic + general/utility skills
+  - Rogue classes: utility + combat skills
+- Recommended skill levels: 1-3
+
+**Optional Fields:**
+- `saveProficiency` - Array of abilities the class is proficient in (e.g., ["str", "con"])
+
+**Example: Fighter**
+```json
+{
+  "baseHP": 10,
+  "hpPerLevel": 4,
+  "staminaPerLevel": 2,
+  "manaPerLevel": 1,
+  "saveProficiency": ["str", "con"],
+  "grantedSkills": [
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 2},
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Defend", "level": 2},
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics", "level": 1}
+  ]
+}
+```
+
+---
+
+### **Item** (Equipment) Items
+Weapons, armor, gear, and consumables.
+
+**Required Fields:**
+- `quantity` - Number of items (default: 1)
+- `weight` - Weight in pounds (number)
+
+**For Weapons:**
+- `roll.diceNum` - Number of dice (typically 1)
+- `roll.diceSize` - Die size ("d4", "d6", "d8", "d10", "d12")
+- `roll.diceBonus` - Bonus to damage (formula like "+@str.mod+ceil(@lvl/2)")
+- **Should grant 1-2 relevant combat skills** at level 1-2
+- **Higher quality/masterwork items can grant skill +2 or +3**
+
+**For Armor:**
+- `acBonus` - Armor class bonus (number)
+- Could grant defensive skills like Defend
+
+**For Tools/Gear:**
+- **Should grant 1 relevant utility or general skill** (e.g., thieves' tools → Thievery +1)
+
+**Example: Longsword**
+```json
+{
+  "quantity": 1,
+  "weight": 3,
+  "roll": {"diceNum": 1, "diceSize": "d8", "diceBonus": "+@str.mod+ceil(@lvl/2)"},
+  "grantedSkills": [
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 1}
+  ]
+}
+```
+
+---
+
+### **Feature** Items
+Abilities, feats, and special powers.
+
+**Skill Guidelines:**
+- **Should grant 0-2 skills** relevant to the feature
+- Combat features → combat skill
+- Magic features → magic skill
+- Skill feats → specific skill at level 1-2
+
+**Example: Power Attack**
+```json
+{
+  "description": "Sacrifice accuracy for damage.",
+  "grantedSkills": [
+    {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 1}
+  ]
+}
+```
+
+---
+
+### **Spell** Items
+Magical spells and rituals.
+
+**Required Fields:**
+- `spellLevel` - 0-9 (0 = cantrip, 1+ = leveled spells)
+- `diceCount` - Number of dice for the spell (usually equals spell level, minimum 1)
+- `castStat` - Related stat: "int" (arcane) or "wis" (divine)
+- `prowess` - Mana cost (typically 0 for cantrips, spellLevel × 2 for leveled spells)
+
+**Do NOT add skills to spells** - they use the Cast/Channel skills from the character.
+
+**Example: Fireball**
+```json
+{
+  "spellLevel": 3,
+  "diceCount": 3,
+  "castStat": "int",
+  "prowess": 6,
+  "description": "Hurls an explosive fireball."
+}
+```
+
+---
+
+### **Skill** Items
+Base skills from the compendium (skills-manifest.json).
+
+**Required Fields:**
+- `level` - Starting level (0 = untrained, can go up to 15)
+- `category` - "combat", "magic", "utility", or "general"
+- `relatedStat` - Primary stat: "str", "dex", "con", "int", "wis", "cha", or null
+- `effort` - Stamina cost to use (0 for most skills, 1-3 for special techniques)
+
+**Skill Creation Rules:**
+- Add entry to `data/skills-manifest.json` first
+- Run `npm run generate:skills` to create JSON
+- Run `npm run pack:skills` to update compendium
+- Skills in compendium should start at **level 0**
+
+---
+
+## Item Creation Workflow
+
+When asked to create new items:
+
+1. **Check the manifest** - For skills, verify the skill exists in `data/skills-manifest.json`
+2. **Use the skill lookup tool** - Run `node scripts/skill-lookup.mjs granted "SkillName" <level>` to get proper UUID format
+3. **Follow skill limits** - Adhere to the category and count requirements above
+4. **Test in Foundry** - Create item, add to character, verify skills aggregate correctly
+5. **Commit with version bump** - Always increment `system.json` version
+
 ## Important Notes
 
 - Always register new item/actor types in THREE places:

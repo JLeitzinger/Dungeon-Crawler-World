@@ -1,5 +1,21 @@
 import dccworldItemBase from "./base-item.mjs";
 
+/**
+ * Class Item Data Model
+ *
+ * Represents a character class (Fighter, Wizard, etc.) that defines:
+ * - Resource scaling (HP, Stamina, Mana per level)
+ * - Base hit points at level 1
+ * - Granted skills (3-5 skills appropriate to the class theme)
+ *
+ * **Design Guidelines:**
+ * - Martial classes: Grant combat + utility skills
+ * - Magic classes: Grant magic + general/utility skills
+ * - Rogue classes: Grant utility + combat skills
+ * - Recommended skill levels: 1-3
+ *
+ * @extends dccworldItemBase
+ */
 export default class dccworldClass extends dccworldItemBase {
 
   static defineSchema() {
