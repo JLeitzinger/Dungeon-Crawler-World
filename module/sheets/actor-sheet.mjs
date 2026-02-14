@@ -168,8 +168,11 @@ export class dccworldActorSheet extends ActorSheet {
     // Render the item sheet for viewing/editing prior to the editable check.
     html.on('click', '.item-edit', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.sheet.render(true);
+      const itemId = $(ev.currentTarget).data('itemId') || li.data('itemId');
+      const item = this.actor.items.get(itemId);
+      if (item) {
+        item.sheet.render(true);
+      }
     });
 
     // -------------------------------------------------------------

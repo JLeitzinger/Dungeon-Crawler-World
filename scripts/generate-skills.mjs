@@ -26,7 +26,7 @@ for (const category of Object.values(manifest.skills)) {
       category: skill.category,
       relatedStat: skill.relatedStat,
       description: skill.description,
-      level: 1,
+      level: 0,
       effort: 0
     });
   }
