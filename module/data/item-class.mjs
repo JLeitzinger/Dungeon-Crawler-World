@@ -40,6 +40,7 @@ export default class dccworldClass extends dccworldItemBase {
     // Secondary ability (optional)
     schema.secondaryAbility = new fields.StringField({
       required: false,
+      blank: true,
       initial: "",
       choices: ["", "str", "dex", "con", "int", "wis", "cha"]
     });
