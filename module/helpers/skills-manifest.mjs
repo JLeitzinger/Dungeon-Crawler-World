@@ -5,33 +5,35 @@
  * and metadata when creating items that grant skill bonuses.
  */
 
-let _manifest = null;
+let _cachedSkillsMap = null;
 
 /**
- * Load and cache the skills manifest
- * @returns {Object} The parsed manifest object
+ * Get the skills manifest from CONFIG.DCC_WORLD (loaded during init)
+ * This is synchronous because the manifest is pre-loaded
+ * @returns {Object} The skills manifest object
  */
-function loadManifest() {
-  if (_manifest) return _manifest;
+function getManifest() {
+  return CONFIG.DCC_WORLD?.skillsManifest || { skills: {} };
+}
 
-  try {
-    const manifestPath = 'systems/dungeon-crawler-world/data/skills-manifest.json';
-    const response = fetch(manifestPath);
+/**
+ * Build and cache a skills lookup map (name -> skill object)
+ * @returns {Object} Map of skill name to skill object
+ */
+function buildSkillsMap() {
+  if (_cachedSkillsMap) return _cachedSkillsMap;
 
-    if (!response.ok) {
-      console.warn('DCC World: Skills manifest not found at', manifestPath);
-      _manifest = { skills: {} };
-      return _manifest;
+  const manifest = getManifest();
+  _cachedSkillsMap = {};
+
+  // Flatten all categories into a single map by skill name
+  for (const category of Object.values(manifest.skills || {})) {
+    for (const skill of category) {
+      _cachedSkillsMap[skill.name] = skill;
     }
-
-    _manifest = response.json();
-    console.log('DCC World: Skills manifest loaded successfully');
-    return _manifest;
-  } catch (error) {
-    console.error('DCC World: Error loading skills manifest:', error);
-    _manifest = { skills: {} };
-    return _manifest;
   }
+
+  return _cachedSkillsMap;
 }
 
 /**
@@ -39,7 +41,7 @@ function loadManifest() {
  * @returns {Array} Array of all skill objects
  */
 export function getAllSkills() {
-  const manifest = loadManifest();
+  const manifest = getManifest();
   const allSkills = [];
 
   for (const category in manifest.skills) {
@@ -52,13 +54,21 @@ export function getAllSkills() {
 }
 
 /**
- * Get a skill by name
+ * Get a skill by name (synchronous lookup)
  * @param {string} name - The skill name to look up
  * @returns {Object|null} The skill object or null if not found
  */
 export function getSkillByName(name) {
-  const allSkills = getAllSkills();
-  return allSkills.find(skill => skill.name === name) || null;
+  const skillsMap = buildSkillsMap();
+  return skillsMap[name] || null;
+}
+
+/**
+ * Get all skills as a map for fast lookup
+ * @returns {Object} Map of skill name -> skill object
+ */
+export function getSkillsMap() {
+  return buildSkillsMap();
 }
 
 /**
@@ -77,7 +87,7 @@ export function getSkillUuid(name) {
  * @returns {Array} Array of skills in the category
  */
 export function getSkillsByCategory(category) {
-  const manifest = loadManifest();
+  const manifest = getManifest();
   return manifest.skills[category] || [];
 }
 
@@ -86,7 +96,7 @@ export function getSkillsByCategory(category) {
  * @returns {Object} Object with category keys and arrays of skill names
  */
 export function getSkillNamesByCategory() {
-  const manifest = loadManifest();
+  const manifest = getManifest();
   const result = {};
 
   for (const category in manifest.skills) {

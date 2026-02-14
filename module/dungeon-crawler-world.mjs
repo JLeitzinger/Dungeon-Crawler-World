@@ -9,6 +9,8 @@ import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DCC_WORLD } from './helpers/config.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
+// Import skills manifest
+import skillsManifest from '../data/skills-manifest.json';
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -25,6 +27,9 @@ Hooks.once('init', function () {
 
   // Add custom constants for configuration.
   CONFIG.DCC_WORLD = DCC_WORLD;
+
+  // Add skills manifest for synchronous skill metadata lookups
+  CONFIG.DCC_WORLD.skillsManifest = skillsManifest;
 
   /**
    * Set an initiative formula for the system

@@ -195,34 +195,39 @@ export default class dccworldCharacter extends dccworldActorBase {
           skill.level += grantedLevel;
         } else {
           // Skill doesn't exist as an item yet - create a placeholder
-          // Try to look up the skill from compendium
-          const skillId = granted.skillUuid.split('.').pop();
+          // Look up the skill metadata from the manifest (synchronous)
+          const skillManifest = CONFIG.DCC_WORLD?.skillsManifest;
+          let manifestSkill = null;
 
-          // Try to find in compendium first
-          const compendium = game.packs.get('dungeon-crawler-world.skills');
-          let compendiumSkill = null;
-          if (compendium) {
-            compendiumSkill = compendium.find(i => i._id === skillId);
+          if (skillManifest?.skills) {
+            // Search all categories for the skill
+            for (const category of Object.values(skillManifest.skills)) {
+              const found = category.find(s => s.name === grantedSkillName);
+              if (found) {
+                manifestSkill = found;
+                break;
+              }
+            }
           }
 
-          if (compendiumSkill) {
-            // Found in compendium, use its data
+          if (manifestSkill) {
+            // Found in manifest, use its data
             skillsMap.set(grantedSkillName, {
               uuid: granted.skillUuid,
               id: null, // No actual item on actor
-              name: compendiumSkill.name,
+              name: manifestSkill.name,
               level: grantedLevel,
-              category: compendiumSkill.system.category || 'general',
-              relatedStat: compendiumSkill.system.relatedStat || null,
-              effort: compendiumSkill.system.effort || 0,
-              description: compendiumSkill.system.description || '',
+              category: manifestSkill.category || 'general',
+              relatedStat: manifestSkill.relatedStat || null,
+              effort: 0,
+              description: manifestSkill.description || '',
               sources: [
                 { type: item.type, name: item.name, level: grantedLevel, uuid: item.uuid }
               ],
               missing: true // Flag that this skill item is not on the actor
             });
           } else {
-            // Not found, create basic placeholder
+            // Not found in manifest, create basic placeholder
             skillsMap.set(grantedSkillName, {
               uuid: granted.skillUuid,
               id: null,
