@@ -1,0 +1,86 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <header class='sheet-header'>
+    <img
+      class='profile-img'
+      src='{{item.img}}'
+      data-edit='img'
+      title='{{item.name}}'
+    />
+    <div class='header-fields'>
+      <h1 class='charname'><input
+          name='name'
+          type='text'
+          value='{{item.name}}'
+          placeholder='Name'
+        /></h1>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class='sheet-tabs tabs' data-group='primary'>
+    <a class='item' data-tab='description'>Description</a>
+    <a class='item' data-tab='attributes'>Attributes</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class='sheet-body'>
+
+    {{! Description Tab }}
+    <div class='tab' data-group='primary' data-tab='description'>
+      {{! Editors must receive enriched text data from getData to properly handle rolls }}
+      {{editor
+        enrichedDescription
+        target='system.description'
+        engine='prosemirror'
+        button=true
+        editable=editable
+      }}
+    </div>
+
+    {{! Attributes Tab }}
+    <div class='tab attributes' data-group='primary' data-tab='attributes'>
+      <div class='resource'>
+        <label class='resource-label'>Level (0-15)</label>
+        <input
+          type='text'
+          name='system.level'
+          value='{{system.level}}'
+          data-dtype='Number'
+        />
+        <p class='notes'>Skill level determines dice pool size (e.g., Level 5 = 5d6).</p>
+      </div>
+      <div class='resource'>
+        <label class='resource-label'>Category</label>
+        <select name='system.category' data-dtype='String'>
+          <option value="combat" {{#if (eq system.category "combat")}}selected{{/if}}>Combat</option>
+          <option value="magic" {{#if (eq system.category "magic")}}selected{{/if}}>Magic</option>
+          <option value="utility" {{#if (eq system.category "utility")}}selected{{/if}}>Utility</option>
+          <option value="general" {{#if (eq system.category "general")}}selected{{/if}}>General</option>
+        </select>
+      </div>
+      <div class='resource'>
+        <label class='resource-label'>Related Stat</label>
+        <select name='system.relatedStat' data-dtype='String'>
+          <option value="" {{#if (eq system.relatedStat null)}}selected{{/if}}>None</option>
+          <option value="str" {{#if (eq system.relatedStat "str")}}selected{{/if}}>STR (Strength)</option>
+          <option value="dex" {{#if (eq system.relatedStat "dex")}}selected{{/if}}>DEX (Dexterity)</option>
+          <option value="con" {{#if (eq system.relatedStat "con")}}selected{{/if}}>CON (Constitution)</option>
+          <option value="int" {{#if (eq system.relatedStat "int")}}selected{{/if}}>INT (Intelligence)</option>
+          <option value="wis" {{#if (eq system.relatedStat "wis")}}selected{{/if}}>WIS (Wisdom)</option>
+          <option value="cha" {{#if (eq system.relatedStat "cha")}}selected{{/if}}>CHA (Charisma)</option>
+        </select>
+        <p class='notes'>Optional: Add the stat's modifier to skill rolls.</p>
+      </div>
+      <div class='resource'>
+        <label class='resource-label'>Effort (Stamina Cost)</label>
+        <input
+          type='text'
+          name='system.effort'
+          value='{{system.effort}}'
+          data-dtype='Number'
+        />
+        <p class='notes'>Amount of stamina spent when using this skill.</p>
+      </div>
+    </div>
+  </section>
+</form>

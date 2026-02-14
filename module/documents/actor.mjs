@@ -70,20 +70,26 @@ export class dccworldActor extends Actor {
 
   /**
    * Roll a skill check for this actor
-   * @param {string} skillId - The ID of the skill to roll
+   * @param {string} skillUuid - The UUID of the skill to roll
    * @param {Object} options - Additional options for the roll
    * @returns {Promise<Object>} The roll result
    */
-  async rollSkill(skillId, options = {}) {
+  async rollSkill(skillUuid, options = {}) {
     // Only characters have skills
     if (this.type !== 'character') {
       ui.notifications.warn("Only characters can use skill checks.");
       return null;
     }
 
-    const skill = this.system.getSkill(skillId);
+    const skill = this.system.getSkill(skillUuid);
     if (!skill) {
-      ui.notifications.error(`Skill "${skillId}" not found.`);
+      ui.notifications.error(`Skill "${skillUuid}" not found.`);
+      return null;
+    }
+
+    // Check if skill item exists on actor
+    if (!skill.id) {
+      ui.notifications.warn(`Skill "${skill.name}" item not found on character. Please add the skill item first.`);
       return null;
     }
 
@@ -127,23 +133,28 @@ export class dccworldActor extends Actor {
 
   /**
    * Perform a contested roll between this actor and another
-   * @param {string} attackSkillId - This actor's skill
+   * @param {string} attackSkillUuid - This actor's skill UUID
    * @param {Actor} defender - The defending actor
-   * @param {string} defenseSkillId - Defender's skill
+   * @param {string} defenseSkillUuid - Defender's skill UUID
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} The contest result
    */
-  async rollContested(attackSkillId, defender, defenseSkillId, options = {}) {
+  async rollContested(attackSkillUuid, defender, defenseSkillUuid, options = {}) {
     if (this.type !== 'character' || defender.type !== 'character') {
       ui.notifications.warn("Only characters can use contested rolls.");
       return null;
     }
 
-    const attackSkill = this.system.getSkill(attackSkillId);
-    const defenseSkill = defender.system.getSkill(defenseSkillId);
+    const attackSkill = this.system.getSkill(attackSkillUuid);
+    const defenseSkill = defender.system.getSkill(defenseSkillUuid);
 
     if (!attackSkill || !defenseSkill) {
       ui.notifications.error("One or both skills not found.");
+      return null;
+    }
+
+    if (!attackSkill.id || !defenseSkill.id) {
+      ui.notifications.warn("One or both skill items not found.");
       return null;
     }
 
@@ -211,88 +222,60 @@ export class dccworldActor extends Actor {
 
   /**
    * Prompt the user about skill improvement
-   * @param {Object} skill - The skill that can be improved
+   * @param {Object} skill - The aggregated skill object that can be improved
    * @private
    */
   async _promptSkillImprovement(skill) {
-    // If it's "Do Something", must create a new skill
-    if (skill.id === 'do-something') {
-      return this._createNewSkillDialog(skill);
+    // Check if skill has multiple sources (skill item + granted from other items)
+    const hasSkillItem = skill.sources && skill.sources.some(s => s.type === 'skill');
+
+    if (!hasSkillItem) {
+      // No skill item on character - prompt to create it first
+      return this._createSkillItemDialog(skill);
     }
 
-    // For other skills, offer choice to improve or create new
+    // For skills with items, offer choice to improve or create new
     return this._skillImprovementChoiceDialog(skill);
   }
 
   /**
-   * Show dialog to create a new skill (for "Do Something" improvements)
-   * @param {Object} parentSkill - The parent skill
+   * Show dialog to create a skill item for an aggregated skill
+   * @param {Object} skill - The aggregated skill object
    * @private
    */
-  async _createNewSkillDialog(parentSkill) {
+  async _createSkillItemDialog(skill) {
     new Dialog({
       title: "⚡ Skill Breakthrough!",
       content: `
-        <p>You rolled all 6s with <strong>${parentSkill.name}</strong>!</p>
-        <p>You've discovered a new skill. What were you trying to do?</p>
-        <form>
-          <div class="form-group">
-            <label>New Skill Name:</label>
-            <input type="text" name="skillName" placeholder="e.g., Melee Combat, Arcane Magic" autofocus />
-          </div>
-          <div class="form-group">
-            <label>Category:</label>
-            <select name="category">
-              <option value="combat">Combat</option>
-              <option value="magic">Magic</option>
-              <option value="utility">Utility</option>
-              <option value="general">General</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Related Stat:</label>
-            <select name="relatedStat">
-              <option value="">None</option>
-              <option value="str">STR (Strength)</option>
-              <option value="dex">DEX (Dexterity)</option>
-              <option value="con">CON (Constitution)</option>
-              <option value="int">INT (Intelligence)</option>
-              <option value="wis">WIS (Wisdom)</option>
-              <option value="cha">CHA (Charisma)</option>
-            </select>
-          </div>
-        </form>
+        <p>You rolled all 6s with <strong>${skill.name}</strong>!</p>
+        <p>This skill is granted by items but you don't have the skill item yet.</p>
+        <p>Would you like to create the skill item and improve it?</p>
       `,
       buttons: {
         create: {
           icon: '<i class="fas fa-star"></i>',
-          label: "Create Skill",
-          callback: async (html) => {
-            const formData = new FormData(html[0].querySelector('form'));
-            const skillName = formData.get('skillName')?.trim();
-            const category = formData.get('category');
-            const relatedStat = formData.get('relatedStat') || null;
-
-            if (!skillName) {
-              ui.notifications.warn("Skill name is required.");
-              return;
-            }
-
-            const skillId = skillName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-            // Create new skill at level 1
-            const skills = foundry.utils.duplicate(this.system.skills);
-            skills[skillId] = {
-              id: skillId,
-              name: skillName,
-              level: 1,
-              parent: parentSkill.id,
-              category,
-              relatedStat
+          label: "Create & Improve",
+          callback: async () => {
+            // Create new skill item at level 1 (will be boosted by granted skills)
+            const skillItemData = {
+              name: skill.name,
+              type: 'skill',
+              system: {
+                level: 1,
+                category: skill.category || 'general',
+                relatedStat: skill.relatedStat || null,
+                effort: skill.effort || 0,
+                description: skill.description || ''
+              }
             };
 
-            await this.update({ 'system.skills': skills });
-            ui.notifications.info(`⚡ New skill learned: ${skillName}!`);
+            const skillItem = await Item.create(skillItemData, { parent: this });
+
+            // Now improve it by 1 level
+            const newLevel = (skillItem.system.level || 0) + 1;
+            await skillItem.update({ 'system.level': newLevel });
+
+            ui.notifications.info(`⚡ Created and improved ${skill.name} to Level ${newLevel}!`);
           }
         },
         cancel: {
@@ -318,7 +301,7 @@ export class dccworldActor extends Actor {
         <div class="skill-improvement-options">
           <div class="option">
             <h4>📈 Improve ${skill.name}</h4>
-            <p>Increase to Level ${skill.level + 1} (roll ${skill.level + 1}d6)</p>
+            <p>Increase skill item to Level ${skill.sources[0].level + 1}</p>
           </div>
           <div class="option">
             <h4>✨ Learn New Skill</h4>
@@ -331,10 +314,16 @@ export class dccworldActor extends Actor {
           icon: '<i class="fas fa-arrow-up"></i>',
           label: "Improve Skill",
           callback: async () => {
-            const skills = foundry.utils.duplicate(this.system.skills);
-            skills[skill.id].level += 1;
-            await this.update({ 'system.skills': skills });
-            ui.notifications.info(`⚡ ${skill.name} improved to Level ${skills[skill.id].level}!`);
+            // Find the skill item on this actor
+            const skillItem = this.items.get(skill.id);
+            if (!skillItem) {
+              ui.notifications.warn("Skill item not found!");
+              return;
+            }
+
+            const newLevel = (skillItem.system.level || 0) + 1;
+            await skillItem.update({ 'system.level': newLevel });
+            ui.notifications.info(`⚡ ${skill.name} improved to Level ${newLevel}!`);
           }
         },
         newSkill: {
@@ -342,7 +331,7 @@ export class dccworldActor extends Actor {
           label: "New Skill",
           callback: async () => {
             // Show create new skill dialog
-            this._createRelatedSkillDialog(skill);
+            this._createNewSkillDialog(skill);
           }
         },
         cancel: {
@@ -351,6 +340,87 @@ export class dccworldActor extends Actor {
         }
       },
       default: "improve"
+    }).render(true);
+  }
+
+  /**
+   * Show dialog to create a new skill related to an existing one
+   * @param {Object} parentSkill - The parent aggregated skill object
+   * @private
+   */
+  async _createNewSkillDialog(parentSkill) {
+    new Dialog({
+      title: `Create Skill Related to ${parentSkill.name}`,
+      content: `
+        <p>Create a new skill branching from <strong>${parentSkill.name}</strong>.</p>
+        <form>
+          <div class="form-group">
+            <label>New Skill Name:</label>
+            <input type="text" name="skillName" placeholder="e.g., Sword Fighting, Dodge" autofocus />
+          </div>
+          <div class="form-group">
+            <label>Category:</label>
+            <select name="category">
+              <option value="${parentSkill.category}" selected>${parentSkill.category}</option>
+              <option value="combat">Combat</option>
+              <option value="magic">Magic</option>
+              <option value="utility">Utility</option>
+              <option value="general">General</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Related Stat:</label>
+            <select name="relatedStat">
+              ${parentSkill.relatedStat ? `<option value="${parentSkill.relatedStat}" selected>${parentSkill.relatedStat.toUpperCase()}</option>` : ''}
+              <option value="">None</option>
+              <option value="str">STR</option>
+              <option value="dex">DEX</option>
+              <option value="con">CON</option>
+              <option value="int">INT</option>
+              <option value="wis">WIS</option>
+              <option value="cha">CHA</option>
+            </select>
+          </div>
+        </form>
+      `,
+      buttons: {
+        create: {
+          icon: '<i class="fas fa-star"></i>',
+          label: "Create Skill",
+          callback: async (html) => {
+            const formData = new FormData(html[0].querySelector('form'));
+            const skillName = formData.get('skillName')?.trim();
+            const category = formData.get('category');
+            const relatedStat = formData.get('relatedStat') || null;
+
+            if (!skillName) {
+              ui.notifications.warn("Skill name is required.");
+              return;
+            }
+
+            // Create new skill item at level 1
+            const skillItemData = {
+              name: skillName,
+              type: 'skill',
+              system: {
+                level: 1,
+                category,
+                relatedStat,
+                effort: 0,
+                description: ''
+              }
+            };
+
+            await Item.create(skillItemData, { parent: this });
+            ui.notifications.info(`⚡ New skill learned: ${skillName}!`);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "create"
     }).render(true);
   }
 
@@ -484,87 +554,6 @@ export class dccworldActor extends Actor {
     await this.update({ 'system.attributes.failureXP': currentXP - cost });
     ui.notifications.info(`Spent ${cost} Failure XP. (Remaining: ${currentXP - cost})`);
     return true;
-  }
-
-  /**
-   * Show dialog to create a skill related to an existing one
-   * @param {Object} parentSkill - The parent skill
-   * @private
-   */
-  async _createRelatedSkillDialog(parentSkill) {
-    new Dialog({
-      title: `Create Skill Related to ${parentSkill.name}`,
-      content: `
-        <p>Create a new skill branching from <strong>${parentSkill.name}</strong>.</p>
-        <form>
-          <div class="form-group">
-            <label>New Skill Name:</label>
-            <input type="text" name="skillName" placeholder="e.g., Sword Fighting, Dodge" autofocus />
-          </div>
-          <div class="form-group">
-            <label>Category:</label>
-            <select name="category">
-              <option value="${parentSkill.category}" selected>${parentSkill.category}</option>
-              <option value="combat">Combat</option>
-              <option value="magic">Magic</option>
-              <option value="utility">Utility</option>
-              <option value="general">General</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Related Stat:</label>
-            <select name="relatedStat">
-              ${parentSkill.relatedStat ? `<option value="${parentSkill.relatedStat}" selected>${parentSkill.relatedStat.toUpperCase()}</option>` : ''}
-              <option value="">None</option>
-              <option value="str">STR</option>
-              <option value="dex">DEX</option>
-              <option value="con">CON</option>
-              <option value="int">INT</option>
-              <option value="wis">WIS</option>
-              <option value="cha">CHA</option>
-            </select>
-          </div>
-        </form>
-      `,
-      buttons: {
-        create: {
-          icon: '<i class="fas fa-star"></i>',
-          label: "Create Skill",
-          callback: async (html) => {
-            const formData = new FormData(html[0].querySelector('form'));
-            const skillName = formData.get('skillName')?.trim();
-            const category = formData.get('category');
-            const relatedStat = formData.get('relatedStat') || null;
-
-            if (!skillName) {
-              ui.notifications.warn("Skill name is required.");
-              return;
-            }
-
-            const skillId = skillName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-            // Create new skill at level 1
-            const skills = foundry.utils.duplicate(this.system.skills);
-            skills[skillId] = {
-              id: skillId,
-              name: skillName,
-              level: 1,
-              parent: parentSkill.id,
-              category,
-              relatedStat
-            };
-
-            await this.update({ 'system.skills': skills });
-            ui.notifications.info(`⚡ New skill learned: ${skillName}!`);
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: "Cancel"
-        }
-      },
-      default: "create"
-    }).render(true);
   }
 
   /**

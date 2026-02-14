@@ -50,6 +50,7 @@ Hooks.once('init', function () {
     item: models.dccworldItem,
     feature: models.dccworldFeature,
     spell: models.dccworldSpell,
+    skill: models.dccworldSkill,
     class: models.dccworldClass,
     race: models.dccworldRace
   }

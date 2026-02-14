@@ -20,6 +20,7 @@
   <nav class='sheet-tabs tabs' data-group='primary'>
     <a class='item' data-tab='description'>Description</a>
     <a class='item' data-tab='attributes'>Attributes</a>
+    <a class='item' data-tab='skills'>Skills</a>
     <a class='item' data-tab='features'>Features</a>
   </nav>
 
@@ -141,42 +142,41 @@
       </div>
     </div>
 
+    {{! Skills Tab }}
+    <div class='tab skills' data-group='primary' data-tab='skills'>
+      <div class='granted-skills'>
+        <h3>Granted Skills</h3>
+        <p class='notes'>This class grants the following skills to characters who have it.</p>
+        <ol class='granted-skills-list'>
+          {{#each system.grantedSkills}}
+          <li class='granted-skill flexrow' data-index='{{@index}}'>
+            <div class='skill-info'>
+              <input
+                type='text'
+                name='system.grantedSkills.{{@index}}.skillUuid'
+                value='{{skillUuid}}'
+                placeholder='Skill UUID'
+                data-dtype='String'
+              />
+              <input
+                type='number'
+                name='system.grantedSkills.{{@index}}.level'
+                value='{{level}}'
+                data-dtype='Number'
+                min='0'
+                title='Level granted'
+              />
+            </div>
+            <a class='granted-skill-delete' title='Remove Skill'><i class='fas fa-trash'></i></a>
+          </li>
+          {{/each}}
+        </ol>
+        <a class='granted-skill-add'><i class='fas fa-plus'></i> Add Skill</a>
+      </div>
+    </div>
+
     {{! Features Tab }}
     <div class='tab' data-group='primary' data-tab='features'>
-      <h3>Starting Skills</h3>
-      <p class="hint">These skills are granted to characters when they select this class.</p>
-
-      {{#if system.startingSkills}}
-      <ol class="starting-skills-list">
-        {{#each system.startingSkills as |skill skillId|}}
-        <li class="starting-skill">
-          <strong>{{skill.name}}</strong> (Level {{skill.level}})
-          <span class="skill-category">{{skill.category}}</span>
-          {{#if skill.relatedStat}}
-          <span class="skill-stat">Stat: {{skill.relatedStat}}</span>
-          {{/if}}
-        </li>
-        {{/each}}
-      </ol>
-      {{else}}
-      <p class="no-skills">No starting skills configured. Edit the class JSON to add skills.</p>
-      {{/if}}
-
-      <div class="hint-box">
-        <h4>How to Configure Starting Skills:</h4>
-        <p>Starting skills are stored in the <code>system.startingSkills</code> field. You can configure them by editing the item's data directly or through code.</p>
-        <p><strong>Example structure:</strong></p>
-        <pre>{
-  "combat": {
-    "name": "Combat",
-    "level": 2,
-    "parent": "do-something",
-    "category": "combat",
-    "relatedStat": "str"
-  }
-}</pre>
-      </div>
-
       <h3>Class Features by Level</h3>
       <div class='resource'>
         <textarea

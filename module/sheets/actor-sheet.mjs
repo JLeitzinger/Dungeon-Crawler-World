@@ -112,6 +112,7 @@ export class dccworldActorSheet extends ActorSheet {
     // Initialize containers.
     const gear = [];
     const features = [];
+    const skillItems = [];
     const spells = {
       0: [],
       1: [],
@@ -136,6 +137,10 @@ export class dccworldActorSheet extends ActorSheet {
       else if (i.type === 'feature') {
         features.push(i);
       }
+      // Append to skills (skill items)
+      else if (i.type === 'skill') {
+        skillItems.push(i);
+      }
       // Append to spells.
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
@@ -147,7 +152,11 @@ export class dccworldActorSheet extends ActorSheet {
     // Assign and return
     context.gear = gear;
     context.features = features;
+    context.skillItems = skillItems;
     context.spells = spells;
+
+    // Add aggregated skills from system
+    context.skills = context.system.aggregatedSkills || {};
   }
 
   /* -------------------------------------------- */
@@ -196,62 +205,6 @@ export class dccworldActorSheet extends ActorSheet {
 
     // Spell rolls
     html.on('click', '.spell-roll', this._onSpellRoll.bind(this));
-
-    // Skill management
-    html.on('click', '.skill-create', this._onSkillCreate.bind(this));
-    html.on('click', '.skill-edit', this._onSkillEdit.bind(this));
-
-    // Delete Skill (inline handler matching item-delete pattern)
-    html.on('click', '.skill-delete', async (ev) => {
-      console.log('=== SKILL DELETE CLICKED ===');
-      console.log('Event:', ev);
-      console.log('Current target:', ev.currentTarget);
-
-      const li = $(ev.currentTarget).closest('.skill');
-      const skillId = li.data('skillId');
-      console.log('Skill ID from DOM:', skillId);
-
-      const skill = this.actor.system.skills[skillId];
-      console.log('Skill from actor.system.skills:', skill);
-
-      if (!skill) {
-        console.log('EARLY RETURN: skill not found!');
-        return;
-      }
-
-      console.log('Showing confirmation dialog...');
-
-      const confirmed = await Dialog.confirm({
-        title: "Delete Skill",
-        content: `<p>Are you sure you want to delete the skill "<strong>${skill.name}</strong>"?</p>`,
-        defaultYes: false
-      });
-
-      console.log('Dialog confirmed:', confirmed);
-
-      if (confirmed) {
-        console.log('Confirmed - proceeding with deletion...');
-
-        // 1. Prepare the update object using Foundry's deletion operator
-        const updateData = {
-          // This syntax tells Foundry to "unset" or delete this specific key
-          [`system.skills.-=${skillId}`]: null
-        };
-
-        console.log('Update data:', updateData);
-
-        // 2. Perform the update
-        // No need to loop through and re-add all other skills;
-        // Foundry will keep them as they are and only delete the one targeted.
-        await this.actor.update(updateData);
-
-        console.log('AFTER update:', this.actor.system.skills);
-
-        // 3. UI Notification & Re-render
-        ui.notifications.info(`Skill removed successfully.`);
-        li.slideUp(200, () => this.render(false));
-      }
-    });
 
     // Skill category filters
     html.on('click', '.skill-filter', this._onSkillFilter.bind(this));
@@ -336,9 +289,9 @@ export class dccworldActorSheet extends ActorSheet {
    */
   async _onSkillRoll(event) {
     event.preventDefault();
-    const skillId = $(event.currentTarget).closest('.skill').data('skillId');
-    if (skillId) {
-      await this.actor.rollSkill(skillId);
+    const skillUuid = $(event.currentTarget).closest('.skill').data('skillUuid');
+    if (skillUuid) {
+      await this.actor.rollSkill(skillUuid);
     }
   }
 
@@ -353,183 +306,6 @@ export class dccworldActorSheet extends ActorSheet {
     if (itemId) {
       await this.actor.rollSpell(itemId);
     }
-  }
-
-  /**
-   * Handle creating a new skill
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onSkillCreate(event) {
-    event.preventDefault();
-
-    // Simple dialog to create a new skill
-    new Dialog({
-      title: "Create New Skill",
-      content: `
-        <form>
-          <div class="form-group">
-            <label>Skill Name:</label>
-            <input type="text" name="skillName" placeholder="e.g., Melee Combat" />
-          </div>
-          <div class="form-group">
-            <label>Parent Skill:</label>
-            <select name="parentSkill">
-              <option value="">None</option>
-              ${Object.entries(this.actor.system.skills).map(([id, skill]) =>
-                `<option value="${id}">${skill.name}</option>`
-              ).join('')}
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Category:</label>
-            <select name="category">
-              <option value="general">General</option>
-              <option value="combat">Combat</option>
-              <option value="magic">Magic</option>
-              <option value="utility">Utility</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Related Stat:</label>
-            <select name="relatedStat">
-              <option value="">None</option>
-              <option value="str">STR</option>
-              <option value="dex">DEX</option>
-              <option value="con">CON</option>
-              <option value="int">INT</option>
-              <option value="wis">WIS</option>
-              <option value="cha">CHA</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Starting Level:</label>
-            <input type="number" name="level" value="1" min="1" />
-          </div>
-          <div class="form-group">
-            <label>Effort (Stamina Cost):</label>
-            <input type="number" name="effort" value="0" min="0" />
-            <p class="notes">Amount of stamina spent when using this skill.</p>
-          </div>
-        </form>
-      `,
-      buttons: {
-        create: {
-          label: "Create",
-          callback: async (html) => {
-            const formData = new FormData(html[0].querySelector('form'));
-            const skillName = formData.get('skillName');
-            const parentSkill = formData.get('parentSkill') || null;
-            const category = formData.get('category');
-            const relatedStat = formData.get('relatedStat') || null;
-            const level = parseInt(formData.get('level')) || 1;
-            const effort = parseInt(formData.get('effort')) || 0;
-
-            if (!skillName) {
-              ui.notifications.warn("Skill name is required.");
-              return;
-            }
-
-            // Generate skill ID from name
-            const skillId = skillName.toLowerCase().replace(/\s+/g, '-');
-
-            // Create the skill
-            const newSkill = {
-              id: skillId,
-              name: skillName,
-              level,
-              parent: parentSkill,
-              category,
-              relatedStat,
-              effort
-            };
-
-            // Update actor with new skill
-            const skills = foundry.utils.duplicate(this.actor.system.skills);
-            skills[skillId] = newSkill;
-            await this.actor.update({ 'system.skills': skills });
-
-            ui.notifications.info(`Created skill: ${skillName}`);
-          }
-        },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "create"
-    }).render(true);
-  }
-
-  /**
-   * Handle editing a skill
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onSkillEdit(event) {
-    event.preventDefault();
-    const skillId = $(event.currentTarget).closest('.skill').data('skillId');
-    const skill = this.actor.system.skills[skillId];
-
-    if (!skill) return;
-
-    // Simple dialog to edit the skill
-    new Dialog({
-      title: `Edit Skill: ${skill.name}`,
-      content: `
-        <form>
-          <div class="form-group">
-            <label>Skill Name:</label>
-            <input type="text" name="skillName" value="${skill.name}" />
-          </div>
-          <div class="form-group">
-            <label>Level:</label>
-            <input type="number" name="level" value="${skill.level}" min="1" />
-          </div>
-          <div class="form-group">
-            <label>Related Stat:</label>
-            <select name="relatedStat">
-              <option value="" ${!skill.relatedStat ? 'selected' : ''}>None</option>
-              <option value="str" ${skill.relatedStat === 'str' ? 'selected' : ''}>STR</option>
-              <option value="dex" ${skill.relatedStat === 'dex' ? 'selected' : ''}>DEX</option>
-              <option value="con" ${skill.relatedStat === 'con' ? 'selected' : ''}>CON</option>
-              <option value="int" ${skill.relatedStat === 'int' ? 'selected' : ''}>INT</option>
-              <option value="wis" ${skill.relatedStat === 'wis' ? 'selected' : ''}>WIS</option>
-              <option value="cha" ${skill.relatedStat === 'cha' ? 'selected' : ''}>CHA</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Effort (Stamina Cost):</label>
-            <input type="number" name="effort" value="${skill.effort || 0}" min="0" />
-            <p class="notes">Amount of stamina spent when using this skill.</p>
-          </div>
-        </form>
-      `,
-      buttons: {
-        save: {
-          label: "Save",
-          callback: async (html) => {
-            const formData = new FormData(html[0].querySelector('form'));
-            const skillName = formData.get('skillName');
-            const level = parseInt(formData.get('level')) || 1;
-            const relatedStat = formData.get('relatedStat') || null;
-            const effort = parseInt(formData.get('effort')) || 0;
-
-            // Update the skill
-            const skills = foundry.utils.duplicate(this.actor.system.skills);
-            skills[skillId].name = skillName;
-            skills[skillId].level = level;
-            skills[skillId].relatedStat = relatedStat;
-            skills[skillId].effort = effort;
-
-            await this.actor.update({ 'system.skills': skills });
-          }
-        },
-        cancel: {
-          label: "Cancel"
-        }
-      },
-      default: "save"
-    }).render(true);
   }
 
   /**

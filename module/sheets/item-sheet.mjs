@@ -89,5 +89,35 @@ export class dccworldItemSheet extends ItemSheet {
     html.on('click', '.effect-control', (ev) =>
       onManageActiveEffect(ev, this.item)
     );
+
+    // Granted Skills management
+    html.on('click', '.granted-skill-add', this._onAddGrantedSkill.bind(this));
+    html.on('click', '.granted-skill-delete', this._onRemoveGrantedSkill.bind(this));
+  }
+
+  /**
+   * Handle adding a new granted skill
+   * @param {Event} event - The originating click event
+   * @private
+   */
+  async _onAddGrantedSkill(event) {
+    event.preventDefault();
+    const grantedSkills = foundry.utils.duplicate(this.item.system.grantedSkills || []);
+    grantedSkills.push({ skillUuid: '', level: 1 });
+    await this.item.update({ 'system.grantedSkills': grantedSkills });
+  }
+
+  /**
+   * Handle removing a granted skill
+   * @param {Event} event - The originating click event
+   * @private
+   */
+  async _onRemoveGrantedSkill(event) {
+    event.preventDefault();
+    const li = $(event.currentTarget).closest('.granted-skill');
+    const index = li.data('index');
+    const grantedSkills = foundry.utils.duplicate(this.item.system.grantedSkills || []);
+    grantedSkills.splice(index, 1);
+    await this.item.update({ 'system.grantedSkills': grantedSkills });
   }
 }

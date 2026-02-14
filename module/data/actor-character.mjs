@@ -51,22 +51,9 @@ export default class dccworldCharacter extends dccworldActorBase {
       return obj;
     }, {}));
 
-    // Skills system - stores all learned skills
-    // Skills are stored as an object with skill IDs as keys
-    schema.skills = new fields.ObjectField({
-      required: true,
-      initial: {
-        "do-something": {
-          id: "do-something",
-          name: "Do Something",
-          level: 1,
-          parent: null,
-          category: "base",
-          relatedStat: null,
-          effort: 0
-        }
-      }
-    });
+    // Note: Skills are now stored as items, not directly on the actor.
+    // Aggregated skills will be computed in prepareDerivedData() and stored
+    // as a non-persisted property for template access.
 
     return schema;
   }
@@ -76,10 +63,8 @@ export default class dccworldCharacter extends dccworldActorBase {
     const classItem = this.parent?.items?.find(i => i.type === 'class');
     const raceItem = this.parent?.items?.find(i => i.type === 'race');
 
-    // Initialize skills from class if character is new (only has "do-something")
-    if (classItem?.system?.startingSkills && Object.keys(this.skills).length === 1) {
-      this._initializeClassSkills(classItem.system.startingSkills);
-    }
+    // Aggregate skills from all items
+    this._aggregateSkills();
 
     // Apply racial ability bonuses first (before calculating modifiers)
     if (raceItem?.system?.abilityBonuses) {
@@ -148,35 +133,105 @@ export default class dccworldCharacter extends dccworldActorBase {
   }
 
   /**
-   * Initialize starting skills from a class
-   * @param {Object} startingSkills - Skills granted by the class
+   * Aggregate skills from all items on the actor
+   * Combines skill items with grantedSkills from all other items
    * @private
    */
-  _initializeClassSkills(startingSkills) {
-    if (!startingSkills || typeof startingSkills !== 'object') return;
+  _aggregateSkills() {
+    // Map to store aggregated skills by skill UUID
+    const skillsMap = new Map();
 
-    for (const [skillId, skillData] of Object.entries(startingSkills)) {
-      if (!this.skills[skillId]) {
-        this.skills[skillId] = {
-          id: skillId,
-          name: skillData.name,
-          level: skillData.level || 1,
-          parent: skillData.parent || null,
-          category: skillData.category || 'general',
-          relatedStat: skillData.relatedStat || null,
-          effort: skillData.effort || 0
-        };
+    // Get all items on this actor
+    const items = this.parent?.items || [];
+
+    // First pass: collect all skill items and their base levels
+    for (const item of items) {
+      if (item.type === 'skill') {
+        const skillUuid = item.uuid;
+        skillsMap.set(skillUuid, {
+          uuid: skillUuid,
+          id: item.id,
+          name: item.name,
+          level: item.system.level || 0,
+          category: item.system.category || 'general',
+          relatedStat: item.system.relatedStat || null,
+          effort: item.system.effort || 0,
+          description: item.system.description || '',
+          sources: [
+            { type: 'skill', name: item.name, level: item.system.level || 0, uuid: item.uuid }
+          ]
+        });
       }
     }
+
+    // Second pass: add bonuses from grantedSkills on all items
+    for (const item of items) {
+      const grantedSkills = item.system?.grantedSkills || [];
+      for (const granted of grantedSkills) {
+        if (!granted.skillUuid) continue;
+
+        const skillUuid = granted.skillUuid;
+        const grantedLevel = granted.level || 0;
+
+        if (skillsMap.has(skillUuid)) {
+          // Skill exists, add to its sources
+          const skill = skillsMap.get(skillUuid);
+          skill.sources.push({
+            type: item.type,
+            name: item.name,
+            level: grantedLevel,
+            uuid: item.uuid
+          });
+          skill.level += grantedLevel;
+        } else {
+          // Skill doesn't exist as an item yet - create a placeholder
+          // This can happen if an item grants a skill that hasn't been added to the actor yet
+          // We'll need to look up the skill from world items
+          skillsMap.set(skillUuid, {
+            uuid: skillUuid,
+            id: null, // Will be resolved
+            name: 'Unknown Skill',
+            level: grantedLevel,
+            category: 'general',
+            relatedStat: null,
+            effort: 0,
+            description: '',
+            sources: [
+              { type: item.type, name: item.name, level: grantedLevel, uuid: item.uuid }
+            ],
+            missing: true // Flag that this skill item is not on the actor
+          });
+        }
+      }
+    }
+
+    // Try to resolve missing skills from world items
+    for (const [skillUuid, skill] of skillsMap.entries()) {
+      if (skill.missing) {
+        // Try to find this skill in world items
+        const worldSkill = game.items?.find(i => i.uuid === skillUuid && i.type === 'skill');
+        if (worldSkill) {
+          skill.name = worldSkill.name;
+          skill.category = worldSkill.system.category || 'general';
+          skill.relatedStat = worldSkill.system.relatedStat || null;
+          skill.effort = worldSkill.system.effort || 0;
+          skill.description = worldSkill.system.description || '';
+          skill.missing = false;
+        }
+      }
+    }
+
+    // Store as an object for easier template access
+    this.aggregatedSkills = Object.fromEntries(skillsMap);
   }
 
   /**
-   * Get a skill by ID
-   * @param {string} skillId - The skill identifier
+   * Get a skill by UUID
+   * @param {string} skillUuid - The skill UUID
    * @returns {Object|null} The skill object or null
    */
-  getSkill(skillId) {
-    return this.skills[skillId] || null;
+  getSkill(skillUuid) {
+    return this.aggregatedSkills?.[skillUuid] || null;
   }
 
   /**
@@ -185,7 +240,8 @@ export default class dccworldCharacter extends dccworldActorBase {
    * @returns {Array} Array of skills in that category
    */
   getSkillsByCategory(category) {
-    return Object.values(this.skills).filter(skill => skill.category === category);
+    if (!this.aggregatedSkills) return [];
+    return Object.values(this.aggregatedSkills).filter(skill => skill.category === category);
   }
 
   /**
@@ -213,8 +269,8 @@ export default class dccworldCharacter extends dccworldActorBase {
 
     data.lvl = this.attributes.level.value;
 
-    // Add skills to roll data
-    data.skills = this.skills;
+    // Add aggregated skills to roll data
+    data.skills = this.aggregatedSkills || {};
 
     return data
   }
