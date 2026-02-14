@@ -283,13 +283,147 @@ Base skills from the compendium (skills-manifest.json).
 
 ## Item Creation Workflow
 
-When asked to create new items:
+When asked to create new items (class, race, equipment, feature) that grant skills:
 
-1. **Check the manifest** - For skills, verify the skill exists in `data/skills-manifest.json`
-2. **Use the skill lookup tool** - Run `node scripts/skill-lookup.mjs granted "SkillName" <level>` to get proper UUID format
-3. **Follow skill limits** - Adhere to the category and count requirements above
-4. **Test in Foundry** - Create item, add to character, verify skills aggregate correctly
-5. **Commit with version bump** - Always increment `system.json` version
+### Step 1: Plan Skills Needed
+- Identify which skills the item should grant based on its type/theme
+- Check if each skill exists in `data/skills-manifest.json`
+
+### Step 2: Create Missing Skills (If Any)
+**If a skill doesn't exist in the manifest, you MUST create it first:**
+
+1. **Add to manifest** - Edit `data/skills-manifest.json`:
+   ```json
+   {
+     "name": "YourSkillName",
+     "uuid": "Compendium.dungeon-crawler-world.skills.Item.YourSkillName",
+     "category": "combat|magic|utility|general",
+     "relatedStat": "str|dex|con|int|wis|cha|null",
+     "description": "Brief description of what this skill does."
+   }
+   ```
+   - Add to the appropriate category array (combat, magic, utility, or general)
+   - Keep UUID format: `Compendium.dungeon-crawler-world.skills.Item.<SkillName>`
+
+2. **Generate skill JSON files**:
+   ```bash
+   npm run generate:skills
+   ```
+
+3. **Pack skills to compendium**:
+   ```bash
+   npm run pack:skills
+   ```
+
+4. **Update documentation** (if adding a new category):
+   - Update `data/skills/README.md` with the new skill
+
+### Step 3: Create the Item
+1. **Use skill lookup tool** - Run `node scripts/skill-lookup.mjs granted "SkillName" <level>` to get proper UUID format
+2. **Follow skill limits** - Adhere to the category and count requirements above
+3. **Create item file** - Add JSON to appropriate directory (`src/packs/items/`, etc.)
+
+### Step 4: Test and Verify
+1. **Pack the compendium** - `npm run pack:items` (or pack:classes, pack:races, etc.)
+2. **Test in Foundry** - Create item, add to character, verify skills aggregate correctly
+3. **Check skill display** - Ensure proper category, related stat, and level show on character sheet
+
+### Step 5: Commit All Changes
+1. **Stage files** - Include:
+   - `data/skills-manifest.json` (if new skills added)
+   - `src/packs/skills/*.json` (generated skill files)
+   - `packs/skills/*` (compendium files)
+   - Item source file
+   - `system.json` (version bump)
+
+2. **Commit with descriptive message**:
+   ```
+   Add [Item Type]: [Name] with new skill: [Skill Name]
+
+   - Created [Human] race with [Diplomacy, Insight] skills
+   - Added new [Insight] skill to manifest (wisdom, general)
+   - Regenerated and packed skills compendium
+   ```
+
+---
+
+## Skill Creation Checklist
+
+Use this checklist whenever adding a new skill to the manifest:
+
+- [ ] Added entry to `data/skills-manifest.json` in appropriate category
+- [ ] Set category: "combat", "magic", "utility", or "general"
+- [ ] Set relatedStat: "str", "dex", "con", "int", "wis", "cha", or null
+- [ ] Wrote clear description (1-2 sentences)
+- [ ] UUID follows format: `Compendium.dungeon-crawler-world.skills.Item.<Name>`
+- [ ] Ran `npm run generate:skills` (created JSON in `src/packs/skills/`)
+- [ ] Ran `npm run pack:skills` (updated compendium)
+- [ ] Updated `data/skills/README.md` if needed
+- [ ] Tested in Foundry: drag skill to character, verify it appears correctly
+
+---
+
+## Example: Creating a Race with New Skills
+
+**Task:** Create an Elf race that grants "Bow Mastery" skill.
+
+**Step 1: Check manifest**
+```bash
+node scripts/skill-lookup.mjs list | grep -i bow
+# No results - skill doesn't exist
+```
+
+**Step 2: Add skill to manifest**
+Edit `data/skills-manifest.json`, add to "combat" array:
+```json
+{
+  "name": "BowMastery",
+  "uuid": "Compendium.dungeon-crawler-world.skills.Item.BowMastery",
+  "category": "combat",
+  "relatedStat": "dex",
+  "description": "Expertise with bows and ranged weapons. Advanced archery techniques."
+}
+```
+
+**Step 3: Generate and pack**
+```bash
+npm run generate:skills  # Creates bowmastery.json
+npm run pack:skills      # Updates compendium
+```
+
+**Step 4: Create race with skill lookup**
+```bash
+node scripts/skill-lookup.mjs granted "BowMastery" 2
+# Output: {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.BowMastery", "level": 2}
+```
+
+**Step 5: Create Elf race JSON**
+```json
+{
+  "_id": "elf",
+  "name": "Elf",
+  "type": "race",
+  "system": {
+    "abilityBonuses": {"dex": 2, "int": 1},
+    "bonuses": {"hp": 0, "stamina": 0, "mana": 0},
+    "size": "medium",
+    "speed": 30,
+    "grantedSkills": [
+      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.BowMastery", "level": 2},
+      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Perception", "level": 1}
+    ]
+  }
+}
+```
+
+**Step 6: Pack, test, commit**
+```bash
+npm run pack:races
+git add data/skills-manifest.json src/packs/skills/bowmastery.json packs/skills/* src/packs/races/elf.json system.json
+git commit -m "Add Elf race with new BowMastery skill"
+```
+
+---
 
 ## Important Notes
 

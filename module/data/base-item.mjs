@@ -37,6 +37,14 @@ export default class dccworldItemBase extends dccworldDataModel {
      * 2. Show up in the skills list with source attribution
      * 3. If the character doesn't have the skill item, create a placeholder entry
      *
+     * **IMPORTANT:** Any skill referenced here MUST exist in the skills compendium.
+     * If a skill doesn't exist in `data/skills-manifest.json`, you must create it first:
+     * 1. Add skill entry to `data/skills-manifest.json`
+     * 2. Run `npm run generate:skills` to create skill JSON
+     * 3. Run `npm run pack:skills` to update compendium
+     *
+     * Use `node scripts/skill-lookup.mjs granted "SkillName" <level>` to generate entries.
+     *
      * @type {Array<{skillUuid: string, level: number}>}
      *
      * @example
