@@ -1,10 +1,10 @@
 {
-  "_id": "arcane-training",
-  "name": "Arcane Training",
+  "_id": "Shadow-Touched",
+  "name": "Shadow Touched",
   "type": "feature",
   "img": "icons/svg/shield.svg",
   "system": {
-    "description": "You can cast one cantrip of your choice from any spell list. Intelligence is your spellcasting ability for it.",
+    "description": "You have advantage on Stealth checks in dim light or darkness.",
     "grantedSkills": []
   },
   "effects": [],

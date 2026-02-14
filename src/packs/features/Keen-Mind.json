@@ -1,10 +1,10 @@
 {
-  "_id": "fey-ancestry",
-  "name": "Fey Ancestry",
+  "_id": "Keen-Mind",
+  "name": "Keen Mind",
   "type": "feature",
   "img": "icons/svg/shield.svg",
   "system": {
-    "description": "You have advantage on saving throws against being charmed or magically put to sleep.",
+    "description": "You always know which way is north, and you can accurately recall anything you have seen or heard within the past month.",
     "grantedSkills": []
   },
   "effects": [],

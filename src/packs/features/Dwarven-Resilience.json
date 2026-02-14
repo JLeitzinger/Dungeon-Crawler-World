@@ -1,10 +1,10 @@
 {
-  "_id": "keen-mind",
-  "name": "Keen Mind",
+  "_id": "Dwarven-Resilience",
+  "name": "Dwarven Resilience",
   "type": "feature",
   "img": "icons/svg/shield.svg",
   "system": {
-    "description": "You always know which way is north, and you can accurately recall anything you have seen or heard within the past month.",
+    "description": "You have advantage on saving throws against poison, and you have resistance against poison damage.",
     "grantedSkills": []
   },
   "effects": [],

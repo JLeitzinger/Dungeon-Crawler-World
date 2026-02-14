@@ -1,10 +1,10 @@
 {
-  "_id": "shadow-touched",
-  "name": "Shadow Touched",
+  "_id": "Fey-Ancestry",
+  "name": "Fey Ancestry",
   "type": "feature",
   "img": "icons/svg/shield.svg",
   "system": {
-    "description": "You have advantage on Stealth checks in dim light or darkness.",
+    "description": "You have advantage on saving throws against being charmed or magically put to sleep.",
     "grantedSkills": []
   },
   "effects": [],

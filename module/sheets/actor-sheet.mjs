@@ -157,22 +157,20 @@ export class dccworldActorSheet extends ActorSheet {
         let featureName = null;
         if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
           featureName = featureRef.featureUuid.split('.').pop();
-          // Capitalize first letter
-          featureName = featureName.charAt(0).toUpperCase() + featureName.slice(1);
         }
 
         if (!featureName) continue;
 
-        // Try to get the feature from compendium
+        // Try to get the feature from compendium (case-insensitive lookup)
         const compendium = game.packs.get('dungeon-crawler-world.features');
         if (compendium) {
-          // Use index to find the feature
-          const index = compendium.index.find(i => i._id === featureName);
+          // Use index to find the feature (case-insensitive)
+          const index = compendium.index.find(i => i._id.toLowerCase() === featureName.toLowerCase());
           if (index) {
             // Add to features list if not already present
-            if (!features.find(f => f._id === featureName)) {
+            if (!features.find(f => f._id === index._id)) {
               features.push({
-                _id: featureName,
+                _id: index._id,
                 name: index.name,
                 type: 'feature',
                 img: index.img || 'icons/svg/shield.svg',
