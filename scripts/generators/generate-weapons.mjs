@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +32,7 @@ function generateWeapon(weaponData) {
   } = weaponData;
 
   return {
+    _id: crypto.randomBytes(8).toString('hex'),
     name,
     type: "item",
     img,
