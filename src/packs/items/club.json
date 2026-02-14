@@ -1,0 +1,22 @@
+{
+  "name": "Club",
+  "type": "item",
+  "img": "icons/svg/item-bag.svg",
+  "system": {
+    "description": "A simple wooden cudgel. Crude but effective.",
+    "quantity": 1,
+    "weight": 2,
+    "roll": {
+      "diceNum": 1,
+      "diceSize": "d4",
+      "diceBonus": "+@str.mod+ceil(@lvl / 2)"
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {}
+}

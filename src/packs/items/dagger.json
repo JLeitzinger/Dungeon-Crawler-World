@@ -1,0 +1,22 @@
+{
+  "name": "Dagger",
+  "type": "item",
+  "img": "icons/svg/item-bag.svg",
+  "system": {
+    "description": "A small blade, easily concealed. Can be thrown.",
+    "quantity": 1,
+    "weight": 1,
+    "roll": {
+      "diceNum": 1,
+      "diceSize": "d4",
+      "diceBonus": "+@dex.mod+ceil(@lvl / 2)"
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {}
+}

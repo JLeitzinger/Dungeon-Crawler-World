@@ -4,7 +4,12 @@
   "description": "CSS compiler for the dccworld system",
   "scripts": {
     "build": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --no-source-map",
-    "watch": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --source-map --watch"
+    "watch": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --source-map --watch",
+    "generate:weapons": "node scripts/generators/generate-weapons.mjs",
+    "pack": "npm run pack:items",
+    "pack:items": "fvtt package pack -n items --in src/packs/items --out packs",
+    "unpack": "npm run unpack:items",
+    "unpack:items": "fvtt package unpack -n items --in packs --out src/packs/items"
   },
   "browserslist": [
     "last 3 versions"
@@ -13,6 +18,7 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "sass": "^1.53.0"
+    "sass": "^1.53.0",
+    "@foundryvtt/foundryvtt-cli": "^1.0.0"
   }
 }

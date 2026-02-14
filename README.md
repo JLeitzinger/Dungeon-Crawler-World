@@ -79,4 +79,45 @@ This system includes a handful of helper CSS classes to help you lay out your sh
 
 This repo includes both CSS for the theme and SCSS source files. If you're new to CSS, it's probably easier to just work in those files directly and delete the SCSS directory. If you're interested in using a CSS preprocessor to add support for nesting, variables, and more, you can run `npm install` in this directory to install the dependencies for the scss compiler. After that, just run `npm run build` to compile the SCSS and start a process that watches for new changes.
 
+## Working with Compendium Packs
+
+This system uses the Foundry CLI to manage compendium packs. Source files are stored as JSON in `src/packs/` for version control, and packed into LevelDB format in `packs/` for Foundry to use.
+
+### Initial Setup
+
+Before working with packs, you need to set the working package context:
+
+```bash
+npm install
+npx fvtt package workon --type System --id dungeon-crawler-world
+```
+
+You only need to run `workon` once per development environment.
+
+### Packing Source Files
+
+After editing source files in `src/packs/`, pack them into LevelDB format:
+
+```bash
+npm run pack        # Pack all compendia
+npm run pack:items  # Pack only items compendium
+```
+
+### Unpacking Compendia
+
+To extract compendium data back to source JSON files (useful after importing items in Foundry):
+
+```bash
+npm run unpack        # Unpack all compendia
+npm run unpack:items  # Unpack only items compendium
+```
+
+### Workflow
+
+1. **Edit in Foundry**: Import/create items in the Foundry UI
+2. **Unpack**: Run `npm run unpack:items` to extract to source files
+3. **Version Control**: Commit the JSON source files in `src/packs/`
+4. **Pack**: Run `npm run pack:items` before testing in Foundry
+5. **Distribute**: The packed `packs/` directory is included when distributing the system
+
 ![image](http://mattsmith.in/images/dungeon-crawler-world.png)

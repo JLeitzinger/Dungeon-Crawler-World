@@ -1,0 +1,22 @@
+{
+  "name": "Crossbow",
+  "type": "item",
+  "img": "icons/svg/item-bag.svg",
+  "system": {
+    "description": "A mechanical bow that trades reload speed for power and accuracy.",
+    "quantity": 1,
+    "weight": 5,
+    "roll": {
+      "diceNum": 1,
+      "diceSize": "d8",
+      "diceBonus": "+@dex.mod+ceil(@lvl / 2)"
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {}
+}
