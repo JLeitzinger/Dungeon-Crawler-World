@@ -73,19 +73,43 @@
     overflow: hidden;
     font-size: 13px;
     text-align: left;
-    align-items: center;
+    align-items: flex-start;
     display: flex;
     color: $c-bright;
 
-    h3, h4 {
-      margin: 0;
-      white-space: nowrap;
-      overflow-x: hidden;
-      font-family: $font-primary;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .item-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      h3, h4 {
+        margin: 0;
+        white-space: nowrap;
+        overflow-x: hidden;
+        font-family: $font-primary;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .item-description {
+        font-family: $font-secondary;
+        font-size: 11px;
+        color: $c-faint;
+        line-height: 1.4;
+        font-style: italic;
+        opacity: 0.8;
+      }
     }
+  }
+
+  // Item Source column
+  .item-source {
+    flex: 0 0 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
   }
 
   // Control Buttons
@@ -348,6 +372,33 @@
   border-radius: 50%;
   margin-right: 8px;
   box-shadow: $glow-cyan;
+}
+
+// Source tags for features
+.source-tag {
+  padding: 2px 8px;
+  font-family: $font-secondary;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 247, 255, 0.1);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: $border-radius-tech;
+  color: $c-cyan;
+  transition: all $transition-fast;
+
+  &.race-source {
+    background: rgba(255, 0, 255, 0.15);
+    border-color: rgba(255, 0, 255, 0.4);
+    color: $c-magenta;
+  }
+
+  &.class-source {
+    background: rgba(255, 102, 0, 0.15);
+    border-color: rgba(255, 102, 0, 0.4);
+    color: $c-orange;
+  }
 }
 
 // Feature/Ability item special styling
