@@ -27,7 +27,20 @@
       "truesight": 0
     },
     "languages": "Common, Elvish",
-    "traits": "Fey Ancestry: Advantage on saves against being charmed or magically put to sleep. Mask of the Wild: You can attempt to hide even when only lightly obscured by natural phenomena. Trance: You meditate for 4 hours instead of sleeping for 8 hours.",
+    "features": [
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Fey-ancestry",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Mask-of-the-wild",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Trance",
+        "level": 1
+      }
+    ],
     "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Survival",

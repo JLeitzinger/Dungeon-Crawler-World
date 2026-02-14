@@ -27,7 +27,24 @@
       "truesight": 0
     },
     "languages": "Common, Elvish",
-    "traits": "Fey Ancestry: Advantage on saves against being charmed or magically put to sleep. Arcane Training: You can cast one cantrip of your choice from any spell list. Trance: You meditate for 4 hours instead of sleeping for 8 hours. Keen Mind: You always know which way is north and can accurately recall anything you've seen or heard within the past month.",
+    "features": [
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Fey-ancestry",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Arcane-training",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Trance",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Keen-mind",
+        "level": 1
+      }
+    ],
     "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Lore",

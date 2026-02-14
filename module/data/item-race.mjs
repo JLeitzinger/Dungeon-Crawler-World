@@ -7,13 +7,17 @@ import dccworldItemBase from "./base-item.mjs";
  * - Ability score bonuses
  * - Size and speed
  * - Resource bonuses (HP, Stamina, Mana)
- * - Senses and traits
+ * - Senses
+ * - Languages
+ * - Racial features (references to feature items)
  * - Granted skills
  *
  * **Design Guidelines:**
- * - **Must grant exactly 2-3 skills from general or utility categories**
- * - **Can grant 0-2 skills from magic or combat categories**
+ * - **Must grant exactly 2 skills from general or utility categories**
+ * - **Must grant exactly 1 skill from magic or combat categories**
+ * - **Total ability bonuses must equal exactly 3**
  * - Recommended skill levels: 1-2
+ * - Features should be created as feature items and referenced here
  *
  * @extends dccworldItemBase
  */
@@ -63,12 +67,19 @@ export default class dccworldRace extends dccworldItemBase {
       initial: "Common"
     });
 
-    // Racial traits (stored as text for now, could be converted to array later)
-    schema.traits = new fields.StringField({
-      required: true,
-      blank: true,
-      initial: ""
-    });
+    // Racial features (references to feature items)
+    // Format: Array of {featureUuid: string, level: number}
+    schema.features = new fields.ArrayField(
+      new fields.ObjectField({
+        required: true,
+        nullable: false,
+        initial: {}
+      }),
+      {
+        required: true,
+        initial: []
+      }
+    );
 
     // HP, Stamina, Mana bonuses
     schema.bonuses = new fields.SchemaField({

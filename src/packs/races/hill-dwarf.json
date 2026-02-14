@@ -27,7 +27,20 @@
       "truesight": 0
     },
     "languages": "Common, Dwarvish",
-    "traits": "Dwarven Resilience: Advantage on saves against poison and resistance to poison damage. Stonecunning: You have advantage on Investigation checks to notice unusual stonework. Craftsmen: You gain a +1 bonus to Craft skill checks.",
+    "features": [
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Stonecunning",
+        "level": 1
+      },
+      {
+        "featureUuid": "Compendium.dungeon-crawler-world.features.Item.Craftsmen",
+        "level": 1
+      }
+    ],
     "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Craft",

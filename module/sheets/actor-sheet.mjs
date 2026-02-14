@@ -133,7 +133,7 @@ export class dccworldActorSheet extends ActorSheet {
       if (i.type === 'item') {
         gear.push(i);
       }
-      // Append to features.
+      // Append to features (including those aggregated from race)
       else if (i.type === 'feature') {
         features.push(i);
       }
@@ -145,6 +145,32 @@ export class dccworldActorSheet extends ActorSheet {
       else if (i.type === 'spell') {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
+        }
+      }
+    }
+
+    // Add features from race item
+    if (context.system.raceItem) {
+      const raceFeatures = context.system.raceItem.system?.features || [];
+      for (const featureRef of raceFeatures) {
+        // Try to get the feature from compendium
+        const featureId = featureRef.featureUuid.split('.').pop();
+        const compendium = game.packs.get('dungeon-crawler-world.features');
+        if (compendium) {
+          const compendiumFeature = compendium.find(i => i._id === featureId);
+          if (compendiumFeature) {
+            // Add to features list if not already present
+            if (!features.find(f => f._id === featureId)) {
+              features.push({
+                _id: featureId,
+                name: compendiumFeature.name,
+                type: 'feature',
+                img: compendiumFeature.img || 'icons/svg/shield.svg',
+                system: compendiumFeature.system,
+                source: 'race'
+              });
+            }
+          }
         }
       }
     }
