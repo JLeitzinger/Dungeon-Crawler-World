@@ -182,9 +182,12 @@ export class dccworldActorSheet extends ActorSheet {
     // Delete Inventory Item
     html.on('click', '.item-delete', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.delete();
-      li.slideUp(200, () => this.render(false));
+      const itemId = $(ev.currentTarget).data('itemId');
+      const item = this.actor.items.get(itemId);
+      if (item) {
+        item.delete();
+        li.slideUp(200, () => this.render(false));
+      }
     });
 
     // Active Effect management
