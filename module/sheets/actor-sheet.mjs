@@ -153,20 +153,30 @@ export class dccworldActorSheet extends ActorSheet {
     if (context.system.raceItem) {
       const raceFeatures = context.system.raceItem.system?.features || [];
       for (const featureRef of raceFeatures) {
+        // Extract feature name from UUID: "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience" -> "Dwarven-resilience"
+        let featureName = null;
+        if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
+          featureName = featureRef.featureUuid.split('.').pop();
+          // Capitalize first letter
+          featureName = featureName.charAt(0).toUpperCase() + featureName.slice(1);
+        }
+
+        if (!featureName) continue;
+
         // Try to get the feature from compendium
-        const featureId = featureRef.featureUuid.split('.').pop();
         const compendium = game.packs.get('dungeon-crawler-world.features');
         if (compendium) {
-          const compendiumFeature = compendium.find(i => i._id === featureId);
-          if (compendiumFeature) {
+          // Use index to find the feature
+          const index = compendium.index.find(i => i._id === featureName);
+          if (index) {
             // Add to features list if not already present
-            if (!features.find(f => f._id === featureId)) {
+            if (!features.find(f => f._id === featureName)) {
               features.push({
-                _id: featureId,
-                name: compendiumFeature.name,
+                _id: featureName,
+                name: index.name,
                 type: 'feature',
-                img: compendiumFeature.img || 'icons/svg/shield.svg',
-                system: compendiumFeature.system,
+                img: index.img || 'icons/svg/shield.svg',
+                system: { description: index.system?.description || '' },
                 source: 'race'
               });
             }

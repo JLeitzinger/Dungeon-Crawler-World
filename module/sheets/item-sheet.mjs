@@ -93,6 +93,10 @@ export class dccworldItemSheet extends ItemSheet {
     // Granted Skills management
     html.on('click', '.granted-skill-add', this._onAddGrantedSkill.bind(this));
     html.on('click', '.granted-skill-delete', this._onRemoveGrantedSkill.bind(this));
+
+    // Granted Features management
+    html.on('click', '.granted-feature-add', this._onAddGrantedFeature.bind(this));
+    html.on('click', '.granted-feature-delete', this._onRemoveGrantedFeature.bind(this));
   }
 
   /**
@@ -119,5 +123,31 @@ export class dccworldItemSheet extends ItemSheet {
     const grantedSkills = foundry.utils.duplicate(this.item.system.grantedSkills || []);
     grantedSkills.splice(index, 1);
     await this.item.update({ 'system.grantedSkills': grantedSkills });
+  }
+
+  /**
+   * Handle adding a new granted feature
+   * @param {Event} event - The originating click event
+   * @private
+   */
+  async _onAddGrantedFeature(event) {
+    event.preventDefault();
+    const features = foundry.utils.duplicate(this.item.system.features || []);
+    features.push({ featureUuid: '', level: 1 });
+    await this.item.update({ 'system.features': features });
+  }
+
+  /**
+   * Handle removing a granted feature
+   * @param {Event} event - The originating click event
+   * @private
+   */
+  async _onRemoveGrantedFeature(event) {
+    event.preventDefault();
+    const li = $(event.currentTarget).closest('.granted-feature');
+    const index = li.data('index');
+    const features = foundry.utils.duplicate(this.item.system.features || []);
+    features.splice(index, 1);
+    await this.item.update({ 'system.features': features });
   }
 }
