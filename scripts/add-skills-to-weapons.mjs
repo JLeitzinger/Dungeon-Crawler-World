@@ -54,8 +54,11 @@ for (const [filename, skills] of Object.entries(weaponSkills)) {
 
   const item = JSON.parse(fs.readFileSync(filepath, 'utf8'));
 
-  // Add skills field
-  item.system.skills = skills;
+  // Remove old 'skills' field if it exists
+  delete item.system.skills;
+
+  // Add grantedSkills field (note: schema uses 'grantedSkills' not 'skills')
+  item.system.grantedSkills = skills;
 
   // Write back
   fs.writeFileSync(filepath, JSON.stringify(item, null, 2), 'utf8');

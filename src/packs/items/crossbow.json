@@ -12,7 +12,7 @@
       "diceSize": "d8",
       "diceBonus": "+@dex.mod+ceil(@lvl / 2)"
     },
-    "skills": [
+    "grantedSkills": [
       {
         "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Shoot",
         "level": 1

@@ -48,7 +48,6 @@ node scripts/skill-lookup.mjs category general
 ## Available Skills
 
 ### Combat Skills
-- **Swing** (str) - General melee weapon attacks
 - **Slash** (str) - Slashing weapons (swords, axes)
 - **Pierce** (dex) - Piercing weapons (spears, daggers)
 - **Blunt** (str) - Blunt weapons (maces, hammers)

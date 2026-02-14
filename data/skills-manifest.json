@@ -4,13 +4,6 @@
   "skills": {
     "combat": [
       {
-        "name": "Swing",
-        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Swing",
-        "category": "combat",
-        "relatedStat": "str",
-        "description": "General melee weapon attacks and close-quarters combat."
-      },
-      {
         "name": "Slash",
         "uuid": "Compendium.dungeon-crawler-world.skills.Item.Slash",
         "category": "combat",
