@@ -1,13 +1,13 @@
 {
-  "_id": "Stealth",
-  "name": "Stealth",
+  "_id": "Slash",
+  "name": "Slash",
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Hiding, sneaking, and evasion.",
+    "description": "Slashing weapons like swords and axes. Cutting and hacking attacks.",
     "level": 1,
-    "category": "utility",
-    "relatedStat": "dex",
+    "category": "combat",
+    "relatedStat": "str",
     "effort": 0,
     "grantedSkills": []
   },

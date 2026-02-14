@@ -6,156 +6,31 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const skillsDir = path.join(__dirname, '../src/packs/skills');
+const manifestPath = path.join(__dirname, '../data/skills-manifest.json');
 
 // Ensure skills directory exists
 if (!fs.existsSync(skillsDir)) {
   fs.mkdirSync(skillsDir, { recursive: true });
 }
 
-const skills = [
-  // Combat Skills
-  {
-    _id: "Swing",
-    name: "Swing",
-    category: "combat",
-    relatedStat: "str",
-    description: "Melee weapon attacks and close-quarters combat techniques.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Shoot",
-    name: "Shoot",
-    category: "combat",
-    relatedStat: "dex",
-    description: "Ranged weapon attacks, marksmanship, and accuracy.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Defend",
-    name: "Defend",
-    category: "combat",
-    relatedStat: "con",
-    description: "Blocking, parrying, dodging, and damage mitigation techniques.",
-    level: 1,
-    effort: 0
-  },
+// Load skills manifest
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
-  // Magic Skills
-  {
-    _id: "Cast",
-    name: "Cast",
-    category: "magic",
-    relatedStat: "int",
-    description: "Arcane spellcasting and magical ability manipulation.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Channel",
-    name: "Channel",
-    category: "magic",
-    relatedStat: "wis",
-    description: "Divine magic, spiritual connection, and channeled energy.",
-    level: 1,
-    effort: 0
-  },
-
-  // Utility Skills
-  {
-    _id: "Athletics",
-    name: "Athletics",
-    category: "utility",
-    relatedStat: "str",
-    description: "Climbing, jumping, swimming, and physical feats of strength.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Acrobatics",
-    name: "Acrobatics",
-    category: "utility",
-    relatedStat: "dex",
-    description: "Balance, tumbling, flexibility, and gymnastic maneuvers.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Stealth",
-    name: "Stealth",
-    category: "utility",
-    relatedStat: "dex",
-    description: "Hiding, sneaking, and avoiding detection.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Perception",
-    name: "Perception",
-    category: "utility",
-    relatedStat: "wis",
-    description: "Noticing details, searching, and general awareness of surroundings.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Survival",
-    name: "Survival",
-    category: "utility",
-    relatedStat: "wis",
-    description: "Tracking, foraging, navigation, and wilderness knowledge.",
-    level: 1,
-    effort: 0
-  },
-
-  // General Skills
-  {
-    _id: "Diplomacy",
-    name: "Diplomacy",
-    category: "general",
-    relatedStat: "cha",
-    description: "Persuasion, negotiation, and social influence.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Intimidation",
-    name: "Intimidation",
-    category: "general",
-    relatedStat: "cha",
-    description: "Coercion, threats, and imposing presence.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Deception",
-    name: "Deception",
-    category: "general",
-    relatedStat: "cha",
-    description: "Lying, disguise, trickery, and misdirection.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Lore",
-    name: "Lore",
-    category: "general",
-    relatedStat: "int",
-    description: "Academic knowledge, research, history, and scholarship.",
-    level: 1,
-    effort: 0
-  },
-  {
-    _id: "Medicine",
-    name: "Medicine",
-    category: "general",
-    relatedStat: "int",
-    description: "Healing, diagnosis, and medical knowledge.",
-    level: 1,
-    effort: 0
+// Flatten skills from all categories into a single array
+const skills = [];
+for (const category of Object.values(manifest.skills)) {
+  for (const skill of category) {
+    skills.push({
+      _id: skill.name,
+      name: skill.name,
+      category: skill.category,
+      relatedStat: skill.relatedStat,
+      description: skill.description,
+      level: 1,
+      effort: 0
+    });
   }
-];
+}
 
 function createSkillItem(skill) {
   return {

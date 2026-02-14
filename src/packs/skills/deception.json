@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Lying, disguise, trickery, and misdirection.",
+    "description": "Lying, disguise, and trickery.",
     "level": 1,
     "category": "general",
     "relatedStat": "cha",

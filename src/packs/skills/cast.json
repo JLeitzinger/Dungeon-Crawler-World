@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Arcane spellcasting and magical ability manipulation.",
+    "description": "Spellcasting and magical ability.",
     "level": 1,
     "category": "magic",
     "relatedStat": "int",

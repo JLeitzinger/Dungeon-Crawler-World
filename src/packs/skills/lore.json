@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Academic knowledge, research, history, and scholarship.",
+    "description": "Academic knowledge, research, and history.",
     "level": 1,
     "category": "general",
     "relatedStat": "int",

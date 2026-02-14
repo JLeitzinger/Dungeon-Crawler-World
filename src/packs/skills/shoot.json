@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Ranged weapon attacks, marksmanship, and accuracy.",
+    "description": "Ranged weapon attacks and marksmanship with bows and crossbows.",
     "level": 1,
     "category": "combat",
     "relatedStat": "dex",

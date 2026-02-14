@@ -45,6 +45,41 @@ node scripts/skill-lookup.mjs category utility
 node scripts/skill-lookup.mjs category general
 ```
 
+## Available Skills
+
+### Combat Skills
+- **Swing** (str) - General melee weapon attacks
+- **Slash** (str) - Slashing weapons (swords, axes)
+- **Pierce** (dex) - Piercing weapons (spears, daggers)
+- **Blunt** (str) - Blunt weapons (maces, hammers)
+- **Shoot** (dex) - Ranged weapons (bows, crossbows)
+- **Defend** (con) - Blocking and damage mitigation
+- **Throw** (dex) - Throwing weapons
+
+### Magic Skills
+- **Cast** (int) - Arcane spellcasting
+- **Channel** (wis) - Divine magic and channeled energy
+
+### Utility Skills
+- **Athletics** (str) - Climbing, jumping, swimming
+- **Acrobatics** (dex) - Balance, tumbling, flexibility
+- **Stealth** (dex) - Hiding, sneaking, evasion
+- **Perception** (wis) - Noticing details, awareness
+- **Survival** (wis) - Tracking, foraging, wilderness
+
+### General Skills
+- **Diplomacy** (cha) - Persuasion, negotiation
+- **Intimidation** (cha) - Coercion, threats
+- **Deception** (cha) - Lying, disguise, trickery
+- **Lore** (int) - Academic knowledge, research
+- **Medicine** (int) - Healing, diagnosis
+- **Mend** (int) - Repairing gear, fixing objects
+- **Craft** (int) - Creating items, artisan work
+- **Thievery** (dex) - Lockpicking, pickpocketing
+- **Focus** (wis) - Concentration, meditation
+- **Ride** (dex) - Mounting, riding animals
+```
+
 ## Adding New Skills
 
 To add a new skill to the manifest:
@@ -62,6 +97,12 @@ To add a new skill to the manifest:
 ```
 
 3. Keep the UUID format consistent: `Compendium.dungeon-crawler-world.skills.Item.<SkillName>`
+
+4. Regenerate and repack the skill items:
+```bash
+npm run generate:skills  # Creates JSON files from manifest
+npm run pack:skills      # Packs them into the compendium
+```
 
 ## UUID Format
 

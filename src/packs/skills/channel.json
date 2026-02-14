@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Divine magic, spiritual connection, and channeled energy.",
+    "description": "Divine magic and channeled energy.",
     "level": 1,
     "category": "magic",
     "relatedStat": "wis",

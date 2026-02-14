@@ -1,12 +1,12 @@
 {
-  "_id": "Stealth",
-  "name": "Stealth",
+  "_id": "Ride",
+  "name": "Ride",
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Hiding, sneaking, and evasion.",
+    "description": "Mounting, riding, and caring for animals and vehicles.",
     "level": 1,
-    "category": "utility",
+    "category": "general",
     "relatedStat": "dex",
     "effort": 0,
     "grantedSkills": []

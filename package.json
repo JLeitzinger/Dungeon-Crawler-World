@@ -10,6 +10,7 @@
     "pack": "npm run pack:items && npm run pack:skills",
     "pack:items": "node scripts/pack-items.mjs",
     "pack:skills": "node scripts/pack-skills.mjs",
+    "add-skills-to-weapons": "node scripts/add-skills-to-weapons.mjs",
     "unpack": "npm run unpack:items",
     "unpack:items": "fvtt package unpack -n items --in packs --out src/packs/items --clean",
     "skill-lookup": "node scripts/skill-lookup.mjs"

@@ -11,7 +11,13 @@
       "diceNum": 1,
       "diceSize": "d8",
       "diceBonus": "+@str.mod+ceil(@lvl / 2)"
-    }
+    },
+    "skills": [
+      {
+        "skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash",
+        "level": 1
+      }
+    ]
   },
   "effects": [],
   "folder": null,

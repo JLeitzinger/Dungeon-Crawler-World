@@ -1,12 +1,12 @@
 {
-  "_id": "Stealth",
-  "name": "Stealth",
+  "_id": "Pierce",
+  "name": "Pierce",
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Hiding, sneaking, and evasion.",
+    "description": "Piercing weapons like spears and daggers. Thrusting and stabbing attacks.",
     "level": 1,
-    "category": "utility",
+    "category": "combat",
     "relatedStat": "dex",
     "effort": 0,
     "grantedSkills": []

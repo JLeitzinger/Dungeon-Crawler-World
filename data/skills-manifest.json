@@ -8,14 +8,35 @@
         "uuid": "Compendium.dungeon-crawler-world.skills.Item.Swing",
         "category": "combat",
         "relatedStat": "str",
-        "description": "Melee weapon attacks and close-quarters combat."
+        "description": "General melee weapon attacks and close-quarters combat."
+      },
+      {
+        "name": "Slash",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Slash",
+        "category": "combat",
+        "relatedStat": "str",
+        "description": "Slashing weapons like swords and axes. Cutting and hacking attacks."
+      },
+      {
+        "name": "Pierce",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Pierce",
+        "category": "combat",
+        "relatedStat": "dex",
+        "description": "Piercing weapons like spears and daggers. Thrusting and stabbing attacks."
+      },
+      {
+        "name": "Blunt",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Blunt",
+        "category": "combat",
+        "relatedStat": "str",
+        "description": "Blunt weapons like maces and hammers. Crushing and smashing attacks."
       },
       {
         "name": "Shoot",
         "uuid": "Compendium.dungeon-crawler-world.skills.Item.Shoot",
         "category": "combat",
         "relatedStat": "dex",
-        "description": "Ranged weapon attacks and marksmanship."
+        "description": "Ranged weapon attacks and marksmanship with bows and crossbows."
       },
       {
         "name": "Defend",
@@ -23,6 +44,13 @@
         "category": "combat",
         "relatedStat": "con",
         "description": "Blocking, parrying, and damage mitigation."
+      },
+      {
+        "name": "Throw",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Throw",
+        "category": "combat",
+        "relatedStat": "dex",
+        "description": "Throwing weapons and objects with accuracy and force."
       }
     ],
     "magic": [
@@ -113,6 +141,41 @@
         "category": "general",
         "relatedStat": "int",
         "description": "Healing, diagnosis, and medical knowledge."
+      },
+      {
+        "name": "Mend",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Mend",
+        "category": "general",
+        "relatedStat": "int",
+        "description": "Repairing gear, fixing objects, and crafting equipment."
+      },
+      {
+        "name": "Craft",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Craft",
+        "category": "general",
+        "relatedStat": "int",
+        "description": "Creating items, crafting goods, and artisan work."
+      },
+      {
+        "name": "Thievery",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Thievery",
+        "category": "general",
+        "relatedStat": "dex",
+        "description": "Lockpicking, pickpocketing, and sleight of hand."
+      },
+      {
+        "name": "Focus",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Focus",
+        "category": "general",
+        "relatedStat": "wis",
+        "description": "Concentration, meditation, and mental discipline."
+      },
+      {
+        "name": "Ride",
+        "uuid": "Compendium.dungeon-crawler-world.skills.Item.Ride",
+        "category": "general",
+        "relatedStat": "dex",
+        "description": "Mounting, riding, and caring for animals and vehicles."
       }
     ]
   }

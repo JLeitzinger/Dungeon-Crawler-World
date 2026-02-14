@@ -1,12 +1,12 @@
 {
-  "_id": "Stealth",
-  "name": "Stealth",
+  "_id": "Throw",
+  "name": "Throw",
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Hiding, sneaking, and evasion.",
+    "description": "Throwing weapons and objects with accuracy and force.",
     "level": 1,
-    "category": "utility",
+    "category": "combat",
     "relatedStat": "dex",
     "effort": 0,
     "grantedSkills": []

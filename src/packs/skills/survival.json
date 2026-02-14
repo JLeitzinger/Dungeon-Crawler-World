@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Tracking, foraging, navigation, and wilderness knowledge.",
+    "description": "Tracking, foraging, and wilderness knowledge.",
     "level": 1,
     "category": "utility",
     "relatedStat": "wis",

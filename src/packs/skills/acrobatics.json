@@ -4,7 +4,7 @@
   "type": "skill",
   "img": "icons/svg/book.svg",
   "system": {
-    "description": "Balance, tumbling, flexibility, and gymnastic maneuvers.",
+    "description": "Balance, tumbling, and flexibility.",
     "level": 1,
     "category": "utility",
     "relatedStat": "dex",
