@@ -252,12 +252,34 @@ export default class dccworldCharacter extends dccworldActorBase {
   }
 
   /**
-   * Get a skill by UUID
-   * @param {string} skillUuid - The skill UUID
+   * Get a skill by UUID or name
+   * @param {string} skillIdentifier - The skill UUID or name
    * @returns {Object|null} The skill object or null
    */
-  getSkill(skillUuid) {
-    return this.aggregatedSkills?.[skillUuid] || null;
+  getSkill(skillIdentifier) {
+    if (!this.aggregatedSkills) return null;
+
+    // First try direct lookup (for names)
+    if (this.aggregatedSkills[skillIdentifier]) {
+      return this.aggregatedSkills[skillIdentifier];
+    }
+
+    // If it's a UUID, extract the skill name and try again
+    if (skillIdentifier.includes('Compendium.dungeon-crawler-world.skills.Item.')) {
+      const skillName = skillIdentifier.split('.').pop();
+      // Capitalize first letter
+      const normalizedName = skillName.charAt(0).toUpperCase() + skillName.slice(1);
+      return this.aggregatedSkills[normalizedName] || null;
+    }
+
+    // Also try to find by matching the uuid field in each skill
+    for (const skill of Object.values(this.aggregatedSkills)) {
+      if (skill.uuid === skillIdentifier) {
+        return skill;
+      }
+    }
+
+    return null;
   }
 
   /**
