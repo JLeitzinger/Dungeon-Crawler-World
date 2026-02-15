@@ -38,14 +38,12 @@ async function packSkills() {
         type: 'Item',
         sort: 100000,
         color: '#ff4444',
-        description: '',
         _stats: {
           systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.5',
+          systemVersion: '0.14.6',
           coreVersion: '13',
-          createdTime: now,
-          modifiedTime: now,
-          lastModifiedBy: 'SYSTEM'
+          ctime: now,
+          mtime: now
         },
         flags: {}
       },
@@ -57,14 +55,12 @@ async function packSkills() {
         type: 'Item',
         sort: 200000,
         color: '#4444ff',
-        description: '',
         _stats: {
           systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.5',
+          systemVersion: '0.14.6',
           coreVersion: '13',
-          createdTime: now,
-          modifiedTime: now,
-          lastModifiedBy: 'SYSTEM'
+          ctime: now,
+          mtime: now
         },
         flags: {}
       },
@@ -76,14 +72,12 @@ async function packSkills() {
         type: 'Item',
         sort: 300000,
         color: '#44ff44',
-        description: '',
         _stats: {
           systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.5',
+          systemVersion: '0.14.6',
           coreVersion: '13',
-          createdTime: now,
-          modifiedTime: now,
-          lastModifiedBy: 'SYSTEM'
+          ctime: now,
+          mtime: now
         },
         flags: {}
       },
@@ -95,14 +89,12 @@ async function packSkills() {
         type: 'Item',
         sort: 400000,
         color: '#ffaa00',
-        description: '',
         _stats: {
           systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.5',
+          systemVersion: '0.14.6',
           coreVersion: '13',
-          createdTime: now,
-          modifiedTime: now,
-          lastModifiedBy: 'SYSTEM'
+          ctime: now,
+          mtime: now
         },
         flags: {}
       }
