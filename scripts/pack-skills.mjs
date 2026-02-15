@@ -17,11 +17,18 @@ async function packSkills() {
     fs.mkdirSync(packDir, { recursive: true });
   }
 
+  // Remove existing database to start fresh
+  if (fs.existsSync(packDir)) {
+    fs.rmSync(packDir, { recursive: true, force: true });
+    fs.mkdirSync(packDir, { recursive: true });
+  }
+
   // Open LevelDB database
   const db = new ClassicLevel(packDir, { valueEncoding: 'json' });
 
   try {
     // Create folder structure
+    const now = Date.now();
     const folders = [
       {
         _id: 'combatskills',
@@ -31,6 +38,15 @@ async function packSkills() {
         type: 'Item',
         sort: 100000,
         color: '#ff4444',
+        description: '',
+        _stats: {
+          systemId: 'dungeon-crawler-world',
+          systemVersion: '0.14.5',
+          coreVersion: '13',
+          createdTime: now,
+          modifiedTime: now,
+          lastModifiedBy: 'SYSTEM'
+        },
         flags: {}
       },
       {
@@ -41,6 +57,15 @@ async function packSkills() {
         type: 'Item',
         sort: 200000,
         color: '#4444ff',
+        description: '',
+        _stats: {
+          systemId: 'dungeon-crawler-world',
+          systemVersion: '0.14.5',
+          coreVersion: '13',
+          createdTime: now,
+          modifiedTime: now,
+          lastModifiedBy: 'SYSTEM'
+        },
         flags: {}
       },
       {
@@ -51,6 +76,15 @@ async function packSkills() {
         type: 'Item',
         sort: 300000,
         color: '#44ff44',
+        description: '',
+        _stats: {
+          systemId: 'dungeon-crawler-world',
+          systemVersion: '0.14.5',
+          coreVersion: '13',
+          createdTime: now,
+          modifiedTime: now,
+          lastModifiedBy: 'SYSTEM'
+        },
         flags: {}
       },
       {
@@ -61,6 +95,15 @@ async function packSkills() {
         type: 'Item',
         sort: 400000,
         color: '#ffaa00',
+        description: '',
+        _stats: {
+          systemId: 'dungeon-crawler-world',
+          systemVersion: '0.14.5',
+          coreVersion: '13',
+          createdTime: now,
+          modifiedTime: now,
+          lastModifiedBy: 'SYSTEM'
+        },
         flags: {}
       }
     ];
