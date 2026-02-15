@@ -8,31 +8,44 @@ This is a Foundry VTT game system called "Dungeon Crawler World" built on the dc
 
 ## Repository Structure
 
-**This repository contains ONLY the core game system code.** Content authoring tools and compendium data have been moved to a separate repository:
+**This repository contains ONLY the core game system code.** All game content (classes, races, items, spells, etc.) is provided by a separate Foundry module:
 
-**[DCW-Content](https://github.com/JLeitzinger/DCW-Content)** - Content generation tools, source JSON files, and packed compendia
+**[DCW-Content](https://github.com/JLeitzinger/DCW-Content)** - Foundry module with all compendium content
 
-### What's in THIS Repository
+### What's in THIS Repository (System)
 - `module/` - Core game system TypeScript/JavaScript code
 - `templates/` - Handlebars templates for character sheets and UI
 - `src/scss/` - SCSS source files for styling
 - `css/` - Compiled CSS
 - `lang/` - Localization files
-- `packs/` - Symlink to `../DCW-Content/packs/` (LevelDB compendium packs for Foundry)
-- `system.json` - System manifest
+- `system.json` - System manifest (does NOT include compendium packs)
 
-### What's in DCW-Content
-- `scripts/` - Generator and packing scripts
+### What's in DCW-Content (Module)
+- `module.json` - Module manifest with compendium pack definitions
+- `packs/` - Generated LevelDB compendium packs (classes, races, items, spells, features, skills)
+- `scripts/` - Content generation and packing scripts
 - `data/` - Manifest files (skills-manifest.json, etc.)
-- `src/packs/` - Source JSON files for all content (classes, races, items, spells, features, skills)
-- `packs/` - Generated LevelDB compendium packs
+- `src/packs/` - Source JSON files for all content
+
+### Installation
+
+**For end users:**
+1. Install the "Dungeon Crawler World" system in Foundry VTT
+2. Install the "Dungeon Crawler World - Content" module separately
+3. Enable the module in your world
+
+**For developers:**
+1. Clone both repositories
+2. System: Work in `Dungeon-Crawler-World` for core code changes
+3. Content: Work in `DCW-Content` for content authoring
 
 ### Content Creation Workflow
 
 **To create or modify game content** (classes, races, items, skills, etc.):
-1. Clone the DCW-Content repository alongside this one
+1. Clone the DCW-Content repository
 2. Follow the instructions in DCW-Content's README.md
-3. After packing content, the `packs/` symlink in this repo will automatically reference the updated compendia
+3. Use the generator and packing scripts to build compendia
+4. Test by installing the module in Foundry
 
 **For content authoring guidelines**, refer to the DCW-Content repository's README and the "Item Type Design Guidelines" section below.
 
