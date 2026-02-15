@@ -6,6 +6,36 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Foundry VTT game system called "Dungeon Crawler World" built on the dccworld (dungeon-crawler-world) boilerplate. It implements a custom tabletop RPG system for Foundry VTT v13.
 
+## Repository Structure
+
+**This repository contains ONLY the core game system code.** Content authoring tools and compendium data have been moved to a separate repository:
+
+**[DCW-Content](https://github.com/JLeitzinger/DCW-Content)** - Content generation tools, source JSON files, and packed compendia
+
+### What's in THIS Repository
+- `module/` - Core game system TypeScript/JavaScript code
+- `templates/` - Handlebars templates for character sheets and UI
+- `src/scss/` - SCSS source files for styling
+- `css/` - Compiled CSS
+- `lang/` - Localization files
+- `packs/` - Symlink to `../DCW-Content/packs/` (LevelDB compendium packs for Foundry)
+- `system.json` - System manifest
+
+### What's in DCW-Content
+- `scripts/` - Generator and packing scripts
+- `data/` - Manifest files (skills-manifest.json, etc.)
+- `src/packs/` - Source JSON files for all content (classes, races, items, spells, features, skills)
+- `packs/` - Generated LevelDB compendium packs
+
+### Content Creation Workflow
+
+**To create or modify game content** (classes, races, items, skills, etc.):
+1. Clone the DCW-Content repository alongside this one
+2. Follow the instructions in DCW-Content's README.md
+3. After packing content, the `packs/` symlink in this repo will automatically reference the updated compendia
+
+**For content authoring guidelines**, refer to the DCW-Content repository's README and the "Item Type Design Guidelines" section below.
+
 ## Development Commands
 
 ### CSS Compilation
@@ -323,375 +353,17 @@ Base skills from the compendium (skills-manifest.json).
 
 ---
 
-## Item Creation Workflow
+## Content Creation
 
-When asked to create new items (class, race, equipment, feature) that grant skills:
+**All content authoring (classes, races, items, skills, features, spells) is done in the [DCW-Content repository](https://github.com/JLeitzinger/DCW-Content).**
 
-### Step 1: Plan Skills Needed
-- Identify which skills the item should grant based on its type/theme
-- Check if each skill exists in `data/skills-manifest.json`
+To create or modify game content:
+1. Clone the DCW-Content repository alongside this one
+2. Follow the comprehensive workflows in DCW-Content's README.md
+3. Use the generator and packing scripts in DCW-Content
+4. The `packs/` symlink in this repo will automatically reference the updated compendia
 
-### Step 2: Create Missing Skills (If Any)
-**If a skill doesn't exist in the manifest, you MUST create it first:**
-
-1. **Add to manifest** - Edit `data/skills-manifest.json`:
-   ```json
-   {
-     "name": "YourSkillName",
-     "uuid": "Compendium.dungeon-crawler-world.skills.Item.YourSkillName",
-     "category": "combat|magic|utility|general",
-     "relatedStat": "str|dex|con|int|wis|cha|null",
-     "description": "Brief description of what this skill does."
-   }
-   ```
-   - Add to the appropriate category array (combat, magic, utility, or general)
-   - Keep UUID format: `Compendium.dungeon-crawler-world.skills.Item.<SkillName>`
-
-2. **Generate skill JSON files**:
-   ```bash
-   npm run generate:skills
-   ```
-
-3. **Pack skills to compendium**:
-   ```bash
-   npm run pack:skills
-   ```
-
-4. **Update documentation** (if adding a new category):
-   - Update `data/skills/README.md` with the new skill
-
-### Step 3: Create the Item
-1. **Use skill lookup tool** - Run `node scripts/skill-lookup.mjs granted "SkillName" <level>` to get proper UUID format
-2. **Follow skill limits** - Adhere to the category and count requirements above
-3. **Create item file** - Add JSON to appropriate directory (`src/packs/items/`, etc.)
-
-### Step 4: Test and Verify
-1. **Pack the compendium** - `npm run pack:items` (or pack:classes, pack:races, etc.)
-2. **Test in Foundry** - Create item, add to character, verify skills aggregate correctly
-3. **Check skill display** - Ensure proper category, related stat, and level show on character sheet
-
-### Step 5: Commit All Changes
-1. **Stage files** - Include:
-   - `data/skills-manifest.json` (if new skills added)
-   - `src/packs/skills/*.json` (generated skill files)
-   - `packs/skills/*` (compendium files)
-   - Item source file
-   - `system.json` (version bump)
-
-2. **Commit with descriptive message**:
-   ```
-   Add [Item Type]: [Name] with new skill: [Skill Name]
-
-   - Created [Human] race with [Diplomacy, Insight] skills
-   - Added new [Insight] skill to manifest (wisdom, general)
-   - Regenerated and packed skills compendium
-   ```
-
----
-
-## Skill Creation Checklist
-
-Use this checklist whenever adding a new skill to the manifest:
-
-- [ ] Added entry to `data/skills-manifest.json` in appropriate category
-- [ ] Set category: "combat", "magic", "utility", or "general"
-- [ ] Set relatedStat: "str", "dex", "con", "int", "wis", "cha", or null
-- [ ] Wrote clear description (1-2 sentences)
-- [ ] UUID follows format: `Compendium.dungeon-crawler-world.skills.Item.<Name>`
-- [ ] Ran `npm run generate:skills` (created JSON in `src/packs/skills/`)
-- [ ] Ran `npm run pack:skills` (updated compendium)
-- [ ] Updated `data/skills/README.md` if needed
-- [ ] Tested in Foundry: drag skill to character, verify it appears correctly
-
----
-
-## Example: Creating a Race with New Skills
-
-**Task:** Create an Elf race that grants "Bow Mastery" skill.
-
-**Step 1: Check manifest**
-```bash
-node scripts/skill-lookup.mjs list | grep -i bow
-# No results - skill doesn't exist
-```
-
-**Step 2: Add skill to manifest**
-Edit `data/skills-manifest.json`, add to "combat" array:
-```json
-{
-  "name": "BowMastery",
-  "uuid": "Compendium.dungeon-crawler-world.skills.Item.BowMastery",
-  "category": "combat",
-  "relatedStat": "dex",
-  "description": "Expertise with bows and ranged weapons. Advanced archery techniques."
-}
-```
-
-**Step 3: Generate and pack**
-```bash
-npm run generate:skills  # Creates bowmastery.json
-npm run pack:skills      # Updates compendium
-```
-
-**Step 4: Create race with skill lookup**
-```bash
-node scripts/skill-lookup.mjs granted "BowMastery" 2
-# Output: {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.BowMastery", "level": 2}
-```
-
-**Step 5: Create Elf race JSON**
-```json
-{
-  "_id": "elf",
-  "name": "Elf",
-  "type": "race",
-  "system": {
-    "abilityBonuses": {"dex": 2, "int": 1},
-    "bonuses": {"hp": 0, "stamina": 0, "mana": 0},
-    "size": "medium",
-    "speed": 30,
-    "grantedSkills": [
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.BowMastery", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Perception", "level": 1}
-    ]
-  }
-}
-```
-
-**Step 6: Pack, test, commit**
-```bash
-npm run pack:races
-git add data/skills-manifest.json src/packs/skills/bowmastery.json packs/skills/* src/packs/races/elf.json system.json
-git commit -m "Add Elf race with new BowMastery skill"
-```
-
----
-
-## Class Generation Workflow
-
-When creating a new class, follow this comprehensive workflow to ensure all components (skills, features, stat boosts) are properly configured.
-
-### Step 1: Plan Class Design
-
-Determine the following for your class:
-
-1. **Class Identity**: What role does this class fill? (tank, damage dealer, healer, support, etc.)
-2. **Primary Stats**: Which 1-2 stats define this class?
-3. **Stat Boost Rate**: How much should each stat grow per level? (0.5-1.0 total recommended)
-4. **Resource Focus**: High HP (martial), high Mana (caster), or balanced?
-5. **Skills Needed**: 3-5 skills from appropriate categories
-6. **Features Needed**: 1-3 signature class abilities
-
-### Step 2: Calculate Stat Boosts
-
-Classes grant ongoing stat boosts using the formula:
-```
-Stat Boost = (current_level - (level_acquired - 1)) × abilityBonuses[stat]
-```
-
-**Guidelines:**
-- Total stat boosts should be 0.5-1.5 per level
-- Most classes use 0.5 in two stats (e.g., `{str: 0.5, con: 0.5}`)
-- Pure casters might use 1.0 in one stat (e.g., `{int: 1.0}`)
-- Hybrid classes can spread across 3 stats (e.g., `{str: 0.33, dex: 0.33, wis: 0.34}`)
-
-**Examples:**
-- **Fighter** (martial, STR/CON focus): `{str: 0.5, con: 0.5}`
-- **Wizard** (pure caster, INT focus): `{int: 1.0}`
-- **Ranger** (hybrid, DEX/WIS): `{dex: 0.5, wis: 0.5}`
-- **Paladin** (hybrid, STR/CHA/WIS): `{str: 0.4, cha: 0.3, wis: 0.3}`
-
-### Step 3: Determine Resource Scaling
-
-Set the following resource values:
-
-- **baseHP**: Starting HP at level 1 (8-12)
-  - High: 12 (barbarian, fighter)
-  - Medium: 10 (ranger, paladin, cleric)
-  - Low: 8 (wizard, sorcerer)
-- **hpPerLevel**: HP gain per level (2-4)
-  - High: 4 (barbarian, fighter)
-  - Medium: 3 (ranger, rogue)
-  - Low: 2 (wizard, sorcerer)
-- **staminaPerLevel**: Stamina gain per level (1-3)
-  - High: 3 (monk, fighter, rogue)
-  - Medium: 2 (ranger, cleric)
-  - Low: 1 (wizard, sorcerer)
-- **manaPerLevel**: Mana gain per level (1-3)
-  - High: 3 (wizard, sorcerer, cleric)
-  - Medium: 2 (druid, bard, paladin)
-  - Low: 1 (fighter, barbarian)
-
-### Step 4: Select or Create Skills
-
-1. **Identify required skills** (3-5 total):
-   - Martial classes: 2-3 combat, 1-2 utility
-   - Magic classes: 2-3 magic, 1-2 general/utility
-   - Hybrid classes: 2 combat, 2 magic, 1 utility
-2. **Check if skills exist**: `node scripts/skill-lookup.mjs list`
-3. **Create missing skills** (if needed):
-   ```bash
-   # Add to data/skills-manifest.json
-   npm run generate:skills
-   npm run pack:skills
-   ```
-4. **Get skill UUIDs**: `node scripts/skill-lookup.mjs granted "SkillName" <level>`
-
-### Step 5: Select or Create Features
-
-1. **Identify class features** (1-3 recommended):
-   - Signature abilities that define the class
-   - Passive bonuses or active abilities
-   - Examples: Second Wind (Fighter), Rage (Barbarian), Spellcasting (Wizard)
-2. **Check existing features**: Look in `src/packs/features/` or Foundry compendium
-3. **Create new features if needed**:
-   - Create feature JSON file in `src/packs/features/`
-   - Pack features: `npm run pack:features`
-4. **Get feature UUIDs**: Features use format `Compendium.dungeon-crawler-world.features.Item.<FeatureName>`
-
-### Step 6: Create Class JSON File
-
-Create a JSON file in `src/packs/classes/<classname>.json`:
-
-```json
-{
-  "_id": "fighter",
-  "name": "Fighter",
-  "type": "class",
-  "img": "icons/svg/sword.svg",
-  "system": {
-    "description": "A master of martial combat, skilled with weapons and armor.",
-    "baseHP": 12,
-    "hpPerLevel": 4,
-    "staminaPerLevel": 3,
-    "manaPerLevel": 1,
-    "abilityBonuses": {
-      "str": 0.5,
-      "con": 0.5
-    },
-    "levelAcquired": 1,
-    "saveProficiency": ["str", "con"],
-    "grantedSkills": [
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Defend", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics", "level": 1}
-    ],
-    "grantedFeatures": [
-      "Compendium.dungeon-crawler-world.features.Item.SecondWind",
-      "Compendium.dungeon-crawler-world.features.Item.ActionSurge"
-    ]
-  }
-}
-```
-
-### Step 7: Pack and Test
-
-1. **Pack the class to compendium**:
-   ```bash
-   npm run pack:classes
-   ```
-2. **Test in Foundry**:
-   - Create a new character
-   - Add the class item to the character
-   - Verify skills appear in skill list
-   - Verify features appear in features tab
-   - Level up the character and confirm stat boosts apply correctly
-3. **Verify stat boost calculation** at different levels:
-   - Level 1: (1 - (1 - 1)) × 0.5 = 0 (no boost yet)
-   - Level 2: (2 - 0) × 0.5 = 1.0 → 1 stat point
-   - Level 5: (5 - 0) × 0.5 = 2.5 → 2 stat points
-   - Level 10: (10 - 0) × 0.5 = 5.0 → 5 stat points
-
-### Step 8: Commit Changes
-
-Stage and commit all modified files:
-
-```bash
-git add src/packs/classes/<classname>.json \
-        src/packs/skills/*.json \
-        src/packs/features/*.json \
-        data/skills-manifest.json \
-        packs/classes/* \
-        packs/skills/* \
-        packs/features/* \
-        system.json
-
-git commit -m "Add <ClassName> class with stat boosts and features
-
-- Created <ClassName> with <stat1/stat2> focus
-- Stat boosts: <details>
-- Skills: <skill list>
-- Features: <feature list>
-- Resource scaling: <HP/Stamina/Mana details>
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-```
-
-### Example: Creating a Barbarian Class
-
-**Step 1: Design**
-- Role: Tank/Damage dealer
-- Primary stats: STR, CON
-- Stat boost: 0.6 STR, 0.4 CON (higher STR emphasis)
-- Resources: Very high HP, high Stamina, low Mana
-- Skills: Slash (3), Athletics (2), Intimidation (1)
-- Features: Rage, Reckless Attack
-
-**Step 2: Stat Boosts**
-```json
-"abilityBonuses": {
-  "str": 0.6,
-  "con": 0.4
-}
-```
-At level 10: STR +6, CON +4
-
-**Step 3: Resources**
-```json
-"baseHP": 12,
-"hpPerLevel": 4,
-"staminaPerLevel": 3,
-"manaPerLevel": 1
-```
-
-**Step 4-5: Skills & Features**
-- Verify Slash, Athletics, Intimidation exist
-- Create Rage and Reckless Attack features
-
-**Step 6: Create JSON**
-```json
-{
-  "_id": "barbarian",
-  "name": "Barbarian",
-  "type": "class",
-  "system": {
-    "description": "A fierce warrior who can enter a battle rage.",
-    "baseHP": 12,
-    "hpPerLevel": 4,
-    "staminaPerLevel": 3,
-    "manaPerLevel": 1,
-    "abilityBonuses": {"str": 0.6, "con": 0.4},
-    "levelAcquired": 1,
-    "saveProficiency": ["str", "con"],
-    "grantedSkills": [
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Slash", "level": 3},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Athletics", "level": 2},
-      {"skillUuid": "Compendium.dungeon-crawler-world.skills.Item.Intimidation", "level": 1}
-    ],
-    "grantedFeatures": [
-      "Compendium.dungeon-crawler-world.features.Item.Rage",
-      "Compendium.dungeon-crawler-world.features.Item.RecklessAttack"
-    ]
-  }
-}
-```
-
-**Step 7-8: Pack, test, commit**
-```bash
-npm run pack:classes
-# Test in Foundry
-git add <files> && git commit
-```
+**Important:** When working on content authoring, switch to the DCW-Content repository. This repository (Dungeon-Crawler-World) is for core game system code only.
 
 ---
 

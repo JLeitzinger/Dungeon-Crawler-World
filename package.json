@@ -1,33 +1,22 @@
 {
   "name": "dungeon-crawler-world",
   "version": "2.0.0",
-  "description": "CSS compiler for the dccworld system",
+  "description": "Foundry VTT game system for Dungeon Crawler World",
   "scripts": {
     "build": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --no-source-map",
-    "watch": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --source-map --watch",
-    "generate:weapons": "node scripts/generators/generate-weapons.mjs",
-    "generate:skills": "node scripts/generate-skills.mjs",
-    "pack": "npm run pack:items && npm run pack:skills && npm run pack:races && npm run pack:spells && npm run pack:features && npm run pack:classes",
-    "pack:items": "node scripts/pack-items.mjs",
-    "pack:skills": "node scripts/pack-skills.mjs",
-    "pack:races": "node scripts/pack-races.mjs",
-    "pack:spells": "node scripts/pack-spells.mjs",
-    "pack:features": "node scripts/pack-features.mjs",
-    "pack:classes": "node scripts/pack-classes.mjs",
-    "add-skills-to-weapons": "node scripts/add-skills-to-weapons.mjs",
-    "unpack": "npm run unpack:items",
-    "unpack:items": "fvtt package unpack -n items --in packs --out src/packs/items --clean",
-    "skill-lookup": "node scripts/skill-lookup.mjs"
+    "watch": "sass src/scss/dungeon-crawler-world.scss css/dungeon-crawler-world.css --style=expanded --source-map --watch"
   },
   "browserslist": [
     "last 3 versions"
   ],
-  "author": "Asacolips",
+  "author": "JLeitzinger",
   "license": "MIT",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JLeitzinger/Dungeon-Crawler-World"
+  },
   "devDependencies": {
-    "@foundryvtt/foundryvtt-cli": "^1.0.0",
-    "classic-level": "^3.0.0",
     "sass": "^1.53.0"
   }
 }
