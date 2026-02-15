@@ -81,6 +81,39 @@
         />
         <p class='notes'>Amount of mana spent when casting this spell.</p>
       </div>
+      <div class='resource'>
+        <label class='resource-label'>Casting Time</label>
+        <input
+          type='text'
+          name='system.castingTime'
+          value='{{system.castingTime}}'
+          data-dtype='String'
+          placeholder='instantaneous or number of rounds'
+        />
+        <p class='notes'>Time required to cast the spell (e.g., "instantaneous", "1 round", "2 rounds").</p>
+      </div>
+      <div class='resource'>
+        <label class='resource-label'>Range</label>
+        <input
+          type='text'
+          name='system.range'
+          value='{{system.range}}'
+          data-dtype='String'
+          placeholder='self, touch, or distance in feet'
+        />
+        <p class='notes'>Spell range (e.g., "self", "touch", "60 feet", "120 feet").</p>
+      </div>
+      <div class='resource'>
+        <label class='resource-label'>Duration</label>
+        <input
+          type='text'
+          name='system.duration'
+          value='{{system.duration}}'
+          data-dtype='String'
+          placeholder='instantaneous or time duration'
+        />
+        <p class='notes'>How long the spell lasts (e.g., "instantaneous", "1 minute", "1 hour").</p>
+      </div>
     </div>
 
     {{! Skills Tab }}
