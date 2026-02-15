@@ -21,6 +21,59 @@ async function packSkills() {
   const db = new ClassicLevel(packDir, { valueEncoding: 'json' });
 
   try {
+    // Create folder structure
+    const folders = [
+      {
+        _id: 'combatskills',
+        name: 'Combat Skills',
+        sorting: 'a',
+        folder: null,
+        type: 'Item',
+        sort: 100000,
+        color: '#ff4444',
+        flags: {}
+      },
+      {
+        _id: 'magicskills',
+        name: 'Magic Skills',
+        sorting: 'a',
+        folder: null,
+        type: 'Item',
+        sort: 200000,
+        color: '#4444ff',
+        flags: {}
+      },
+      {
+        _id: 'utilityskills',
+        name: 'Utility Skills',
+        sorting: 'a',
+        folder: null,
+        type: 'Item',
+        sort: 300000,
+        color: '#44ff44',
+        flags: {}
+      },
+      {
+        _id: 'generalskills',
+        name: 'General Skills',
+        sorting: 'a',
+        folder: null,
+        type: 'Item',
+        sort: 400000,
+        color: '#ffaa00',
+        flags: {}
+      }
+    ];
+
+    // Pack folders
+    console.log('Creating folder structure...');
+    for (const folder of folders) {
+      const key = `!folders!${folder._id}`;
+      await db.put(key, folder);
+      console.log(`✓ Created folder: ${folder.name}`);
+    }
+    console.log('');
+
     // Read all JSON files from source directory
     const files = fs.readdirSync(sourceDir).filter(f => f.endsWith('.json'));
 
