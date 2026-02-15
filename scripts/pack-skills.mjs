@@ -17,98 +17,10 @@ async function packSkills() {
     fs.mkdirSync(packDir, { recursive: true });
   }
 
-  // Remove existing database to start fresh
-  if (fs.existsSync(packDir)) {
-    fs.rmSync(packDir, { recursive: true, force: true });
-    fs.mkdirSync(packDir, { recursive: true });
-  }
-
   // Open LevelDB database
   const db = new ClassicLevel(packDir, { valueEncoding: 'json' });
 
   try {
-    // Create folder structure
-    const now = Date.now();
-    const folders = [
-      {
-        _id: 'combatskills',
-        name: 'Combat Skills',
-        sorting: 'a',
-        folder: null,
-        type: 'Item',
-        sort: 100000,
-        color: '#ff4444',
-        _stats: {
-          systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.6',
-          coreVersion: '13',
-          ctime: now,
-          mtime: now
-        },
-        flags: {}
-      },
-      {
-        _id: 'magicskills',
-        name: 'Magic Skills',
-        sorting: 'a',
-        folder: null,
-        type: 'Item',
-        sort: 200000,
-        color: '#4444ff',
-        _stats: {
-          systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.6',
-          coreVersion: '13',
-          ctime: now,
-          mtime: now
-        },
-        flags: {}
-      },
-      {
-        _id: 'utilityskills',
-        name: 'Utility Skills',
-        sorting: 'a',
-        folder: null,
-        type: 'Item',
-        sort: 300000,
-        color: '#44ff44',
-        _stats: {
-          systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.6',
-          coreVersion: '13',
-          ctime: now,
-          mtime: now
-        },
-        flags: {}
-      },
-      {
-        _id: 'generalskills',
-        name: 'General Skills',
-        sorting: 'a',
-        folder: null,
-        type: 'Item',
-        sort: 400000,
-        color: '#ffaa00',
-        _stats: {
-          systemId: 'dungeon-crawler-world',
-          systemVersion: '0.14.6',
-          coreVersion: '13',
-          ctime: now,
-          mtime: now
-        },
-        flags: {}
-      }
-    ];
-
-    // Pack folders
-    console.log('Creating folder structure...');
-    for (const folder of folders) {
-      const key = `!folders!${folder._id}`;
-      await db.put(key, folder);
-      console.log(`✓ Created folder: ${folder.name}`);
-    }
-    console.log('');
-
     // Read all JSON files from source directory
     const files = fs.readdirSync(sourceDir).filter(f => f.endsWith('.json'));
 

@@ -32,14 +32,6 @@ for (const category of Object.values(manifest.skills)) {
   }
 }
 
-// Folder IDs for each skill category
-const FOLDER_IDS = {
-  combat: 'combatskills',
-  magic: 'magicskills',
-  utility: 'utilityskills',
-  general: 'generalskills'
-};
-
 function createSkillItem(skill) {
   return {
     _id: skill._id,
@@ -55,7 +47,7 @@ function createSkillItem(skill) {
       grantedSkills: []
     },
     effects: [],
-    folder: FOLDER_IDS[skill.category] || null,
+    folder: null,
     sort: 0,
     ownership: {
       default: 0
