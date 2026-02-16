@@ -56,15 +56,6 @@ export class dccworldActorSheet extends ActorSheet {
     // Adding a pointer to CONFIG.DCC_WORLD
     context.config = CONFIG.DCC_WORLD;
 
-    console.log('DCC World: ===== Sheet getData() called =====');
-    console.log('DCC World: Actor type:', actorData.type);
-    console.log('DCC World: Has raceItem:', !!context.system.raceItem);
-    console.log('DCC World: Has classItem:', !!context.system.classItem);
-    if (context.system.raceItem) {
-      console.log('DCC World: Race item:', context.system.raceItem.name);
-      console.log('DCC World: Race features:', context.system.raceItem.system?.features);
-    }
-    console.log('DCC World: Has features manifest:', !!CONFIG.DCC_WORLD?.featuresManifest);
 
     // Prepare character data and items.
     if (actorData.type == 'character') {
@@ -159,67 +150,6 @@ export class dccworldActorSheet extends ActorSheet {
       }
     }
 
-    // Add features from race item
-    console.log('DCC World: Checking for race features...');
-    console.log('DCC World: raceItem exists:', !!context.system.raceItem);
-
-    if (context.system.raceItem) {
-      const raceFeatures = context.system.raceItem.system?.features || [];
-
-      console.log('DCC World: Loading features for race:', context.system.raceItem.name);
-      console.log('DCC World: Race features array:', raceFeatures);
-      console.log('DCC World: Race features type:', typeof raceFeatures);
-      console.log('DCC World: Race features length:', raceFeatures.length);
-
-      // Build a map of features from manifest for quick lookup
-      const featuresMap = {};
-      if (CONFIG.DCC_WORLD?.featuresManifest?.features) {
-        for (const category of Object.values(CONFIG.DCC_WORLD.featuresManifest.features)) {
-          for (const feature of category) {
-            // Extract ID from UUID: "Compendium.dungeon-crawler-world.features.Item.Dwarven-resilience"
-            const id = feature.uuid.split('.').pop();
-            featuresMap[id] = feature;
-          }
-        }
-      }
-
-      console.log('DCC World: Features map loaded:', Object.keys(featuresMap));
-
-      for (const featureRef of raceFeatures) {
-        // Extract feature name from UUID
-        let featureId = null;
-        if (featureRef.featureUuid.includes('Compendium.dungeon-crawler-world.features.Item.')) {
-          featureId = featureRef.featureUuid.split('.').pop();
-        }
-
-        if (!featureId) continue;
-
-        console.log('DCC World: Looking up feature:', featureId);
-        console.log('DCC World: Found in map:', !!featuresMap[featureId]);
-
-        // Look up in manifest
-        const featureData = featuresMap[featureId];
-        if (featureData) {
-          // Add to features list if not already present
-          if (!features.find(f => f._id === featureId)) {
-            features.push({
-              _id: featureId,
-              name: featureData.name,
-              type: 'feature',
-              img: 'icons/svg/shield.svg',
-              system: { description: featureData.description || '' },
-              source: 'race'
-            });
-            console.log('DCC World: Added feature:', featureData.name);
-          }
-        } else {
-          console.warn(`DCC World: Feature "${featureId}" not found in manifest for race ${context.system.raceItem.name}`);
-        }
-      }
-
-      console.log('DCC World: Total features after adding race features:', features.length);
-    }
-
     // Assign and return
     context.gear = gear;
     context.features = features;
@@ -231,6 +161,105 @@ export class dccworldActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
+
+  /** @override */
+  async _onDropItem(event, data) {
+    // Get the item from the data first to check its type
+    const droppedItem = await Item.implementation.fromDropData(data);
+
+    // Call parent to handle the drop
+    const result = await super._onDropItem(event, data);
+
+    // If a race or class was dropped, grant its features
+    // We need to find the newly created item on the actor
+    if (droppedItem && (droppedItem.type === 'race' || droppedItem.type === 'class')) {
+      // Find the item on the actor (it was just added by super._onDropItem)
+      const actorItem = this.actor.items.find(i =>
+        i.type === droppedItem.type && i.name === droppedItem.name
+      );
+
+      if (actorItem) {
+        await this._grantFeaturesFromItem(actorItem);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Remove features that were granted by a race or class item
+   * @param {Item} item - The race or class item being removed
+   * @private
+   */
+  async _removeGrantedFeatures(item) {
+    // Find all features on this character that were granted by this item
+    const featuresToRemove = this.actor.items.filter(i =>
+      i.type === 'feature' &&
+      i.flags['dungeon-crawler-world']?.grantedBy === item.uuid
+    );
+
+    if (featuresToRemove.length > 0) {
+      const itemIds = featuresToRemove.map(f => f.id);
+      await this.actor.deleteEmbeddedDocuments('Item', itemIds);
+      ui.notifications.info(`Removed ${featuresToRemove.length} feature(s) from ${item.name}`);
+    }
+  }
+
+  /**
+   * Grant features from a race or class item
+   * @param {Item} item - The race or class item
+   * @private
+   */
+  async _grantFeaturesFromItem(item) {
+    const grantedFeatures = item.system?.grantedFeatures || [];
+
+    if (grantedFeatures.length === 0) return;
+
+    const featuresToCreate = [];
+
+    for (const featureRef of grantedFeatures) {
+      const featureUuid = featureRef.featureUuid;
+
+      if (!featureUuid) continue;
+
+      // Check if character already has this feature
+      const existingFeature = this.actor.items.find(i =>
+        i.type === 'feature' &&
+        (i.flags['dungeon-crawler-world']?.sourceUuid === featureUuid ||
+         i.name === featureUuid.split('.').pop())
+      );
+
+      if (existingFeature) continue;
+
+      try {
+        // Load the feature from compendium
+        const featureDoc = await fromUuid(featureUuid);
+
+        if (featureDoc) {
+          // Prepare the feature data for creation
+          const featureData = featureDoc.toObject();
+          featureData.flags = featureData.flags || {};
+          featureData.flags['dungeon-crawler-world'] = {
+            sourceUuid: featureUuid,
+            grantedBy: item.uuid,
+            grantedAt: featureRef.level || 1
+          };
+
+          featuresToCreate.push(featureData);
+        } else {
+          console.warn(`DCC World: Could not find feature ${featureUuid}`);
+        }
+      } catch (error) {
+        console.warn(`DCC World: Error loading feature ${featureUuid}:`, error);
+      }
+    }
+
+    // Create all features at once
+    if (featuresToCreate.length > 0) {
+      await this.actor.createEmbeddedDocuments('Item', featuresToCreate);
+      ui.notifications.info(`Granted ${featuresToCreate.length} feature(s) from ${item.name}`);
+    }
+  }
 
   /** @override */
   activateListeners(html) {
@@ -254,13 +283,17 @@ export class dccworldActorSheet extends ActorSheet {
     html.on('click', '.item-create', this._onItemCreate.bind(this));
 
     // Delete Inventory Item
-    html.on('click', '.item-delete', (ev) => {
+    html.on('click', '.item-delete', async (ev) => {
       const button = $(ev.currentTarget);
       const container = button.closest('.item, .equipped-item');
       const itemId = button.data('itemId') || container.data('itemId');
       const item = this.actor.items.get(itemId);
       if (item) {
-        item.delete();
+        // If deleting a race or class, remove granted features
+        if (item.type === 'race' || item.type === 'class') {
+          await this._removeGrantedFeatures(item);
+        }
+        await item.delete();
         container.slideUp(200, () => this.render(false));
       }
     });

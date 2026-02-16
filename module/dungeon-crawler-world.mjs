@@ -41,21 +41,6 @@ Hooks.once('init', async function () {
     CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
   }
 
-  // Load features manifest for feature metadata lookups
-  try {
-    const manifestResponse = await fetch('systems/dungeon-crawler-world/data/features-manifest.json');
-    if (manifestResponse.ok) {
-      CONFIG.DCC_WORLD.featuresManifest = await manifestResponse.json();
-      console.log('DCC World: Features manifest loaded successfully');
-    } else {
-      console.warn('DCC World: Could not load features manifest');
-      CONFIG.DCC_WORLD.featuresManifest = { features: {} };
-    }
-  } catch (error) {
-    console.error('DCC World: Error loading features manifest:', error);
-    CONFIG.DCC_WORLD.featuresManifest = { features: {} };
-  }
-
   /**
    * Set an initiative formula for the system
    * @type {String}
