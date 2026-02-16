@@ -67,7 +67,8 @@ Hooks.once('init', async function () {
     spell: models.dccworldSpell,
     skill: models.dccworldSkill,
     class: models.dccworldClass,
-    race: models.dccworldRace
+    race: models.dccworldRace,
+    weapon: models.dccworldWeapon
   }
 
   // Active Effects are never copied to the Actor,

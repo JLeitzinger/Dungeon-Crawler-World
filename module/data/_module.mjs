@@ -11,3 +11,4 @@ export {default as dccworldSpell} from "./item-spell.mjs";
 export {default as dccworldSkill} from "./item-skill.mjs";
 export {default as dccworldClass} from "./item-class.mjs";
 export {default as dccworldRace} from "./item-race.mjs";
+export {default as dccworldWeapon} from "./item-weapon.mjs";

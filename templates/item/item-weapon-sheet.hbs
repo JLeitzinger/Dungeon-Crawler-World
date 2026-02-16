@@ -1,0 +1,201 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <header class='sheet-header'>
+    <img
+      class='profile-img'
+      src='{{item.img}}'
+      data-edit='img'
+      title='{{item.name}}'
+    />
+    <div class='header-fields'>
+      <h1 class='charname'><input
+          name='name'
+          type='text'
+          value='{{item.name}}'
+          placeholder='Weapon Name'
+        /></h1>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Quantity</label>
+          <input
+            type='text'
+            name='system.quantity'
+            value='{{system.quantity}}'
+            data-dtype='Number'
+          />
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>Weight</label>
+          <input
+            type='text'
+            name='system.weight'
+            value='{{system.weight}}'
+            data-dtype='Number'
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class='sheet-tabs tabs' data-group='primary'>
+    <a class='item' data-tab='description'>Description</a>
+    <a class='item' data-tab='attributes'>Attributes</a>
+    <a class='item' data-tab='skills'>Skills</a>
+    <a class='item' data-tab='features'>Features</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class='sheet-body'>
+
+    {{! Description Tab }}
+    <div class='tab' data-group='primary' data-tab='description'>
+      {{editor
+        enrichedDescription
+        target='system.description'
+        engine='prosemirror'
+        button=true
+        editable=editable
+      }}
+    </div>
+
+    {{! Attributes Tab }}
+    <div class='tab attributes' data-group='primary' data-tab='attributes'>
+      <h3>Weapon Properties</h3>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Rarity</label>
+          <select name='system.rarity' data-dtype='String'>
+            <option value='common' {{#if (eq system.rarity 'common')}}selected{{/if}}>Common</option>
+            <option value='uncommon' {{#if (eq system.rarity 'uncommon')}}selected{{/if}}>Uncommon</option>
+            <option value='rare' {{#if (eq system.rarity 'rare')}}selected{{/if}}>Rare</option>
+            <option value='legendary' {{#if (eq system.rarity 'legendary')}}selected{{/if}}>Legendary</option>
+            <option value='mythic' {{#if (eq system.rarity 'mythic')}}selected{{/if}}>Mythic</option>
+            <option value='celestial' {{#if (eq system.rarity 'celestial')}}selected{{/if}}>Celestial</option>
+          </select>
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Effort (Stamina Cost)</label>
+          <input
+            type='text'
+            name='system.effort'
+            value='{{system.effort}}'
+            data-dtype='Number'
+          />
+        </div>
+
+        <div class='resource grid-span-2'>
+          <label class='resource-label'>Range</label>
+          <input
+            type='text'
+            name='system.range'
+            value='{{system.range}}'
+            placeholder='melee, 30 feet, 60/120 feet, etc.'
+            data-dtype='String'
+          />
+        </div>
+      </div>
+
+      <h3>Damage/Attack Roll</h3>
+      <div class='resource'>
+        <label class='resource-label'>Roll Formula:</label>
+        <span>{{system.formula}}</span>
+        <div class='grid grid-4col'>
+          <div class='grid-span-1'>
+            <label class='resource-label'>Number of Dice</label>
+            <input
+              type='text'
+              name='system.roll.diceNum'
+              value='{{system.roll.diceNum}}'
+              data-dtype='Number'
+            />
+          </div>
+          <div class='grid-span-1'>
+            <label class='resource-label'>Die Size</label>
+            <input
+              type='text'
+              name='system.roll.diceSize'
+              value='{{system.roll.diceSize}}'
+              data-dtype='String'
+            />
+          </div>
+          <div class='grid-span-2'>
+            <label class='resource-label'>Roll Modifier</label>
+            <input
+              type='text'
+              name='system.roll.diceBonus'
+              value='{{system.roll.diceBonus}}'
+              data-dtype='String'
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{! Skills Tab }}
+    <div class='tab skills' data-group='primary' data-tab='skills'>
+      <div class='granted-skills'>
+        <h3>Granted Skills</h3>
+        <p class='notes'>This weapon grants the following combat skills to characters who equip it.</p>
+        <ol class='granted-skills-list'>
+          {{#each system.grantedSkills}}
+          <li class='granted-skill flexrow' data-index='{{@index}}'>
+            <div class='skill-info'>
+              <input
+                type='text'
+                name='system.grantedSkills.{{@index}}.skillUuid'
+                value='{{skillUuid}}'
+                placeholder='Skill UUID'
+                data-dtype='String'
+              />
+              <input
+                type='number'
+                name='system.grantedSkills.{{@index}}.level'
+                value='{{level}}'
+                data-dtype='Number'
+                min='0'
+                title='Level granted'
+              />
+            </div>
+            <a class='granted-skill-delete' title='Remove Skill'><i class='fas fa-trash'></i></a>
+          </li>
+          {{/each}}
+        </ol>
+        <a class='granted-skill-add'><i class='fas fa-plus'></i> Add Skill</a>
+      </div>
+    </div>
+
+    {{! Features Tab }}
+    <div class='tab features' data-group='primary' data-tab='features'>
+      <div class='granted-features'>
+        <h3>Granted Features</h3>
+        <p class='notes'>Special abilities or properties this weapon grants. Higher rarity weapons should have more features.</p>
+        <ol class='granted-features-list'>
+          {{#each system.grantedFeatures}}
+          <li class='granted-feature flexrow' data-index='{{@index}}'>
+            <div class='feature-info'>
+              <input
+                type='text'
+                name='system.grantedFeatures.{{@index}}.featureUuid'
+                value='{{featureUuid}}'
+                placeholder='Feature UUID'
+                data-dtype='String'
+              />
+              <input
+                type='number'
+                name='system.grantedFeatures.{{@index}}.level'
+                value='{{level}}'
+                data-dtype='Number'
+                min='0'
+                title='Level required'
+              />
+            </div>
+            <a class='granted-feature-delete' title='Remove Feature'><i class='fas fa-trash'></i></a>
+          </li>
+          {{/each}}
+        </ol>
+        <a class='granted-feature-add'><i class='fas fa-plus'></i> Add Feature</a>
+      </div>
+    </div>
+  </section>
+</form>
