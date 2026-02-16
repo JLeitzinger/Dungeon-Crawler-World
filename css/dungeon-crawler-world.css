@@ -2066,14 +2066,48 @@
   border-left: 3px solid;
   border-radius: 3px;
   font-size: 13px;
+  gap: 10px;
 }
-.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-name {
+.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-info .weapon-name {
   font-weight: 500;
 }
-.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-effort {
+.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-info .weapon-effort {
   font-size: 11px;
   color: #99aabb;
   font-style: italic;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .damage-roll-button {
+  padding: 4px 10px;
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(136, 0, 255, 0.2) 100%);
+  border: 1px solid rgba(255, 0, 255, 0.4);
+  border-radius: 4px;
+  color: #ff00ff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .damage-roll-button i {
+  margin-right: 4px;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .damage-roll-button:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.3) 0%, rgba(136, 0, 255, 0.3) 100%);
+  border-color: rgba(255, 0, 255, 0.6);
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
+  color: #f0f0f5;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .damage-roll-button:active {
+  transform: translateY(1px);
 }
 .dcc-roll-card .equipped-weapons-section .weapon-item.common {
   border-left-color: #778899;
@@ -2273,4 +2307,65 @@
 .dcc-roll-card .roll-details .all-sixes-notice i {
   margin-right: 6px;
   color: #ffd700;
+}
+
+.damage-roll-card .damage-header {
+  background: linear-gradient(90deg, rgba(255, 102, 0, 0.15) 0%, rgba(255, 0, 0, 0.15) 100%);
+  border-bottom: 1px solid rgba(255, 102, 0, 0.3);
+}
+.damage-roll-card .damage-header .weapon-name {
+  color: #ff6600;
+  text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+}
+.damage-roll-card .damage-total-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 16px;
+  background: linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 0, 0, 0.1) 100%);
+}
+.damage-roll-card .damage-total-section .damage-icon {
+  font-size: 48px;
+  color: #ff6600;
+  text-shadow: 0 0 20px rgba(255, 102, 0, 0.6);
+  animation: pulse-glow 2s infinite;
+}
+.damage-roll-card .damage-total-section .damage-amount {
+  text-align: center;
+}
+.damage-roll-card .damage-total-section .damage-amount .damage-label {
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #99aabb;
+  margin-bottom: 6px;
+}
+.damage-roll-card .damage-total-section .damage-amount .damage-value {
+  font-family: "Orbitron", sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: #ff6600;
+  text-shadow: 0 0 25px rgba(255, 102, 0, 0.7);
+  line-height: 1;
+}
+.damage-roll-card .formula-section {
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 102, 0, 0.2);
+  font-size: 12px;
+  color: #99aabb;
+  text-align: center;
+}
+.damage-roll-card .formula-section .formula-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 6px;
+}
+.damage-roll-card .formula-section .formula-text {
+  font-family: monospace;
+  color: #ff6600;
 }

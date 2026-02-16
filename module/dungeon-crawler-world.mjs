@@ -7,6 +7,7 @@ import { dccworldItemSheet } from './sheets/item-sheet.mjs';
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DCC_WORLD } from './helpers/config.mjs';
+import { initializeChatListeners } from './helpers/dice.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
 
@@ -88,6 +89,9 @@ Hooks.once('init', async function () {
     types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon'],
     label: 'DCC_WORLD.SheetLabels.Item',
   });
+
+  // Initialize chat message listeners
+  initializeChatListeners();
 
   // Preload Handlebars templates.
   return preloadHandlebarsTemplates();

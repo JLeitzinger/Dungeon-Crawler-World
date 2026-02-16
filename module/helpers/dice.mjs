@@ -97,6 +97,7 @@ export async function sendSkillRollToChat(rollResult, options = {}) {
     equippedWeapons = actor.items?.filter(i =>
       i.type === 'weapon' && i.system?.equipped === true
     ).map(w => ({
+      id: w.id,
       name: w.name,
       rarity: w.system.rarity || 'common',
       effort: w.system.effort || 0
@@ -105,6 +106,7 @@ export async function sendSkillRollToChat(rollResult, options = {}) {
 
   // Prepare template data
   const templateData = {
+    actorId: actor.id,
     actorName: actor.name,
     actionVerb,
     skillName,
@@ -197,4 +199,82 @@ export async function sendContestedRollToChat(contestResult, options = {}) {
   };
 
   return ChatMessage.create(chatData);
+}
+
+/**
+ * Roll weapon damage and send to chat
+ * @param {Actor} actor - The actor rolling damage
+ * @param {string} weaponId - The ID of the weapon to roll damage for
+ * @param {Object} options - Additional options
+ */
+export async function rollWeaponDamage(actor, weaponId, options = {}) {
+  const weapon = actor.items.get(weaponId);
+
+  if (!weapon || weapon.type !== 'weapon') {
+    ui.notifications.error('Weapon not found!');
+    return null;
+  }
+
+  // Get the damage formula
+  const formula = weapon.system.formula;
+  if (!formula) {
+    ui.notifications.warn(`${weapon.name} has no damage formula!`);
+    return null;
+  }
+
+  // Roll the damage using actor's roll data
+  const rollData = actor.getRollData();
+  const roll = await new Roll(formula, rollData).evaluate();
+
+  // Prepare template data
+  const templateData = {
+    actorName: actor.name,
+    weaponName: weapon.name,
+    total: roll.total,
+    formula: formula,
+    showFormula: options.showFormula !== false
+  };
+
+  // Render the template
+  const content = await renderTemplate(
+    'systems/dungeon-crawler-world/templates/chat/damage-roll-card.hbs',
+    templateData
+  );
+
+  const chatData = {
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content,
+    sound: CONFIG.sounds.dice,
+    rolls: [roll],
+    ...options
+  };
+
+  return ChatMessage.create(chatData);
+}
+
+/**
+ * Initialize chat message listeners for damage roll buttons
+ * Call this during system initialization
+ */
+export function initializeChatListeners() {
+  Hooks.on('renderChatMessage', (message, html) => {
+    // Add click handler for damage roll buttons
+    html.find('.damage-roll-button').click(async (event) => {
+      event.preventDefault();
+      const button = $(event.currentTarget);
+      const actorId = button.data('actor-id');
+      const weaponId = button.data('weapon-id');
+
+      // Get the actor
+      const actor = game.actors.get(actorId);
+      if (!actor) {
+        ui.notifications.error('Actor not found!');
+        return;
+      }
+
+      // Roll the damage
+      await rollWeaponDamage(actor, weaponId);
+    });
+  });
 }

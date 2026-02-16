@@ -1,0 +1,27 @@
+<div class="dcc-roll-card damage-roll-card">
+  {{!-- Header --}}
+  <div class="roll-card-header damage-header">
+    <div class="action-text">
+      <strong>{{actorName}}</strong> deals damage with <span class="weapon-name">{{weaponName}}</span>!
+    </div>
+  </div>
+
+  {{!-- Damage amount --}}
+  <div class="damage-total-section">
+    <div class="damage-icon">
+      <i class="fas fa-burst"></i>
+    </div>
+    <div class="damage-amount">
+      <div class="damage-label">Damage</div>
+      <div class="damage-value">{{total}}</div>
+    </div>
+  </div>
+
+  {{!-- Optional: Show formula used --}}
+  {{#if showFormula}}
+  <div class="formula-section">
+    <span class="formula-label">Formula:</span>
+    <span class="formula-text">{{formula}}</span>
+  </div>
+  {{/if}}
+</div>

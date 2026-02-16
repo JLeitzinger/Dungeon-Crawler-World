@@ -16,5 +16,6 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/dungeon-crawler-world/templates/item/parts/item-effects.hbs',
     // Chat card templates
     'systems/dungeon-crawler-world/templates/chat/skill-roll-card.hbs',
+    'systems/dungeon-crawler-world/templates/chat/damage-roll-card.hbs',
   ]);
 };
