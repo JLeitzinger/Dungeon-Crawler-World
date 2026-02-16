@@ -107,8 +107,26 @@ export class dccworldActor extends Actor {
     const rollLevel = options.customLevel ? Math.min(options.customLevel, skill.level) : skill.level;
     const isMaxLevel = rollLevel === skill.level;
 
-    // Calculate effort cost (custom or default)
-    const effortCost = options.customEffort !== undefined ? options.customEffort : (skill.effort || 0);
+    // Calculate effort cost from equipped weapons that grant this skill
+    let equippedWeaponEffort = 0;
+    const equippedWeapons = this.items.filter(i =>
+      i.type === 'weapon' && i.system?.equipped === true
+    );
+
+    for (const weapon of equippedWeapons) {
+      const grantedSkills = weapon.system?.grantedSkills || [];
+      // Check if this weapon grants the skill being rolled
+      const grantsThisSkill = grantedSkills.some(gs => gs.skillUuid === skillUuid);
+      if (grantsThisSkill) {
+        equippedWeaponEffort += (weapon.system?.effort || 0);
+      }
+    }
+
+    // Total effort cost = sum of equipped weapon efforts × number of dice rolled
+    // Use customEffort if explicitly provided, otherwise calculate from weapons or use skill effort
+    const effortCost = options.customEffort !== undefined
+      ? options.customEffort
+      : (equippedWeaponEffort > 0 ? equippedWeaponEffort * rollLevel : (skill.effort || 0));
 
     // Check if character has enough stamina
     if (effortCost > 0 && this.system.stamina.value < effortCost) {
@@ -703,6 +721,21 @@ export class dccworldActor extends Actor {
       return null;
     }
 
+    // Calculate total effort from all equipped weapons for each skill
+    const allEquippedWeapons = this.items.filter(i => i.type === 'weapon' && i.system?.equipped === true);
+    const skillEffortMap = {};
+
+    for (const skill of availableSkills) {
+      let totalEffort = 0;
+      for (const w of allEquippedWeapons) {
+        const weaponSkills = w.system?.grantedSkills || [];
+        if (weaponSkills.some(gs => gs.skillUuid === skill.uuid)) {
+          totalEffort += (w.system?.effort || 0);
+        }
+      }
+      skillEffortMap[skill.uuid] = totalEffort;
+    }
+
     // Show dialog to select skill and level
     return new Promise((resolve) => {
       new Dialog({
@@ -724,12 +757,13 @@ export class dccworldActor extends Actor {
             </div>
             <div class="form-group">
               <p><strong>Weapon:</strong> ${weapon.name} (${weapon.system.rarity})</p>
-              <p><strong>Base Effort:</strong> ${weapon.system.effort}</p>
-              <p><strong>Stamina Cost:</strong> <span id="stamina-cost">${weapon.system.effort * (availableSkills[0]?.maxLevel || 1)}</span></p>
-              <p class="notes">Cost = Weapon Effort × Skill Level</p>
+              <p><strong>Total Equipped Weapon Effort:</strong> <span id="weapon-effort">${skillEffortMap[availableSkills[0]?.uuid] || 0}</span></p>
+              <p><strong>Stamina Cost:</strong> <span id="stamina-cost">${(skillEffortMap[availableSkills[0]?.uuid] || 0) * (availableSkills[0]?.maxLevel || 1)}</span></p>
+              <p class="notes">Cost = Total Equipped Weapon Effort × Skill Level</p>
             </div>
           </form>
           <script>
+            const skillEfforts = ${JSON.stringify(skillEffortMap)};
             document.querySelector('select[name="skillUuid"]').addEventListener('change', (e) => {
               const skillUuid = e.target.value;
               const skill = ${JSON.stringify(availableSkills)}.find(s => s.uuid === skillUuid);
@@ -742,12 +776,15 @@ export class dccworldActor extends Actor {
                 if (i === skill.maxLevel) option.selected = true;
                 levelSelect.appendChild(option);
               }
+              document.getElementById('weapon-effort').textContent = skillEfforts[skillUuid] || 0;
               updateStaminaCost();
             });
             document.getElementById('skill-level-select').addEventListener('change', updateStaminaCost);
             function updateStaminaCost() {
+              const skillUuid = document.querySelector('select[name="skillUuid"]').value;
               const level = parseInt(document.getElementById('skill-level-select').value);
-              const cost = ${weapon.system.effort} * level;
+              const effort = skillEfforts[skillUuid] || 0;
+              const cost = effort * level;
               document.getElementById('stamina-cost').textContent = cost;
             }
           </script>
@@ -760,19 +797,10 @@ export class dccworldActor extends Actor {
               const formData = new FormData(html[0].querySelector('form'));
               const skillUuid = formData.get('skillUuid');
               const skillLevel = parseInt(formData.get('skillLevel'));
-              const effortCost = weapon.system.effort * skillLevel;
 
-              // Check stamina
-              if (effortCost > this.system.stamina.value) {
-                ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
-                resolve(null);
-                return;
-              }
-
-              // Roll the skill with weapon effort cost
+              // Roll the skill (effort cost will be calculated automatically from equipped weapons)
               const result = await this.rollSkill(skillUuid, {
                 customLevel: skillLevel,
-                customEffort: effortCost,
                 sendToChat: true,
                 checkImprovement: true
               });
