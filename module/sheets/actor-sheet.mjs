@@ -114,6 +114,7 @@ export class dccworldActorSheet extends ActorSheet {
     const gear = [];
     const features = [];
     const skillItems = [];
+    const weapons = [];
     const spells = {
       0: [],
       1: [],
@@ -134,6 +135,10 @@ export class dccworldActorSheet extends ActorSheet {
       if (i.type === 'item') {
         gear.push(i);
       }
+      // Append to weapons
+      else if (i.type === 'weapon') {
+        weapons.push(i);
+      }
       // Append to features (including those aggregated from race)
       else if (i.type === 'feature') {
         features.push(i);
@@ -152,6 +157,7 @@ export class dccworldActorSheet extends ActorSheet {
 
     // Assign and return
     context.gear = gear;
+    context.weapons = weapons;
     context.features = features;
     context.skillItems = skillItems;
     context.spells = spells;
@@ -317,6 +323,12 @@ export class dccworldActorSheet extends ActorSheet {
     // Spell rolls
     html.on('click', '.spell-roll', this._onSpellRoll.bind(this));
 
+    // Weapon rolls
+    html.on('click', '.weapon-roll', this._onWeaponRoll.bind(this));
+
+    // Weapon equip toggle
+    html.on('click', '.weapon-equip-toggle', this._onWeaponEquipToggle.bind(this));
+
     // Skill category filters
     html.on('click', '.skill-filter', this._onSkillFilter.bind(this));
 
@@ -419,6 +431,42 @@ export class dccworldActorSheet extends ActorSheet {
     const itemId = $(event.currentTarget).closest('.skill').data('itemId');
     if (itemId) {
       await this.actor.rollSpell(itemId);
+    }
+  }
+
+  /**
+   * Handle weapon rolls
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onWeaponRoll(event) {
+    event.preventDefault();
+    const itemId = $(event.currentTarget).closest('.item').data('itemId');
+    if (itemId) {
+      await this.actor.rollWeapon(itemId);
+    }
+  }
+
+  /**
+   * Handle weapon equip/unequip toggle
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onWeaponEquipToggle(event) {
+    event.preventDefault();
+    const button = $(event.currentTarget);
+    const itemId = button.closest('.item').data('itemId');
+    const weapon = this.actor.items.get(itemId);
+
+    if (weapon && weapon.type === 'weapon') {
+      const newEquippedState = !weapon.system.equipped;
+      await weapon.update({ 'system.equipped': newEquippedState });
+
+      if (newEquippedState) {
+        ui.notifications.info(`${weapon.name} equipped`);
+      } else {
+        ui.notifications.info(`${weapon.name} unequipped`);
+      }
     }
   }
 

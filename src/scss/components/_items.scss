@@ -842,3 +842,96 @@
     }
   }
 }
+
+// ==========================================
+// Weapons List Styling
+// ==========================================
+
+// Weapon item special styling
+.item.weapon {
+  border-left: 3px solid $c-orange;
+
+  &.equipped {
+    background: rgba(0, 255, 136, 0.08);
+    border-color: rgba(0, 255, 136, 0.3);
+    border-left-color: $c-green;
+
+    &::before {
+      background: $c-green;
+      box-shadow: $glow-green;
+    }
+
+    .item-name h4 {
+      color: $c-green;
+    }
+  }
+
+  .item-name h4 {
+    color: $c-orange;
+
+    &:hover {
+      color: $c-bright;
+    }
+  }
+}
+
+// Weapon rarity styling
+.item-rarity {
+  flex: 0 0 100px;
+  padding: 0 8px;
+
+  .rarity-common {
+    color: $c-faint;
+    text-transform: capitalize;
+  }
+
+  .rarity-uncommon {
+    color: $c-cyan;
+    text-transform: capitalize;
+  }
+
+  .rarity-rare {
+    color: $c-green;
+    text-shadow: $glow-green;
+    text-transform: capitalize;
+  }
+
+  .rarity-legendary {
+    color: $c-magenta;
+    text-shadow: $glow-magenta;
+    text-transform: capitalize;
+  }
+
+  .rarity-mythic {
+    color: $c-orange;
+    text-shadow: 0 0 8px rgba(255, 102, 0, 0.6);
+    text-transform: capitalize;
+  }
+
+  .rarity-celestial {
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    text-transform: capitalize;
+  }
+}
+
+// Weapon effort cost
+.item-effort {
+  flex: 0 0 60px;
+  padding: 0 8px;
+  color: $c-orange;
+  font-weight: 600;
+}
+
+// Weapon equip toggle button
+.weapon-equip-toggle {
+  &.equipped {
+    color: $c-green !important;
+    border-color: rgba(0, 255, 136, 0.5) !important;
+    background: rgba(0, 255, 136, 0.15) !important;
+
+    &:hover {
+      box-shadow: $glow-green !important;
+    }
+  }
+}

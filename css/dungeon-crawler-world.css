@@ -1692,6 +1692,73 @@
   border-color: #ff00ff;
   box-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
 }
+.dungeon-crawler-world .item.weapon {
+  border-left: 3px solid #ff6600;
+}
+.dungeon-crawler-world .item.weapon.equipped {
+  background: rgba(0, 255, 136, 0.08);
+  border-color: rgba(0, 255, 136, 0.3);
+  border-left-color: #00ff88;
+}
+.dungeon-crawler-world .item.weapon.equipped::before {
+  background: #00ff88;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+}
+.dungeon-crawler-world .item.weapon.equipped .item-name h4 {
+  color: #00ff88;
+}
+.dungeon-crawler-world .item.weapon .item-name h4 {
+  color: #ff6600;
+}
+.dungeon-crawler-world .item.weapon .item-name h4:hover {
+  color: #ffffff;
+}
+.dungeon-crawler-world .item-rarity {
+  flex: 0 0 100px;
+  padding: 0 8px;
+}
+.dungeon-crawler-world .item-rarity .rarity-common {
+  color: #99aabb;
+  text-transform: capitalize;
+}
+.dungeon-crawler-world .item-rarity .rarity-uncommon {
+  color: #00f7ff;
+  text-transform: capitalize;
+}
+.dungeon-crawler-world .item-rarity .rarity-rare {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
+  text-transform: capitalize;
+}
+.dungeon-crawler-world .item-rarity .rarity-legendary {
+  color: #ff00ff;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
+  text-transform: capitalize;
+}
+.dungeon-crawler-world .item-rarity .rarity-mythic {
+  color: #ff6600;
+  text-shadow: 0 0 8px rgba(255, 102, 0, 0.6);
+  text-transform: capitalize;
+}
+.dungeon-crawler-world .item-rarity .rarity-celestial {
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  text-transform: capitalize;
+}
+.dungeon-crawler-world .item-effort {
+  flex: 0 0 60px;
+  padding: 0 8px;
+  color: #ff6600;
+  font-weight: 600;
+}
+.dungeon-crawler-world .weapon-equip-toggle.equipped {
+  color: #00ff88 !important;
+  border-color: rgba(0, 255, 136, 0.5) !important;
+  background: rgba(0, 255, 136, 0.15) !important;
+}
+.dungeon-crawler-world .weapon-equip-toggle.equipped:hover {
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3) !important;
+}
 .dungeon-crawler-world .effects .item {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(0, 247, 255, 0.15);

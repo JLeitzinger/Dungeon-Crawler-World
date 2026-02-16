@@ -650,4 +650,58 @@ export class dccworldActor extends Actor {
     }).render(true);
   }
 
+  /**
+   * Roll a weapon attack for this actor
+   * @param {string} itemId - The ID of the weapon item to roll
+   * @param {Object} options - Additional options for the roll
+   * @returns {Promise<Roll>} The roll result
+   */
+  async rollWeapon(itemId, options = {}) {
+    const weapon = this.items.get(itemId);
+    if (!weapon || weapon.type !== 'weapon') {
+      ui.notifications.error(`Weapon "${itemId}" not found.`);
+      return null;
+    }
+
+    // Check if weapon is equipped
+    if (!weapon.system.equipped) {
+      ui.notifications.warn(`${weapon.name} is not equipped!`);
+      return null;
+    }
+
+    // Check if character has enough stamina
+    const effortCost = weapon.system.effort || 0;
+    if (effortCost > 0 && this.system.stamina.value < effortCost) {
+      ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
+      return null;
+    }
+
+    // Retrieve roll data
+    const rollData = this.getRollData();
+
+    // Create the roll using the weapon's formula
+    const roll = new Roll(weapon.system.formula, rollData);
+    await roll.evaluate();
+
+    // Deduct stamina after successful attack
+    if (effortCost > 0) {
+      const newStamina = Math.max(0, this.system.stamina.value - effortCost);
+      await this.update({ 'system.stamina.value': newStamina });
+      ui.notifications.info(`-${effortCost} Stamina (${newStamina}/${this.system.stamina.max})`);
+    }
+
+    // Send to chat
+    const speaker = ChatMessage.getSpeaker({ actor: this });
+    const rollMode = game.settings.get('core', 'rollMode');
+    const label = `[${weapon.system.rarity}] ${weapon.name}`;
+
+    await roll.toMessage({
+      speaker: speaker,
+      rollMode: rollMode,
+      flavor: label,
+    });
+
+    return roll;
+  }
+
 }

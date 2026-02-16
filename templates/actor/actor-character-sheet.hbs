@@ -133,6 +133,7 @@
     <a class="item" data-tab="features">Features</a>
     <a class="item" data-tab="description">Description</a>
     <a class="item" data-tab="items">Items</a>
+    <a class="item" data-tab="weapons">Weapons</a>
     <a class="item" data-tab="spells">Spells</a>
     <a class="item" data-tab="effects">Effects</a>
   </nav>
@@ -185,6 +186,11 @@
     {{!-- Owned Items Tab --}}
     <div class="tab items" data-group="primary" data-tab="items">
        {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-items.hbs"}}
+    </div>
+
+    {{!-- Owned Weapons Tab --}}
+    <div class="tab weapons" data-group="primary" data-tab="weapons">
+      {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-weapons.hbs"}}
     </div>
 
     {{!-- Owned Spells Tab --}}

@@ -70,6 +70,12 @@ export default class dccworldWeapon extends dccworldItemBase {
       }
     );
 
+    // Equipped status - determines if weapon grants skills and can be used
+    schema.equipped = new fields.BooleanField({
+      required: true,
+      initial: false
+    });
+
     return schema;
   }
 
