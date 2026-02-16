@@ -97,9 +97,9 @@ export class dccworldActor extends Actor {
       return null;
     }
 
-    // Check if skill item exists on actor
-    if (!skill.id) {
-      ui.notifications.warn(`Skill "${skill.name}" item not found on character. Please add the skill item first.`);
+    // Check if skill is usable (either has a skill item OR is granted by equipped items)
+    if (!skill.id && !skill.sources?.some(s => s.type !== 'skill')) {
+      ui.notifications.warn(`Skill "${skill.name}" is not available. Add the skill item or equip an item that grants it.`);
       return null;
     }
 

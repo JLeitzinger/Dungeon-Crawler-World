@@ -176,9 +176,9 @@ export default class dccworldCharacter extends dccworldActorBase {
       for (const granted of grantedSkills) {
         if (!granted.skillUuid) continue;
 
-        // Extract skill name from UUID: "Compendium.dungeon-crawler-world.skills.Item.Slash" -> "Slash"
+        // Extract skill name from UUID: "Compendium.dcw-content.skills.Item.Slash" -> "Slash"
         let grantedSkillName = null;
-        if (granted.skillUuid.includes('Compendium.dungeon-crawler-world.skills.Item.')) {
+        if (granted.skillUuid.includes('Compendium.') && granted.skillUuid.includes('.skills.Item.')) {
           grantedSkillName = granted.skillUuid.split('.').pop();
           // Capitalize first letter
           grantedSkillName = grantedSkillName.charAt(0).toUpperCase() + grantedSkillName.slice(1);
@@ -270,7 +270,7 @@ export default class dccworldCharacter extends dccworldActorBase {
     }
 
     // If it's a UUID, extract the skill name and try again
-    if (skillIdentifier.includes('Compendium.dungeon-crawler-world.skills.Item.')) {
+    if (skillIdentifier.includes('Compendium.') && skillIdentifier.includes('.skills.Item.')) {
       const skillName = skillIdentifier.split('.').pop();
       // Capitalize first letter
       const normalizedName = skillName.charAt(0).toUpperCase() + skillName.slice(1);
