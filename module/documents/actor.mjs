@@ -80,6 +80,8 @@ export class dccworldActor extends Actor {
    * Roll a skill check for this actor
    * @param {string} skillUuid - The UUID of the skill to roll
    * @param {Object} options - Additional options for the roll
+   * @param {number} options.customLevel - Optional custom skill level to roll at (must be <= actual level)
+   * @param {number} options.customEffort - Optional custom effort cost (for weapon attacks)
    * @returns {Promise<Object>} The roll result
    */
   async rollSkill(skillUuid, options = {}) {
@@ -101,8 +103,14 @@ export class dccworldActor extends Actor {
       return null;
     }
 
+    // Determine the level to roll at
+    const rollLevel = options.customLevel ? Math.min(options.customLevel, skill.level) : skill.level;
+    const isMaxLevel = rollLevel === skill.level;
+
+    // Calculate effort cost (custom or default)
+    const effortCost = options.customEffort !== undefined ? options.customEffort : (skill.effort || 0);
+
     // Check if character has enough stamina
-    const effortCost = skill.effort || 0;
     if (effortCost > 0 && this.system.stamina.value < effortCost) {
       ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
       return null;
@@ -111,7 +119,7 @@ export class dccworldActor extends Actor {
     const statModifier = this.system.getSkillStatModifier(skill);
 
     const rollResult = await rollSkillCheck({
-      skillLevel: skill.level,
+      skillLevel: rollLevel,
       statModifier,
       skillName: skill.name,
       actor: this
@@ -131,8 +139,8 @@ export class dccworldActor extends Actor {
       await sendSkillRollToChat(rollResult, options.chatOptions);
     }
 
-    // Check for skill improvement (all 6s)
-    if (rollResult.allSixes && options.checkImprovement !== false) {
+    // Check for skill improvement (all 6s) - only if rolled at max level
+    if (rollResult.allSixes && isMaxLevel && options.checkImprovement !== false) {
       await this._promptSkillImprovement(skill);
     }
 
@@ -654,7 +662,7 @@ export class dccworldActor extends Actor {
    * Roll a weapon attack for this actor
    * @param {string} itemId - The ID of the weapon item to roll
    * @param {Object} options - Additional options for the roll
-   * @returns {Promise<Roll>} The roll result
+   * @returns {Promise<Object>} The roll result
    */
   async rollWeapon(itemId, options = {}) {
     const weapon = this.items.get(itemId);
@@ -669,39 +677,118 @@ export class dccworldActor extends Actor {
       return null;
     }
 
-    // Check if character has enough stamina
-    const effortCost = weapon.system.effort || 0;
-    if (effortCost > 0 && this.system.stamina.value < effortCost) {
-      ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
+    // Get granted skills
+    const grantedSkills = weapon.system.grantedSkills || [];
+    if (grantedSkills.length === 0) {
+      ui.notifications.warn(`${weapon.name} has no combat skills!`);
       return null;
     }
 
-    // Retrieve roll data
-    const rollData = this.getRollData();
-
-    // Create the roll using the weapon's formula
-    const roll = new Roll(weapon.system.formula, rollData);
-    await roll.evaluate();
-
-    // Deduct stamina after successful attack
-    if (effortCost > 0) {
-      const newStamina = Math.max(0, this.system.stamina.value - effortCost);
-      await this.update({ 'system.stamina.value': newStamina });
-      ui.notifications.info(`-${effortCost} Stamina (${newStamina}/${this.system.stamina.max})`);
+    // For each granted skill, get the character's actual skill level
+    const availableSkills = [];
+    for (const grantedSkill of grantedSkills) {
+      const skill = this.system.getSkill(grantedSkill.skillUuid);
+      if (skill && skill.level > 0) {
+        availableSkills.push({
+          uuid: grantedSkill.skillUuid,
+          name: skill.name,
+          maxLevel: skill.level,
+          category: skill.category
+        });
+      }
     }
 
-    // Send to chat
-    const speaker = ChatMessage.getSpeaker({ actor: this });
-    const rollMode = game.settings.get('core', 'rollMode');
-    const label = `[${weapon.system.rarity}] ${weapon.name}`;
+    if (availableSkills.length === 0) {
+      ui.notifications.warn(`You don't have any of the required skills for ${weapon.name}!`);
+      return null;
+    }
 
-    await roll.toMessage({
-      speaker: speaker,
-      rollMode: rollMode,
-      flavor: label,
+    // Show dialog to select skill and level
+    return new Promise((resolve) => {
+      new Dialog({
+        title: `Attack with ${weapon.name}`,
+        content: `
+          <form>
+            <div class="form-group">
+              <label>Combat Skill:</label>
+              <select name="skillUuid" autofocus>
+                ${availableSkills.map(s => `<option value="${s.uuid}">${s.name} (Level ${s.maxLevel})</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Skill Level to Roll:</label>
+              <select name="skillLevel" id="skill-level-select">
+                ${availableSkills[0] ? Array.from({length: availableSkills[0].maxLevel}, (_, i) => i + 1)
+                  .map(lvl => `<option value="${lvl}" ${lvl === availableSkills[0].maxLevel ? 'selected' : ''}>${lvl}d6</option>`).join('') : ''}
+              </select>
+            </div>
+            <div class="form-group">
+              <p><strong>Weapon:</strong> ${weapon.name} (${weapon.system.rarity})</p>
+              <p><strong>Base Effort:</strong> ${weapon.system.effort}</p>
+              <p><strong>Stamina Cost:</strong> <span id="stamina-cost">${weapon.system.effort * (availableSkills[0]?.maxLevel || 1)}</span></p>
+              <p class="notes">Cost = Weapon Effort × Skill Level</p>
+            </div>
+          </form>
+          <script>
+            document.querySelector('select[name="skillUuid"]').addEventListener('change', (e) => {
+              const skillUuid = e.target.value;
+              const skill = ${JSON.stringify(availableSkills)}.find(s => s.uuid === skillUuid);
+              const levelSelect = document.getElementById('skill-level-select');
+              levelSelect.innerHTML = '';
+              for (let i = 1; i <= skill.maxLevel; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.text = i + 'd6';
+                if (i === skill.maxLevel) option.selected = true;
+                levelSelect.appendChild(option);
+              }
+              updateStaminaCost();
+            });
+            document.getElementById('skill-level-select').addEventListener('change', updateStaminaCost);
+            function updateStaminaCost() {
+              const level = parseInt(document.getElementById('skill-level-select').value);
+              const cost = ${weapon.system.effort} * level;
+              document.getElementById('stamina-cost').textContent = cost;
+            }
+          </script>
+        `,
+        buttons: {
+          attack: {
+            icon: '<i class="fas fa-dice-d20"></i>',
+            label: "Attack",
+            callback: async (html) => {
+              const formData = new FormData(html[0].querySelector('form'));
+              const skillUuid = formData.get('skillUuid');
+              const skillLevel = parseInt(formData.get('skillLevel'));
+              const effortCost = weapon.system.effort * skillLevel;
+
+              // Check stamina
+              if (effortCost > this.system.stamina.value) {
+                ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
+                resolve(null);
+                return;
+              }
+
+              // Roll the skill with weapon effort cost
+              const result = await this.rollSkill(skillUuid, {
+                customLevel: skillLevel,
+                customEffort: effortCost,
+                sendToChat: true,
+                checkImprovement: true
+              });
+
+              resolve(result);
+            }
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => resolve(null)
+          }
+        },
+        default: "attack"
+      }).render(true);
     });
-
-    return roll;
   }
 
 }
