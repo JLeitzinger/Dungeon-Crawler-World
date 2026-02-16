@@ -113,6 +113,20 @@ Handlebars.registerHelper('divide', function (a, b) {
   return a / b;
 });
 
+// Addition helper
+Handlebars.registerHelper('add', function (a, b) {
+  return a + b;
+});
+
+// Range helper for creating arrays (e.g., for dropdowns)
+Handlebars.registerHelper('range', function (start, end) {
+  const arr = [];
+  for (let i = start; i < end; i++) {
+    arr.push(i);
+  }
+  return arr;
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */

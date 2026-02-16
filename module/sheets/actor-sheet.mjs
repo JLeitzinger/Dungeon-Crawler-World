@@ -415,9 +415,20 @@ export class dccworldActorSheet extends ActorSheet {
    */
   async _onSkillRoll(event) {
     event.preventDefault();
-    const skillUuid = $(event.currentTarget).closest('.skill').data('skillUuid');
+    const skillElement = $(event.currentTarget).closest('.skill');
+    const skillUuid = skillElement.data('skillUuid');
+
     if (skillUuid) {
-      await this.actor.rollSkill(skillUuid);
+      // Get the selected level from the dropdown
+      const levelSelect = skillElement.find('.skill-level-select');
+      const selectedLevel = levelSelect.length ? parseInt(levelSelect.val()) : null;
+
+      // Roll with custom level if selected
+      if (selectedLevel) {
+        await this.actor.rollSkill(skillUuid, { customLevel: selectedLevel });
+      } else {
+        await this.actor.rollSkill(skillUuid);
+      }
     }
   }
 

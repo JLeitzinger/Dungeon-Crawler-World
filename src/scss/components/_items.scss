@@ -935,3 +935,49 @@
     }
   }
 }
+
+// Skill roll level dropdown
+.skill-roll-level {
+  flex: 0 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .skill-level-select {
+    width: 60px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    border-radius: $border-radius-tech;
+    color: $c-cyan;
+    font-family: $font-secondary;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: rgba(0, 247, 255, 0.1);
+      border-color: $c-cyan;
+      box-shadow: $glow-cyan;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $c-cyan;
+      box-shadow: $glow-cyan;
+    }
+
+    option {
+      background: $c-dark;
+      color: $c-cyan;
+    }
+  }
+}
+
+// Update skill level header
+.skill-roll-level-header {
+  flex: 0 0 80px;
+  text-align: center;
+}

@@ -167,6 +167,11 @@ export default class dccworldCharacter extends dccworldActorBase {
 
     // Second pass: add bonuses from grantedSkills on all items
     for (const item of items) {
+      // Weapons only grant skills when equipped
+      if (item.type === 'weapon' && !item.system?.equipped) {
+        continue;
+      }
+
       const grantedSkills = item.system?.grantedSkills || [];
       for (const granted of grantedSkills) {
         if (!granted.skillUuid) continue;

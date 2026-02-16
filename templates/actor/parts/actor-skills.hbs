@@ -12,7 +12,8 @@
   <div class="skills-header items-header flexrow">
     <div class="skill-name-header">Name</div>
     <div class="skill-info-header flexrow">
-      <div class="skill-level-header">Level</div>
+      <div class="skill-roll-level-header">Roll At</div>
+      <div class="skill-level-header">Max Level</div>
       <div class="skill-stat-header">Stat</div>
       <div class="skill-category-header">Category</div>
     </div>
@@ -38,9 +39,16 @@
       </div>
 
       <div class="skill-info flexrow">
+        <div class="skill-roll-level">
+          <select class="skill-level-select" data-skill-uuid="{{skill.uuid}}" data-max-level="{{skill.level}}">
+            {{#each (range 1 (add skill.level 1))}}
+              <option value="{{this}}" {{#if (eq this ../skill.level)}}selected{{/if}}>{{this}}d6</option>
+            {{/each}}
+          </select>
+        </div>
+
         <div class="skill-level">
           <span class="level-value">{{skill.level}}</span>
-          <span class="dice-pool">({{skill.level}}d6{{#if skill.relatedStat}}+{{lookup (lookup @root.system.abilities skill.relatedStat) 'mod'}}{{/if}})</span>
           {{#if skill.effort}}
             <span class="effort-cost">{{skill.effort}} stamina</span>
           {{/if}}

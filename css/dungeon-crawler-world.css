@@ -1759,6 +1759,44 @@
 .dungeon-crawler-world .weapon-equip-toggle.equipped:hover {
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3) !important;
 }
+.dungeon-crawler-world .skill-roll-level {
+  flex: 0 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dungeon-crawler-world .skill-roll-level .skill-level-select {
+  width: 60px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 2px;
+  color: #00f7ff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.dungeon-crawler-world .skill-roll-level .skill-level-select:hover {
+  background: rgba(0, 247, 255, 0.1);
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+}
+.dungeon-crawler-world .skill-roll-level .skill-level-select:focus {
+  outline: none;
+  border-color: #00f7ff;
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+}
+.dungeon-crawler-world .skill-roll-level .skill-level-select option {
+  background: #0a0a0f;
+  color: #00f7ff;
+}
+.dungeon-crawler-world .skill-roll-level-header {
+  flex: 0 0 80px;
+  text-align: center;
+}
 .dungeon-crawler-world .effects .item {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(0, 247, 255, 0.15);
