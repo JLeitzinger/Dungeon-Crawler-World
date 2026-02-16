@@ -176,13 +176,43 @@
     </div>
 
     {{! Features Tab }}
-    <div class='tab' data-group='primary' data-tab='features'>
-      <h3>Class Features by Level</h3>
+    <div class='tab features' data-group='primary' data-tab='features'>
+      <div class='granted-features'>
+        <h3>Granted Features</h3>
+        <p class='notes'>This class grants the following features to characters who have it.</p>
+        <ol class='granted-features-list'>
+          {{#each system.grantedFeatures}}
+          <li class='granted-feature flexrow' data-index='{{@index}}'>
+            <div class='feature-info'>
+              <input
+                type='text'
+                name='system.grantedFeatures.{{@index}}.featureUuid'
+                value='{{featureUuid}}'
+                placeholder='Feature UUID'
+                data-dtype='String'
+              />
+              <input
+                type='number'
+                name='system.grantedFeatures.{{@index}}.level'
+                value='{{level}}'
+                data-dtype='Number'
+                min='0'
+                title='Level granted'
+              />
+            </div>
+            <a class='granted-feature-delete' title='Remove Feature'><i class='fas fa-trash'></i></a>
+          </li>
+          {{/each}}
+        </ol>
+        <a class='granted-feature-add'><i class='fas fa-plus'></i> Add Feature</a>
+      </div>
+
+      <h3>Class Features by Level (Notes)</h3>
       <div class='resource'>
         <textarea
           name='system.features'
-          rows='15'
-          placeholder='List class features gained at each level...'
+          rows='10'
+          placeholder='Optional freeform notes about class features gained at each level...'
         >{{system.features}}</textarea>
       </div>
     </div>

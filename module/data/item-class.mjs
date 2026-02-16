@@ -102,10 +102,17 @@ export default class dccworldClass extends dccworldItemBase {
       cha: new fields.BooleanField({ initial: false })
     });
 
-    // Granted features (array of feature UUIDs)
+    // Granted features (array of feature objects with UUID and level)
     schema.grantedFeatures = new fields.ArrayField(
-      new fields.StringField({ required: false, blank: false }),
-      { required: true, initial: [] }
+      new fields.ObjectField({
+        required: true,
+        nullable: false,
+        initial: {}
+      }),
+      {
+        required: true,
+        initial: []
+      }
     );
 
     // Class features by level (stored as text for now)

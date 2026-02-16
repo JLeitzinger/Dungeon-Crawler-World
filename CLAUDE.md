@@ -62,6 +62,78 @@ npm run watch
 
 The system uses SCSS for styling. Source files are in `src/scss/` and compile to `css/dungeon-crawler-world.css`.
 
+## Testing Changes
+
+**CRITICAL: Always test changes in Foundry VTT before committing!** This catches errors during system initialization that could break the system for users.
+
+### Local Foundry VTT Installation
+- **Path**: `/home/elaboratejohnny/FoundryVTT/`
+- This is a local installation for testing system changes
+
+### Testing Workflow
+
+**After making any code changes, especially to data models, sheets, or core system files:**
+
+1. **Start Foundry VTT and monitor output:**
+   ```bash
+   cd /home/FoundryVTT
+   node resources/app/main.js
+   ```
+
+2. **Watch the console output carefully** for errors during startup, especially:
+   - System initialization errors
+   - Data model registration errors
+   - Template loading errors
+   - JavaScript syntax errors
+   - Schema validation errors
+
+3. **Common error patterns to watch for:**
+   ```
+   ERROR | System initialization failed
+   ERROR | Invalid data model schema
+   ERROR | Template not found
+   ERROR | Uncaught TypeError
+   ERROR | Cannot read property 'X' of undefined
+   ```
+
+4. **If errors occur:**
+   - **DO NOT commit the changes**
+   - Read the error message and stack trace
+   - Identify which file and line caused the error
+   - Fix the issue in the code
+   - Restart Foundry and test again
+   - Repeat until no errors appear
+
+5. **After Foundry starts successfully:**
+   - Access the web interface (usually http://localhost:30000)
+   - Create or load a test world using the Dungeon Crawler World system
+   - Test the specific functionality you changed:
+     - Open character/item sheets
+     - Verify new fields appear correctly
+     - Try adding/removing items
+     - Check that data saves properly
+   - Look for errors in the browser console (F12)
+
+6. **Only commit if:**
+   - Foundry starts without errors
+   - The system loads properly in a world
+   - Your changes work as expected
+   - No console errors appear in normal usage
+
+### Quick Test Command
+```bash
+# Start Foundry VTT from the installation directory
+cd /home/elaboratejohnny/FoundryVTT && node resources/app/main.js
+```
+
+### Testing Data Model Changes
+
+When changing data models (e.g., adding/modifying fields in `module/data/`):
+- Existing items may have old data structure
+- You may need to delete and recreate test items
+- Check that both new and existing items work
+- Verify that item sheets display all fields correctly
+
 ## Architecture Overview
 
 ### Data Model System

@@ -215,19 +215,19 @@
         <h3>Granted Features</h3>
         <p class='notes'>This race grants the following features to characters who have it.</p>
         <ol class='granted-features-list'>
-          {{#each system.features}}
+          {{#each system.grantedFeatures}}
           <li class='granted-feature flexrow' data-index='{{@index}}'>
             <div class='feature-info'>
               <input
                 type='text'
-                name='system.features.{{@index}}.featureUuid'
+                name='system.grantedFeatures.{{@index}}.featureUuid'
                 value='{{featureUuid}}'
                 placeholder='Feature UUID'
                 data-dtype='String'
               />
               <input
                 type='number'
-                name='system.features.{{@index}}.level'
+                name='system.grantedFeatures.{{@index}}.level'
                 value='{{level}}'
                 data-dtype='Number'
                 min='0'

@@ -67,9 +67,9 @@ export default class dccworldRace extends dccworldItemBase {
       initial: "Common"
     });
 
-    // Racial features (references to feature items)
+    // Granted features (references to feature items)
     // Format: Array of {featureUuid: string, level: number}
-    schema.features = new fields.ArrayField(
+    schema.grantedFeatures = new fields.ArrayField(
       new fields.ObjectField({
         required: true,
         nullable: false,

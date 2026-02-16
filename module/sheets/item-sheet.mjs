@@ -132,9 +132,9 @@ export class dccworldItemSheet extends ItemSheet {
    */
   async _onAddGrantedFeature(event) {
     event.preventDefault();
-    const features = foundry.utils.duplicate(this.item.system.features || []);
+    const features = foundry.utils.duplicate(this.item.system.grantedFeatures || []);
     features.push({ featureUuid: '', level: 1 });
-    await this.item.update({ 'system.features': features });
+    await this.item.update({ 'system.grantedFeatures': features });
   }
 
   /**
@@ -146,8 +146,8 @@ export class dccworldItemSheet extends ItemSheet {
     event.preventDefault();
     const li = $(event.currentTarget).closest('.granted-feature');
     const index = li.data('index');
-    const features = foundry.utils.duplicate(this.item.system.features || []);
+    const features = foundry.utils.duplicate(this.item.system.grantedFeatures || []);
     features.splice(index, 1);
-    await this.item.update({ 'system.features': features });
+    await this.item.update({ 'system.grantedFeatures': features });
   }
 }
