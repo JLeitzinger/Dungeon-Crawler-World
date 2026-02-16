@@ -271,6 +271,41 @@ export class dccworldActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Restore skill filter state
+    if (this._activeSkillFilter) {
+      const filterButton = html.find(`.skill-filter[data-category="${this._activeSkillFilter}"]`);
+      if (filterButton.length) {
+        filterButton.siblings('.skill-filter').removeClass('active');
+        filterButton.addClass('active');
+
+        // Apply the filter
+        const skillsList = filterButton.closest('.skills-container').find('.skills-list');
+        const skillItems = skillsList.find('.skill');
+        if (this._activeSkillFilter === 'all') {
+          skillItems.show();
+        } else {
+          skillItems.each((i, elem) => {
+            const skillCategory = $(elem).data('skill-category');
+            if (skillCategory === this._activeSkillFilter) {
+              $(elem).show();
+            } else {
+              $(elem).hide();
+            }
+          });
+        }
+      }
+    }
+
+    // Restore skill level dropdown selections
+    if (this._skillLevelSelections) {
+      for (const [skillUuid, level] of Object.entries(this._skillLevelSelections)) {
+        const dropdown = html.find(`.skill-level-select[data-skill-uuid="${skillUuid}"]`);
+        if (dropdown.length) {
+          dropdown.val(level);
+        }
+      }
+    }
+
     // Render the item sheet for viewing/editing prior to the editable check.
     html.on('click', '.item-edit', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
@@ -331,6 +366,21 @@ export class dccworldActorSheet extends ActorSheet {
 
     // Skill category filters
     html.on('click', '.skill-filter', this._onSkillFilter.bind(this));
+
+    // Skill level dropdown changes - save selections
+    html.on('change', '.skill-level-select', (ev) => {
+      const dropdown = $(ev.currentTarget);
+      const skillUuid = dropdown.data('skill-uuid');
+      const selectedLevel = parseInt(dropdown.val());
+
+      // Initialize storage if needed
+      if (!this._skillLevelSelections) {
+        this._skillLevelSelections = {};
+      }
+
+      // Save the selection
+      this._skillLevelSelections[skillUuid] = selectedLevel;
+    });
 
     // Stat increases
     html.on('click', '.stat-increase-button', this._onStatIncrease.bind(this));
@@ -490,6 +540,9 @@ export class dccworldActorSheet extends ActorSheet {
     event.preventDefault();
     const button = $(event.currentTarget);
     const category = button.data('category');
+
+    // Save the active filter state
+    this._activeSkillFilter = category;
 
     // Update active state on buttons
     button.siblings('.skill-filter').removeClass('active');
