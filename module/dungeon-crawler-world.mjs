@@ -85,6 +85,7 @@ Hooks.once('init', async function () {
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('dungeon-crawler-world', dccworldItemSheet, {
     makeDefault: true,
+    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon'],
     label: 'DCC_WORLD.SheetLabels.Item',
   });
 
