@@ -127,6 +127,11 @@ Handlebars.registerHelper('range', function (start, end) {
   return arr;
 });
 
+// Greater than comparison helper
+Handlebars.registerHelper('gt', function (a, b) {
+  return a > b;
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */

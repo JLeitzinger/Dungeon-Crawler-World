@@ -1,0 +1,97 @@
+<div class="dcc-roll-card skill-roll-card">
+  {{!-- Header with action description --}}
+  <div class="roll-card-header">
+    <div class="action-text">
+      <strong>{{actorName}}</strong> {{actionVerb}} <span class="skill-name">{{skillName}}</span>!
+    </div>
+    {{#if leveledUp}}
+    <div class="level-up-badge">
+      <i class="fas fa-bolt"></i> LEVEL UP!
+    </div>
+    {{/if}}
+  </div>
+
+  {{!-- Equipped weapons section --}}
+  {{#if equippedWeapons.length}}
+  <div class="equipped-weapons-section">
+    <div class="section-label">
+      <i class="fas fa-sword"></i> Equipped Weapons
+    </div>
+    <div class="weapons-list">
+      {{#each equippedWeapons}}
+      <div class="weapon-item {{rarity}}">
+        <span class="weapon-name">{{name}}</span>
+        {{#if effort}}
+        <span class="weapon-effort">{{effort}} effort</span>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- Total result --}}
+  <div class="roll-total-section">
+    <div class="total-label">Total</div>
+    <div class="total-value">{{total}}</div>
+  </div>
+
+  {{!-- Expandable details section --}}
+  <details class="roll-details">
+    <summary class="details-toggle">
+      <i class="fas fa-chevron-down"></i> View Roll Details
+    </summary>
+    <div class="details-content">
+      {{!-- Dice pool --}}
+      <div class="dice-section">
+        <div class="dice-label">
+          Skill Dice ({{skillLevel}}d6)
+        </div>
+        <div class="dice-pool">
+          {{#each dice}}
+          <span class="die d6 {{#if (eq this 6)}}max{{/if}}" data-value="{{this}}">{{this}}</span>
+          {{/each}}
+        </div>
+        <div class="dice-subtotal">
+          Dice Total: {{diceTotal}}
+        </div>
+      </div>
+
+      {{!-- Stat modifier --}}
+      {{#if statModifier}}
+      <div class="modifier-section">
+        <div class="modifier-label">Stat Modifier</div>
+        <div class="modifier-value {{#if (gt statModifier 0)}}positive{{else}}negative{{/if}}">
+          {{#if (gt statModifier 0)}}+{{/if}}{{statModifier}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{!-- Final breakdown --}}
+      <div class="calculation-breakdown">
+        <div class="breakdown-line">
+          <span>{{diceTotal}}</span>
+          {{#if statModifier}}
+          <span>{{#if (gt statModifier 0)}}+{{/if}} {{statModifier}}</span>
+          {{/if}}
+          <span class="equals">=</span>
+          <span class="final">{{total}}</span>
+        </div>
+      </div>
+
+      {{!-- Effort cost if any --}}
+      {{#if effortCost}}
+      <div class="effort-section">
+        <i class="fas fa-running"></i> Stamina Cost: <strong>{{effortCost}}</strong>
+      </div>
+      {{/if}}
+
+      {{!-- All 6s notification --}}
+      {{#if allSixes}}
+      <div class="all-sixes-notice">
+        <i class="fas fa-star"></i> All 6s! This skill can improve!
+      </div>
+      {{/if}}
+    </div>
+  </details>
+</div>

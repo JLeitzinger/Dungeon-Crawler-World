@@ -157,7 +157,10 @@ export class dccworldActor extends Actor {
 
     // Send to chat unless explicitly disabled
     if (options.sendToChat !== false) {
-      await sendSkillRollToChat(rollResult, options.chatOptions);
+      await sendSkillRollToChat(rollResult, {
+        ...options.chatOptions,
+        effortCost
+      });
     }
 
     // Check for skill improvement (all 6s) - only if rolled at max level

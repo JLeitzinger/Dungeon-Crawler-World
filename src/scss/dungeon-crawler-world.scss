@@ -19,3 +19,6 @@
   @import 'components/items';
   @import 'components/effects';
 }
+
+/* Global chat card styles (not scoped to .dungeon-crawler-world) */
+@import 'components/chat';

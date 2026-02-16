@@ -1,0 +1,348 @@
+// Chat Roll Cards - Styled to match character sheets
+.dcc-roll-card {
+  font-family: $font-primary;
+  background: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  color: $c-white;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.1);
+
+  // Header with action description
+  .roll-card-header {
+    background: linear-gradient(90deg, rgba(0, 247, 255, 0.15) 0%, rgba(255, 0, 255, 0.15) 100%);
+    border-bottom: 1px solid rgba(0, 247, 255, 0.3);
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+
+    .action-text {
+      font-family: $font-secondary;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: $c-white;
+
+      strong {
+        color: $c-cyan;
+        text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+      }
+
+      .skill-name {
+        color: $c-magenta;
+        text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+      }
+    }
+
+    .level-up-badge {
+      background: linear-gradient(135deg, #ff00ff 0%, #ff6600 100%);
+      color: $c-white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+      animation: pulse-glow 2s infinite;
+
+      i {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  // Equipped weapons section
+  .equipped-weapons-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+    background: rgba(0, 247, 255, 0.05);
+
+    .section-label {
+      font-family: $font-secondary;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: $c-cyan;
+      margin-bottom: 8px;
+
+      i {
+        margin-right: 6px;
+      }
+    }
+
+    .weapons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .weapon-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid;
+      border-radius: 3px;
+      font-size: 13px;
+
+      .weapon-name {
+        font-weight: 500;
+      }
+
+      .weapon-effort {
+        font-size: 11px;
+        color: $c-faint;
+        font-style: italic;
+      }
+
+      // Rarity colors
+      &.common {
+        border-left-color: #778899;
+      }
+
+      &.uncommon {
+        border-left-color: #00ff88;
+      }
+
+      &.rare {
+        border-left-color: #00f7ff;
+      }
+
+      &.legendary {
+        border-left-color: #ff00ff;
+      }
+
+      &.mythic {
+        border-left-color: #ff6600;
+      }
+
+      &.celestial {
+        border-left-color: #ffd700;
+      }
+    }
+  }
+
+  // Total result section
+  .roll-total-section {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(0, 247, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+    border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+    text-align: center;
+
+    .total-label {
+      font-family: $font-secondary;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: $c-faint;
+      margin-bottom: 6px;
+    }
+
+    .total-value {
+      font-family: $font-secondary;
+      font-size: 36px;
+      font-weight: 700;
+      color: $c-cyan;
+      text-shadow: 0 0 20px rgba(0, 247, 255, 0.6);
+      line-height: 1;
+    }
+  }
+
+  // Expandable details section
+  .roll-details {
+    border-top: 1px solid rgba(0, 247, 255, 0.2);
+
+    summary.details-toggle {
+      padding: 10px 16px;
+      background: rgba(0, 247, 255, 0.05);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: $font-secondary;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: $c-cyan;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 247, 255, 0.1);
+        color: $c-white;
+      }
+
+      i {
+        transition: transform 0.2s ease;
+      }
+    }
+
+    &[open] summary i {
+      transform: rotate(180deg);
+    }
+
+    .details-content {
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    // Dice section
+    .dice-section {
+      margin-bottom: 12px;
+
+      .dice-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: $c-faint;
+        margin-bottom: 8px;
+      }
+
+      .dice-pool {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+
+        .die {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #12121a 0%, #0a0a0f 100%);
+          border: 1px solid rgba(0, 247, 255, 0.3);
+          border-radius: 4px;
+          font-family: $font-secondary;
+          font-size: 16px;
+          font-weight: 700;
+          color: $c-white;
+
+          &.max {
+            background: linear-gradient(135deg, #ff00ff 0%, #8800ff 100%);
+            border-color: #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+            color: $c-white;
+          }
+        }
+      }
+
+      .dice-subtotal {
+        font-size: 13px;
+        color: $c-faint;
+        font-style: italic;
+      }
+    }
+
+    // Modifier section
+    .modifier-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(0, 247, 255, 0.05);
+      border-left: 3px solid rgba(0, 247, 255, 0.5);
+      border-radius: 3px;
+      margin-bottom: 12px;
+
+      .modifier-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: $c-faint;
+      }
+
+      .modifier-value {
+        font-family: $font-secondary;
+        font-size: 18px;
+        font-weight: 700;
+
+        &.positive {
+          color: $c-green;
+        }
+
+        &.negative {
+          color: $c-orange;
+        }
+      }
+    }
+
+    // Calculation breakdown
+    .calculation-breakdown {
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      border: 1px solid rgba(0, 247, 255, 0.2);
+      margin-bottom: 12px;
+
+      .breakdown-line {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: $font-secondary;
+        font-size: 18px;
+        font-weight: 600;
+        color: $c-white;
+
+        .equals {
+          color: $c-cyan;
+        }
+
+        .final {
+          color: $c-magenta;
+          font-size: 22px;
+          font-weight: 700;
+        }
+      }
+    }
+
+    // Effort section
+    .effort-section {
+      padding: 8px 12px;
+      background: rgba(255, 102, 0, 0.1);
+      border-left: 3px solid $c-orange;
+      border-radius: 3px;
+      font-size: 13px;
+      color: $c-white;
+      margin-bottom: 8px;
+
+      i {
+        color: $c-orange;
+        margin-right: 6px;
+      }
+
+      strong {
+        color: $c-orange;
+      }
+    }
+
+    // All 6s notice
+    .all-sixes-notice {
+      padding: 10px 12px;
+      background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(136, 0, 255, 0.2) 100%);
+      border: 1px solid rgba(255, 0, 255, 0.5);
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $c-magenta;
+      text-align: center;
+
+      i {
+        margin-right: 6px;
+        color: #ffd700;
+      }
+    }
+  }
+}

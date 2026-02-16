@@ -1983,3 +1983,294 @@
   height: 20px;
   object-fit: contain;
 }
+
+/* Global chat card styles (not scoped to .dungeon-crawler-world) */
+.dcc-roll-card {
+  font-family: "Rajdhani", sans-serif;
+  background: linear-gradient(180deg, #0a0a0f 0%, #12121a 100%);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  color: #f0f0f5;
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.1);
+}
+.dcc-roll-card .roll-card-header {
+  background: linear-gradient(90deg, rgba(0, 247, 255, 0.15) 0%, rgba(255, 0, 255, 0.15) 100%);
+  border-bottom: 1px solid rgba(0, 247, 255, 0.3);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+.dcc-roll-card .roll-card-header .action-text {
+  font-family: "Orbitron", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #f0f0f5;
+}
+.dcc-roll-card .roll-card-header .action-text strong {
+  color: #00f7ff;
+  text-shadow: 0 0 10px rgba(0, 247, 255, 0.5);
+}
+.dcc-roll-card .roll-card-header .action-text .skill-name {
+  color: #ff00ff;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+.dcc-roll-card .roll-card-header .level-up-badge {
+  background: linear-gradient(135deg, #ff00ff 0%, #ff6600 100%);
+  color: #f0f0f5;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+  animation: pulse-glow 2s infinite;
+}
+.dcc-roll-card .roll-card-header .level-up-badge i {
+  margin-right: 4px;
+}
+.dcc-roll-card .equipped-weapons-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+  background: rgba(0, 247, 255, 0.05);
+}
+.dcc-roll-card .equipped-weapons-section .section-label {
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00f7ff;
+  margin-bottom: 8px;
+}
+.dcc-roll-card .equipped-weapons-section .section-label i {
+  margin-right: 6px;
+}
+.dcc-roll-card .equipped-weapons-section .weapons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-name {
+  font-weight: 500;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item .weapon-effort {
+  font-size: 11px;
+  color: #99aabb;
+  font-style: italic;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item.common {
+  border-left-color: #778899;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item.uncommon {
+  border-left-color: #00ff88;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item.rare {
+  border-left-color: #00f7ff;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item.legendary {
+  border-left-color: #ff00ff;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item.mythic {
+  border-left-color: #ff6600;
+}
+.dcc-roll-card .equipped-weapons-section .weapon-item.celestial {
+  border-left-color: #ffd700;
+}
+.dcc-roll-card .roll-total-section {
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0, 247, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+  border-bottom: 1px solid rgba(0, 247, 255, 0.2);
+  text-align: center;
+}
+.dcc-roll-card .roll-total-section .total-label {
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #99aabb;
+  margin-bottom: 6px;
+}
+.dcc-roll-card .roll-total-section .total-value {
+  font-family: "Orbitron", sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #00f7ff;
+  text-shadow: 0 0 20px rgba(0, 247, 255, 0.6);
+  line-height: 1;
+}
+.dcc-roll-card .roll-details {
+  border-top: 1px solid rgba(0, 247, 255, 0.2);
+}
+.dcc-roll-card .roll-details summary.details-toggle {
+  padding: 10px 16px;
+  background: rgba(0, 247, 255, 0.05);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00f7ff;
+  transition: all 0.2s ease;
+}
+.dcc-roll-card .roll-details summary.details-toggle:hover {
+  background: rgba(0, 247, 255, 0.1);
+  color: #f0f0f5;
+}
+.dcc-roll-card .roll-details summary.details-toggle i {
+  transition: transform 0.2s ease;
+}
+.dcc-roll-card .roll-details[open] summary i {
+  transform: rotate(180deg);
+}
+.dcc-roll-card .roll-details .details-content {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.dcc-roll-card .roll-details .dice-section {
+  margin-bottom: 12px;
+}
+.dcc-roll-card .roll-details .dice-section .dice-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #99aabb;
+  margin-bottom: 8px;
+}
+.dcc-roll-card .roll-details .dice-section .dice-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.dcc-roll-card .roll-details .dice-section .dice-pool .die {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #12121a 0%, #0a0a0f 100%);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 4px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #f0f0f5;
+}
+.dcc-roll-card .roll-details .dice-section .dice-pool .die.max {
+  background: linear-gradient(135deg, #ff00ff 0%, #8800ff 100%);
+  border-color: #ff00ff;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+  color: #f0f0f5;
+}
+.dcc-roll-card .roll-details .dice-section .dice-subtotal {
+  font-size: 13px;
+  color: #99aabb;
+  font-style: italic;
+}
+.dcc-roll-card .roll-details .modifier-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 247, 255, 0.05);
+  border-left: 3px solid rgba(0, 247, 255, 0.5);
+  border-radius: 3px;
+  margin-bottom: 12px;
+}
+.dcc-roll-card .roll-details .modifier-section .modifier-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #99aabb;
+}
+.dcc-roll-card .roll-details .modifier-section .modifier-value {
+  font-family: "Orbitron", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+.dcc-roll-card .roll-details .modifier-section .modifier-value.positive {
+  color: #00ff88;
+}
+.dcc-roll-card .roll-details .modifier-section .modifier-value.negative {
+  color: #ff6600;
+}
+.dcc-roll-card .roll-details .calculation-breakdown {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  margin-bottom: 12px;
+}
+.dcc-roll-card .roll-details .calculation-breakdown .breakdown-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f0f0f5;
+}
+.dcc-roll-card .roll-details .calculation-breakdown .breakdown-line .equals {
+  color: #00f7ff;
+}
+.dcc-roll-card .roll-details .calculation-breakdown .breakdown-line .final {
+  color: #ff00ff;
+  font-size: 22px;
+  font-weight: 700;
+}
+.dcc-roll-card .roll-details .effort-section {
+  padding: 8px 12px;
+  background: rgba(255, 102, 0, 0.1);
+  border-left: 3px solid #ff6600;
+  border-radius: 3px;
+  font-size: 13px;
+  color: #f0f0f5;
+  margin-bottom: 8px;
+}
+.dcc-roll-card .roll-details .effort-section i {
+  color: #ff6600;
+  margin-right: 6px;
+}
+.dcc-roll-card .roll-details .effort-section strong {
+  color: #ff6600;
+}
+.dcc-roll-card .roll-details .all-sixes-notice {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, rgba(255, 0, 255, 0.2) 0%, rgba(136, 0, 255, 0.2) 100%);
+  border: 1px solid rgba(255, 0, 255, 0.5);
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff00ff;
+  text-align: center;
+}
+.dcc-roll-card .roll-details .all-sixes-notice i {
+  margin-right: 6px;
+  color: #ffd700;
+}

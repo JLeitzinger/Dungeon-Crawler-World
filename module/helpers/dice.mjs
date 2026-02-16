@@ -61,6 +61,8 @@ export async function contestedRoll(attacker, defender) {
  * Send a skill check result to chat
  * @param {Object} rollResult - Result from rollSkillCheck
  * @param {Object} options - Chat message options
+ * @param {boolean} options.leveledUp - Whether the skill leveled up from this roll
+ * @param {number} options.effortCost - Stamina cost for the roll
  */
 export async function sendSkillRollToChat(rollResult, options = {}) {
   const {
@@ -75,32 +77,53 @@ export async function sendSkillRollToChat(rollResult, options = {}) {
     actor
   } = rollResult;
 
-  // Build dice display
-  const diceDisplay = dice.map(d => {
-    const isSix = d === 6;
-    return `<span class="die d6 ${isSix ? 'max' : ''}" data-value="${d}">${d}</span>`;
-  }).join(' ');
+  // Get the skill to determine category - use getSkill method
+  const skill = actor.system.getSkill ? actor.system.getSkill(skillName) : null;
+  const skillCategory = skill?.category || 'general';
 
-  // Build the chat message content
-  const content = `
-    <div class="dcc-world-roll skill-check-roll">
-      <div class="roll-header">
-        <h3>${skillName}</h3>
-        <span class="skill-level">Level ${skillLevel}</span>
-      </div>
-      <div class="dice-pool">
-        <div class="dice-results">
-          ${diceDisplay}
-        </div>
-        <div class="roll-breakdown">
-          <div class="dice-total">${diceTotal} (dice)</div>
-          ${statModifier !== 0 ? `<div class="stat-bonus">${statModifier > 0 ? '+' : ''}${statModifier} (stat)</div>` : ''}
-          <div class="final-total"><strong>Total: ${total}</strong></div>
-        </div>
-      </div>
-      ${allSixes ? '<div class="skill-improvement"><strong>⚡ All 6s! Skill can improve!</strong></div>' : ''}
-    </div>
-  `;
+  // Determine action verb based on skill category
+  let actionVerb = 'uses';
+  if (skillCategory === 'combat') {
+    actionVerb = 'attacks with';
+  } else if (skillCategory === 'magic') {
+    actionVerb = 'casts';
+  } else if (skillCategory === 'utility') {
+    actionVerb = 'performs';
+  }
+
+  // Get equipped weapons - only show for combat skills
+  let equippedWeapons = [];
+  if (skillCategory === 'combat') {
+    equippedWeapons = actor.items?.filter(i =>
+      i.type === 'weapon' && i.system?.equipped === true
+    ).map(w => ({
+      name: w.name,
+      rarity: w.system.rarity || 'common',
+      effort: w.system.effort || 0
+    })) || [];
+  }
+
+  // Prepare template data
+  const templateData = {
+    actorName: actor.name,
+    actionVerb,
+    skillName,
+    skillLevel,
+    dice,
+    diceTotal,
+    statModifier,
+    total,
+    allSixes,
+    leveledUp: options.leveledUp || false,
+    effortCost: options.effortCost || 0,
+    equippedWeapons
+  };
+
+  // Render the template
+  const content = await renderTemplate(
+    'systems/dungeon-crawler-world/templates/chat/skill-roll-card.hbs',
+    templateData
+  );
 
   const chatData = {
     user: game.user.id,
