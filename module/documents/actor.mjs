@@ -115,10 +115,13 @@ export class dccworldActor extends Actor {
 
     for (const weapon of equippedWeapons) {
       const grantedSkills = weapon.system?.grantedSkills || [];
-      // Check if this weapon grants the skill being rolled
-      const grantsThisSkill = grantedSkills.some(gs => gs.skillUuid === skillUuid);
-      if (grantsThisSkill) {
-        equippedWeaponEffort += (weapon.system?.effort || 0);
+      // Check if this weapon grants the skill being rolled (compare by skill name)
+      for (const gs of grantedSkills) {
+        const grantedSkill = this.system.getSkill(gs.skillUuid);
+        if (grantedSkill && grantedSkill.name === skill.name) {
+          equippedWeaponEffort += (weapon.system?.effort || 0);
+          break; // Only count this weapon once per skill
+        }
       }
     }
 
