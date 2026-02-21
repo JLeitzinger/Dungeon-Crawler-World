@@ -139,11 +139,15 @@ export class dccworldActor extends Actor {
 
     const statModifier = this.system.getSkillStatModifier(skill);
 
+    // Only base skill item dice count for level-up; min 1 die when skill is level 0
+    const improvementDice = Math.max(1, skill.baseLevel ?? 0);
+
     const rollResult = await rollSkillCheck({
       skillLevel: rollLevel,
       statModifier,
       skillName: skill.name,
-      actor: this
+      actor: this,
+      improvementDice
     });
 
     // Deduct stamina after successful roll

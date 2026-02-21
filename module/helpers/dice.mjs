@@ -7,7 +7,7 @@
  * @param {Actor} options.actor - The actor making the roll
  * @returns {Promise<Object>} Roll result with dice, total, and metadata
  */
-export async function rollSkillCheck({skillLevel = 1, statModifier = 0, skillName = "Unknown Skill", actor}) {
+export async function rollSkillCheck({skillLevel = 1, statModifier = 0, skillName = "Unknown Skill", actor, improvementDice}) {
   // Roll the dice pool
   const numDice = Math.max(1, skillLevel);
   const roll = await new Roll(`${numDice}d6`).evaluate();
@@ -19,8 +19,12 @@ export async function rollSkillCheck({skillLevel = 1, statModifier = 0, skillNam
   const diceTotal = dice.reduce((sum, die) => sum + die, 0);
   const total = diceTotal + statModifier;
 
-  // Check if all dice are 6s (for skill improvement)
-  const allSixes = dice.length > 0 && dice.every(die => die === 6);
+  // Check if all improvement dice are 6s (for skill improvement).
+  // Only the base skill dice count toward level-up eligibility — bonus dice from
+  // weapons/race/class grants are excluded. Minimum 1 die checked.
+  const checkCount = improvementDice !== undefined ? Math.max(1, improvementDice) : numDice;
+  const checkDice = dice.slice(0, checkCount);
+  const allSixes = checkDice.length > 0 && checkDice.every(die => die === 6);
 
   return {
     roll,

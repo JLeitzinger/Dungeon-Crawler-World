@@ -149,17 +149,19 @@ export default class dccworldCharacter extends dccworldActorBase {
     for (const item of items) {
       if (item.type === 'skill') {
         const skillName = item.name;
+        const baseLevel = item.system.level || 0;
         skillsMap.set(skillName, {
           uuid: item.uuid,
           id: item.id, // Embedded ID for deletion/editing
           name: item.name,
-          level: item.system.level || 0,
+          baseLevel, // Skill item's own level (used for level-up check)
+          level: baseLevel, // Total level (skill + all grants); accumulated in second pass
           category: item.system.category || 'general',
           relatedStat: item.system.relatedStat || null,
           effort: item.system.effort || 0,
           description: item.system.description || '',
           sources: [
-            { type: 'skill', name: item.name, level: item.system.level || 0, uuid: item.uuid }
+            { type: 'skill', name: item.name, level: baseLevel, uuid: item.uuid }
           ]
         });
       }
@@ -221,6 +223,7 @@ export default class dccworldCharacter extends dccworldActorBase {
               uuid: granted.skillUuid,
               id: null, // No actual item on actor
               name: manifestSkill.name,
+              baseLevel: 0, // No skill item, so base level is 0
               level: grantedLevel,
               category: manifestSkill.category || 'general',
               relatedStat: manifestSkill.relatedStat || null,
@@ -237,6 +240,7 @@ export default class dccworldCharacter extends dccworldActorBase {
               uuid: granted.skillUuid,
               id: null,
               name: grantedSkillName,
+              baseLevel: 0, // No skill item, so base level is 0
               level: grantedLevel,
               category: 'general',
               relatedStat: null,
