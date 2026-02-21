@@ -19,12 +19,19 @@ export async function rollSkillCheck({skillLevel = 1, statModifier = 0, skillNam
   const diceTotal = dice.reduce((sum, die) => sum + die, 0);
   const total = diceTotal + statModifier;
 
-  // Check if all improvement dice are 6s (for skill improvement).
-  // Only the base skill dice count toward level-up eligibility — bonus dice from
-  // weapons/race/class grants are excluded. Minimum 1 die checked.
-  const checkCount = improvementDice !== undefined ? Math.max(1, improvementDice) : numDice;
-  const checkDice = dice.slice(0, checkCount);
-  const allSixes = checkDice.length > 0 && checkDice.every(die => die === 6);
+  // Check for skill improvement eligibility.
+  // Only base skill item dice count — bonus dice from weapons/race/class grants are excluded.
+  // improvementDice === 0 (skill level 0): passes if the best die rolled is a 6.
+  // improvementDice > 0: all N base-skill dice must be 6s.
+  // improvementDice === undefined: all dice checked (backwards compat).
+  let allSixes;
+  if (improvementDice === 0) {
+    allSixes = dice.length > 0 && Math.max(...dice) === 6;
+  } else {
+    const checkCount = improvementDice !== undefined ? improvementDice : numDice;
+    const checkDice = dice.slice(0, checkCount);
+    allSixes = checkDice.length > 0 && checkDice.every(die => die === 6);
+  }
 
   return {
     roll,
