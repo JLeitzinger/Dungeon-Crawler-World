@@ -76,18 +76,23 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
 
 1. **Start Foundry VTT and monitor output:**
    ```bash
-   cd /home/FoundryVTT
-   node resources/app/main.js
+   cd /home/elaboratejohnny/FoundryVTT && node resources/app/main.js
    ```
 
-2. **Watch the console output carefully** for errors during startup, especially:
+2. **Access the game in the browser:**
+   - Navigate to `http://localhost:30000`
+   - The test world "DCW Test" loads automatically
+   - Select **Gamemaster** from the user dropdown
+   - Click **Join Game Session** (no password required)
+
+3. **Watch the console output carefully** for errors during startup, especially:
    - System initialization errors
    - Data model registration errors
    - Template loading errors
    - JavaScript syntax errors
    - Schema validation errors
 
-3. **Common error patterns to watch for:**
+4. **Common error patterns to watch for:**
    ```
    ERROR | System initialization failed
    ERROR | Invalid data model schema
@@ -96,7 +101,7 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
    ERROR | Cannot read property 'X' of undefined
    ```
 
-4. **If errors occur:**
+5. **If errors occur:**
    - **DO NOT commit the changes**
    - Read the error message and stack trace
    - Identify which file and line caused the error
@@ -104,9 +109,8 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
    - Restart Foundry and test again
    - Repeat until no errors appear
 
-5. **After Foundry starts successfully:**
-   - Access the web interface (usually http://localhost:30000)
-   - Create or load a test world using the Dungeon Crawler World system
+6. **After Foundry starts successfully:**
+   - Navigate to `http://localhost:30000`, select Gamemaster, and join
    - Test the specific functionality you changed:
      - Open character/item sheets
      - Verify new fields appear correctly
@@ -114,7 +118,7 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
      - Check that data saves properly
    - Look for errors in the browser console (F12)
 
-6. **Only commit if:**
+7. **Only commit if:**
    - Foundry starts without errors
    - The system loads properly in a world
    - Your changes work as expected
@@ -125,6 +129,9 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
 # Start Foundry VTT from the installation directory
 cd /home/elaboratejohnny/FoundryVTT && node resources/app/main.js
 ```
+
+Once running, access at **http://localhost:30000** and log in as **Gamemaster** (no password).
+The test world "DCW Test" is pre-configured and loads automatically.
 
 ### Testing Data Model Changes
 
