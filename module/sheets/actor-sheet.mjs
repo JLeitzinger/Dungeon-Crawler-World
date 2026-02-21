@@ -176,16 +176,19 @@ export class dccworldActorSheet extends ActorSheet {
     // Call parent to handle the drop
     const result = await super._onDropItem(event, data);
 
-    // If a race or class was dropped, grant its features
+    // Grant features (race/class) and skills (race/class/feature/weapon)
     // We need to find the newly created item on the actor
-    if (droppedItem && (droppedItem.type === 'race' || droppedItem.type === 'class')) {
-      // Find the item on the actor (it was just added by super._onDropItem)
+    const GRANTS_SKILLS_TYPES = ['race', 'class', 'feature', 'weapon'];
+    if (droppedItem && GRANTS_SKILLS_TYPES.includes(droppedItem.type)) {
       const actorItem = this.actor.items.find(i =>
         i.type === droppedItem.type && i.name === droppedItem.name
       );
 
       if (actorItem) {
-        await this._grantFeaturesFromItem(actorItem);
+        if (droppedItem.type === 'race' || droppedItem.type === 'class') {
+          await this._grantFeaturesFromItem(actorItem);
+        }
+        await this._grantSkillsFromItem(actorItem);
       }
     }
 
@@ -267,6 +270,76 @@ export class dccworldActorSheet extends ActorSheet {
     }
   }
 
+  /**
+   * Grant level-0 skill items from a dropped item's grantedSkills list.
+   * Skips skills the actor already owns. Loads full skill data from the compendium.
+   * @param {Item} item - The dropped item (race, class, feature, weapon)
+   * @private
+   */
+  async _grantSkillsFromItem(item) {
+    const grantedSkills = item.system?.grantedSkills || [];
+    if (grantedSkills.length === 0) return;
+
+    const skillsToCreate = [];
+
+    for (const granted of grantedSkills) {
+      const skillUuid = granted.skillUuid;
+      if (!skillUuid) continue;
+
+      // Extract skill name from UUID (same logic as _aggregateSkills)
+      let skillName = skillUuid.split('.').pop();
+      skillName = skillName.charAt(0).toUpperCase() + skillName.slice(1);
+
+      // Skip if the actor already owns a skill item with this name
+      const existingSkill = this.actor.items.find(i =>
+        i.type === 'skill' && i.name === skillName
+      );
+      if (existingSkill) continue;
+
+      try {
+        const skillDoc = await fromUuid(skillUuid);
+        if (skillDoc) {
+          const skillData = skillDoc.toObject();
+          skillData.system.level = 0;
+          skillData.flags = skillData.flags || {};
+          skillData.flags['dungeon-crawler-world'] = {
+            sourceUuid: skillUuid,
+            grantedBy: item.uuid
+          };
+          skillsToCreate.push(skillData);
+        } else {
+          console.warn(`DCC World: Could not find skill ${skillUuid}`);
+        }
+      } catch (error) {
+        console.warn(`DCC World: Error loading skill ${skillUuid}:`, error);
+      }
+    }
+
+    if (skillsToCreate.length > 0) {
+      await this.actor.createEmbeddedDocuments('Item', skillsToCreate);
+      ui.notifications.info(`Granted ${skillsToCreate.length} skill(s) from ${item.name}`);
+    }
+  }
+
+  /**
+   * Remove skill items that were auto-granted by a specific item.
+   * Only removes skills that have no other granting source.
+   * @param {Item} item - The item being removed
+   * @private
+   */
+  async _removeGrantedSkills(item) {
+    const skillsToRemove = this.actor.items.filter(i =>
+      i.type === 'skill' &&
+      i.flags['dungeon-crawler-world']?.grantedBy === item.uuid
+    );
+
+    if (skillsToRemove.length > 0) {
+      const itemIds = skillsToRemove.map(s => s.id);
+      await this.actor.deleteEmbeddedDocuments('Item', itemIds);
+      ui.notifications.info(`Removed ${skillsToRemove.length} skill(s) from ${item.name}`);
+    }
+  }
+
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
@@ -334,6 +407,8 @@ export class dccworldActorSheet extends ActorSheet {
         if (item.type === 'race' || item.type === 'class') {
           await this._removeGrantedFeatures(item);
         }
+        // Remove any auto-granted skills from this item
+        await this._removeGrantedSkills(item);
         await item.delete();
         container.slideUp(200, () => this.render(false));
       }
