@@ -59,6 +59,10 @@ export class dccworldActorSheet extends ActorSheet {
     // Whether the current user is a GM (gates GM-only controls like awarding XP)
     context.isGM = game.user.isGM;
 
+    // Whether enough XP is banked to level up (gates the Level Up button)
+    context.canLevelUp = actorData.type === 'character'
+      && (actorData.system.attributes.xp.value || 0) >= (actorData.system.attributes.xp.max || 0);
+
 
     // Prepare character data and items.
     if (actorData.type == 'character') {

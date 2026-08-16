@@ -476,12 +476,22 @@ export class dccworldActor extends Actor {
    * equipped). Once locked in, a later ability score change won't retroactively
    * alter the amount gained at this or any earlier level.
    *
+   * Requires banked XP to meet the current level's threshold (300 * level); the
+   * excess carries over toward the next level rather than being reset to 0.
+   *
    * Any earlier levels that predate this tracking (or were reached by editing the
    * Level field by hand) are backfilled at today's rates the first time this runs,
    * so they stop drifting with future stat changes too.
    */
   async levelUp() {
     if (this.type !== 'character') return;
+
+    const currentXP = this.system.attributes.xp.value || 0;
+    const neededXP = this.system.attributes.xp.max || 0;
+    if (currentXP < neededXP) {
+      ui.notifications.warn(`Not enough XP to level up! Need ${neededXP}, have ${currentXP}.`);
+      return;
+    }
 
     const currentLevel = this.system.attributes.level.value;
     const newLevel = currentLevel + 1;
@@ -507,6 +517,7 @@ export class dccworldActor extends Actor {
       'system.hp.value': this.system.hp.value + hpPerLevel,
       'system.stamina.value': this.system.stamina.value + staminaPerLevel,
       'system.mana.value': this.system.mana.value + manaPerLevel,
+      'system.attributes.xp.value': currentXP - neededXP,
     });
 
     ui.notifications.info(`${this.name} reached Level ${newLevel}! +${hpPerLevel} HP, +${staminaPerLevel} Stamina, +${manaPerLevel} Mana`);

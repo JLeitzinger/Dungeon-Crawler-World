@@ -10,7 +10,7 @@ As a starting point for the AI to scale awards from, not a fixed table:
 - Cleverly resolving a non-combat challenge (a puzzle, a negotiation, a trap survived): award XP like the combat equivalent of the danger it posed
 
 ## Leveling Up
-Once you've banked enough XP, you level up. Each level grants:
+Once you've banked enough XP, you level up. The Level Up button is only available once your XP meets the threshold; leveling spends that threshold's worth of XP and carries any excess over toward the next level rather than resetting to 0. Each level grants:
 - Your class's HP/Stamina/Mana gain at today's rates, locked in permanently (see [[Health Points]], [[Stamina Points]], [[Mana Points]])
 - 3 stat increase points to spend on any of your ability scores (STR/DEX/CON/INT/WIS/CHA), your choice how to split them
 

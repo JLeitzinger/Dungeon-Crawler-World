@@ -249,6 +249,13 @@
   }
 }
 
+// Level up button - disabled state when not enough XP is banked
+.level-up-button.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: default;
+}
+
 // Start of turn regen button
 .resource-regen {
   margin: 10px 0;

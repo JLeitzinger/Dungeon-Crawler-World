@@ -921,6 +921,11 @@
   background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 179, 95, 0.2) 100%);
   box-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
 }
+.dungeon-crawler-world .level-up-button.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+  cursor: default;
+}
 .dungeon-crawler-world .resource-regen {
   margin: 10px 0;
 }
