@@ -129,7 +129,8 @@ export async function sendSkillRollToChat(rollResult, options = {}) {
     allSixes,
     leveledUp: options.leveledUp || false,
     effortCost: options.effortCost || 0,
-    equippedWeapons
+    equippedWeapons,
+    offensiveSpell: options.offensiveSpell || null
   };
 
   // Render the template
@@ -240,7 +241,7 @@ export async function rollWeaponDamage(actor, weaponId, options = {}) {
   // Prepare template data
   const templateData = {
     actorName: actor.name,
-    weaponName: weapon.name,
+    sourceName: weapon.name,
     total: roll.total,
     formula: formula,
     showFormula: options.showFormula !== false
@@ -265,12 +266,147 @@ export async function rollWeaponDamage(actor, weaponId, options = {}) {
 }
 
 /**
+ * Roll offensive spell damage and send to chat. Mirrors rollWeaponDamage - the cast roll
+ * (Actor#rollSpell) already determined whether the spell landed; this is just the amount.
+ * @param {Actor} actor - The actor rolling damage
+ * @param {string} spellId - The ID of the spell to roll damage for
+ * @param {Object} options - Additional options
+ */
+export async function rollSpellDamage(actor, spellId, options = {}) {
+  const spell = actor.items.get(spellId);
+
+  if (!spell || spell.type !== 'spell') {
+    ui.notifications.error('Spell not found!');
+    return null;
+  }
+
+  if (!spell.system.offensive) {
+    ui.notifications.warn(`${spell.name} is not an offensive spell!`);
+    return null;
+  }
+
+  // Get the damage formula
+  const formula = spell.system.formula;
+  if (!formula) {
+    ui.notifications.warn(`${spell.name} has no damage formula!`);
+    return null;
+  }
+
+  // Roll the damage using actor's roll data
+  const rollData = actor.getRollData();
+  const roll = await new Roll(formula, rollData).evaluate();
+
+  // Prepare template data
+  const templateData = {
+    actorName: actor.name,
+    sourceName: spell.name,
+    total: roll.total,
+    formula: formula,
+    showFormula: options.showFormula !== false
+  };
+
+  // Render the template
+  const content = await renderTemplate(
+    'systems/dungeon-crawler-world/templates/chat/damage-roll-card.hbs',
+    templateData
+  );
+
+  const chatData = {
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content,
+    sound: CONFIG.sounds.dice,
+    rolls: [roll],
+    ...options
+  };
+
+  return ChatMessage.create(chatData);
+}
+
+/**
+ * Regenerate missing HP/Stamina/Mana at the start of a character's turn.
+ * Each resource rolls 1d6 + its ability modifier (minimum 0) + LUK, capped at the
+ * amount missing - see Rules/Resources/{Health,Stamina,Mana} Points.md.
+ * @param {Actor} actor - The character regenerating resources
+ * @returns {Promise<Array|null>} Regen results per resource, or null if not a character
+ */
+export async function rollResourceRegen(actor) {
+  if (actor.type !== 'character') {
+    ui.notifications.warn("Only characters regenerate resources this way.");
+    return null;
+  }
+
+  const luck = actor.system.luck?.total || 0;
+  const resources = [
+    { key: 'hp', label: 'HP', abilityKey: 'con' },
+    { key: 'stamina', label: 'Stamina', abilityKey: 'str' },
+    { key: 'mana', label: 'Mana', abilityKey: 'int' }
+  ];
+
+  const results = [];
+  for (const { key, label, abilityKey } of resources) {
+    const resource = actor.system[key];
+    const missing = resource.max - resource.value;
+
+    if (missing <= 0) {
+      results.push({ key, label, roll: null, gained: 0, newValue: resource.value, max: resource.max });
+      continue;
+    }
+
+    const abilityMod = Math.max(0, actor.system.abilities[abilityKey]?.mod || 0);
+    const roll = await new Roll('1d6').evaluate();
+    const gained = Math.min(missing, Math.max(0, roll.total + abilityMod + luck));
+
+    results.push({ key, label, roll, abilityMod, gained, newValue: resource.value + gained, max: resource.max });
+  }
+
+  await actor.update({
+    'system.hp.value': results.find(r => r.key === 'hp').newValue,
+    'system.stamina.value': results.find(r => r.key === 'stamina').newValue,
+    'system.mana.value': results.find(r => r.key === 'mana').newValue
+  });
+
+  const rows = results.map(r => {
+    if (!r.roll) {
+      return `<div class="regen-row full"><span class="regen-label">${r.label}</span><span class="regen-detail">Already full (${r.max}/${r.max})</span></div>`;
+    }
+    const dieResult = r.roll.terms[0].results[0].result;
+    const parts = [`${dieResult}`];
+    if (r.abilityMod) parts.push(`+${r.abilityMod}`);
+    if (luck) parts.push(`${luck >= 0 ? '+' : ''}${luck}`);
+    return `<div class="regen-row">
+      <span class="regen-label">${r.label}</span>
+      <span class="regen-detail">${parts.join(' ')} = <strong>+${r.gained}</strong> (${r.newValue}/${r.max})</span>
+    </div>`;
+  }).join('');
+
+  const content = `
+    <div class="dcc-world-roll regen-roll">
+      <h3><i class="fas fa-heart"></i> ${actor.name} - Start of Turn Regen</h3>
+      ${rows}
+    </div>
+  `;
+
+  const rolls = results.map(r => r.roll).filter(Boolean);
+
+  await ChatMessage.create({
+    user: game.user.id,
+    speaker: ChatMessage.getSpeaker({ actor }),
+    content,
+    sound: CONFIG.sounds.dice,
+    rolls
+  });
+
+  return results;
+}
+
+/**
  * Initialize chat message listeners for damage roll buttons
  * Call this during system initialization
  */
 export function initializeChatListeners() {
   Hooks.on('renderChatMessage', (message, html) => {
-    // Add click handler for damage roll buttons
+    // Add click handler for weapon damage roll buttons
     html.find('.damage-roll-button').click(async (event) => {
       event.preventDefault();
       const button = $(event.currentTarget);
@@ -286,6 +422,24 @@ export function initializeChatListeners() {
 
       // Roll the damage
       await rollWeaponDamage(actor, weaponId);
+    });
+
+    // Add click handler for offensive spell damage roll buttons
+    html.find('.spell-damage-roll-button').click(async (event) => {
+      event.preventDefault();
+      const button = $(event.currentTarget);
+      const actorId = button.data('actor-id');
+      const spellId = button.data('spell-id');
+
+      // Get the actor
+      const actor = game.actors.get(actorId);
+      if (!actor) {
+        ui.notifications.error('Actor not found!');
+        return;
+      }
+
+      // Roll the damage
+      await rollSpellDamage(actor, spellId);
     });
   });
 }

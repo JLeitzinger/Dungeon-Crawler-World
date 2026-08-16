@@ -56,6 +56,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Adding a pointer to CONFIG.DCC_WORLD
     context.config = CONFIG.DCC_WORLD;
 
+    // Whether the current user is a GM (gates GM-only controls like awarding XP)
+    context.isGM = game.user.isGM;
+
 
     // Prepare character data and items.
     if (actorData.type == 'character') {
@@ -463,6 +466,12 @@ export class dccworldActorSheet extends ActorSheet {
     // Level up
     html.on('click', '.level-up-button', this._onLevelUp.bind(this));
 
+    // Award XP (GM only)
+    html.on('click', '.award-xp-button', this._onAwardXP.bind(this));
+
+    // Regen HP/Stamina/Mana (start of turn)
+    html.on('click', '.regen-button', this._onRegenResources.bind(this));
+
     // Header collapse toggle
     html.on('click', '.header-collapse-toggle', this._onHeaderCollapseToggle.bind(this));
 
@@ -664,6 +673,26 @@ export class dccworldActorSheet extends ActorSheet {
   async _onLevelUp(event) {
     event.preventDefault();
     await this.actor.levelUp();
+  }
+
+  /**
+   * Handle the GM awarding XP
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onAwardXP(event) {
+    event.preventDefault();
+    await this.actor.promptAwardXP();
+  }
+
+  /**
+   * Handle regenerating HP/Stamina/Mana at the start of this character's turn
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onRegenResources(event) {
+    event.preventDefault();
+    await this.actor.regenResources();
   }
 
   /**

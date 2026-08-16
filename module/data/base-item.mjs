@@ -72,6 +72,17 @@ export default class dccworldItemBase extends dccworldDataModel {
       }
     );
 
+    /**
+     * Flat LUK bonus granted while this item applies.
+     *
+     * Unlike ability scores, LUK is added directly to every roll a character makes with
+     * no modifier formula - see dccworldCharacter's luck aggregation. Weapons only apply
+     * this while equipped (matching grantedSkills); every other item type applies it
+     * unconditionally whenever owned. Most items should use -2 to +2; reserve larger
+     * swings for rare/mythic items or curses.
+     */
+    schema.luckBonus = new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 });
+
     return schema;
   }
 

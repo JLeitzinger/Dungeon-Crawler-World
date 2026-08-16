@@ -35,6 +35,15 @@
   </div>
   {{/if}}
 
+  {{!-- Offensive spell damage button --}}
+  {{#if offensiveSpell}}
+  <div class="spell-damage-section">
+    <button class="spell-damage-roll-button" data-actor-id="{{actorId}}" data-spell-id="{{offensiveSpell.id}}" data-spell-name="{{offensiveSpell.name}}">
+      <i class="fas fa-dice-d20"></i> Damage
+    </button>
+  </div>
+  {{/if}}
+
   {{!-- Total result --}}
   <div class="roll-total-section">
     <div class="total-label">Total</div>

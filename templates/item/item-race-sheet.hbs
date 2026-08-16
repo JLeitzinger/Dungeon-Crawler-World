@@ -140,7 +140,7 @@
       </div>
 
       <h3>Resource Bonuses</h3>
-      <div class='grid grid-3col'>
+      <div class='grid grid-4col'>
         <div class='resource'>
           <label class='resource-label'>HP Bonus</label>
           <input
@@ -169,6 +169,17 @@
             type='text'
             name='system.bonuses.mana'
             value='{{system.bonuses.mana}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Luck Bonus</label>
+          <input
+            type='text'
+            name='system.luckBonus'
+            value='{{system.luckBonus}}'
             data-dtype='Number'
             placeholder='0'
           />

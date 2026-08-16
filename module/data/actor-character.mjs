@@ -56,6 +56,13 @@ export default class dccworldCharacter extends dccworldActorBase {
       return obj;
     }, {}));
 
+    // LUK is not an ability score: no rolled value, no floor((score-10)/2) modifier formula.
+    // It starts at 0 and only moves via race/class/item/feature luckBonus grants (see base-item.mjs).
+    // Kept out of `abilities` on purpose so it never runs through the ability-modifier loop below.
+    schema.luck = new fields.SchemaField({
+      value: new fields.NumberField({ required: true, nullable: false, integer: true, initial: 0 })
+    });
+
     // Note: Skills are now stored as items, not directly on the actor.
     // Aggregated skills will be computed in prepareDerivedData() and stored
     // as a non-persisted property for template access.
@@ -70,6 +77,9 @@ export default class dccworldCharacter extends dccworldActorBase {
 
     // Aggregate skills from all items
     this._aggregateSkills();
+
+    // Aggregate LUK from all items (weapons only while equipped, everything else unconditionally)
+    this._aggregateLuck();
 
     // Apply racial ability bonuses first (before calculating modifiers)
     if (raceItem?.system?.abilityBonuses) {
@@ -286,6 +296,25 @@ export default class dccworldCharacter extends dccworldActorBase {
 
     // Store as an object for easier template access
     this.aggregatedSkills = Object.fromEntries(skillsMap);
+  }
+
+  /**
+   * Aggregate LUK from all items on the actor into `this.luck.total`.
+   * Weapons only contribute their luckBonus while equipped (matching grantedSkills);
+   * every other item type (race, class, features, spells, skills, gear) contributes
+   * unconditionally whenever owned.
+   * @private
+   */
+  _aggregateLuck() {
+    const items = this.parent?.items || [];
+    let total = this.luck.value;
+
+    for (const item of items) {
+      if (item.type === 'weapon' && !item.system?.equipped) continue;
+      total += item.system?.luckBonus || 0;
+    }
+
+    this.luck.total = total;
   }
 
   /**

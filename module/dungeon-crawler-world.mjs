@@ -42,14 +42,8 @@ Hooks.once('init', async function () {
     CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
   }
 
-  /**
-   * Set an initiative formula for the system
-   * @type {String}
-   */
-  CONFIG.Combat.initiative = {
-    formula: '1d20 + @abilities.dex.mod',
-    decimals: 2,
-  };
+  // No CONFIG.Combat.initiative formula: initiative is card-based (see Rules/Combat/Initiative.md)
+  // and run by the AI narrating turn order rather than through Foundry's numeric Combat Tracker.
 
   // Define custom Document and DataModel classes
   CONFIG.Actor.documentClass = dccworldActor;

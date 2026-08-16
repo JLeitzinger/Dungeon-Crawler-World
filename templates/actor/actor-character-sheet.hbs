@@ -100,6 +100,13 @@
 
       </div>
 
+      {{!-- Start of Turn Regen --}}
+      <div class="resource-regen">
+        <button type="button" class="regen-button" title="Roll 1d6 + ability modifier (min 0) + LUK to regain missing HP/Stamina/Mana">
+          <i class="fas fa-dice-d6"></i> Regen (Start of Turn)
+        </button>
+      </div>
+
       {{!-- XP Bar --}}
       <div class="xp-bar">
         <label for="system.attributes.xp.value">XP</label>
@@ -107,6 +114,9 @@
           <div class="xp-bar-fill" style="width: {{numberFormat (divide system.attributes.xp.value system.attributes.xp.max) decimals=2 style='percent'}}"></div>
           <span class="xp-text">{{system.attributes.xp.value}} / {{system.attributes.xp.max}}</span>
         </div>
+        {{#if isGM}}
+        <a class="award-xp-button" title="Award XP"><i class="fas fa-star"></i> Award XP</a>
+        {{/if}}
       </div>
 
       {{!-- Failure XP --}}
@@ -166,6 +176,12 @@
               <span class="ability-mod rollable" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
             </div>
             {{/each}}
+
+            <div class="ability flexrow flex-group-center luck" title="Added directly to every roll - no formula, no dice pool. Only moves via race/class/item grants.">
+              <label for="system.luck.value" class="resource-label flexlarge align-left">LUK</label>
+              <input type="text" name="system.luck.value" value="{{system.luck.value}}" data-dtype="Number"/>
+              <span class="ability-mod">{{numberFormat system.luck.total decimals=0 sign=true}}</span>
+            </div>
           </div>
         </aside>
 

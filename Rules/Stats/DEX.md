@@ -6,15 +6,13 @@
         
         - Ranged attacks (shooting bows, throwing knives, firing guns).
             
-        - Dodging attacks or avoiding traps.4
+        - Dodging attacks or avoiding traps.
             
         - Stealth and sneaking.
             
-        - Picking locks, disarming traps, sleight of hand.5
+        - Picking locks, disarming traps, sleight of hand.
             
         - Maintaining balance on narrow surfaces.
-            
-        - Initiative in combat.6
             
     - **Associated Skills (Examples):** Acrobatics, Stealth, Sleight of Hand, Thievery.
         

@@ -26,7 +26,9 @@ export default class dccworldWeapon extends dccworldItemBase {
     schema.quantity = new fields.NumberField({ ...requiredInteger, initial: 1, min: 1 });
     schema.weight = new fields.NumberField({ required: true, nullable: false, initial: 0, min: 0 });
 
-    // Roll formula fields (number of dice, die size, bonus)
+    // Damage roll formula fields (number of dice, die size, bonus). Used by the "Roll Damage"
+    // button on the attack chat card (Actor#rollWeaponDamage in helpers/dice.mjs) - separate
+    // from the attack/defense skill roll itself, which uses the dice-pool system instead.
     schema.roll = new fields.SchemaField({
       diceNum: new fields.NumberField({ ...requiredInteger, initial: 1, min: 1 }),
       diceSize: new fields.StringField({ initial: "d20" }),
@@ -80,7 +82,6 @@ export default class dccworldWeapon extends dccworldItemBase {
   }
 
   prepareDerivedData() {
-    // Build the formula dynamically using string interpolation
     const roll = this.roll;
     this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
   }

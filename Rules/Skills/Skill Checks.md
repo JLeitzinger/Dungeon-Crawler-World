@@ -3,6 +3,6 @@ Every skill check in the game is a contested skill check.
 For every check,
 - you choose what skill you'll use
 - if it's a general skill check roll
-	- the AI will choose what to contest it with and the appropriate number of dice
-- if it's a [[combat roll]]
-	- the enemy will roll a skill in response
+	- the AI will choose what to contest it with and the appropriate number of dice (see [[Difficulty]] for how to size it)
+- if it's a [[Attack]]
+	- the enemy will roll a skill in response — if they're wearing armor, that's usually [[Armor|Defend]]

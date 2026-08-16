@@ -1,4 +1,4 @@
-import { rollSkillCheck, contestedRoll, sendSkillRollToChat, sendContestedRollToChat } from '../helpers/dice.mjs';
+import { rollSkillCheck, contestedRoll, sendSkillRollToChat, sendContestedRollToChat, rollResourceRegen } from '../helpers/dice.mjs';
 
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
@@ -137,7 +137,8 @@ export class dccworldActor extends Actor {
       return null;
     }
 
-    const statModifier = this.system.getSkillStatModifier(skill);
+    // LUK is added directly to every roll on top of the skill's own stat modifier.
+    const statModifier = this.system.getSkillStatModifier(skill) + (this.system.luck?.total || 0);
 
     // Only base skill item dice count for level-up.
     // Level 0: pass 0 so dice.mjs uses the maximum die result instead.
@@ -206,13 +207,13 @@ export class dccworldActor extends Actor {
     const contestResult = await contestedRoll(
       {
         skillLevel: attackSkill.level,
-        statModifier: this.system.getSkillStatModifier(attackSkill),
+        statModifier: this.system.getSkillStatModifier(attackSkill) + (this.system.luck?.total || 0),
         skillName: attackSkill.name,
         actor: this
       },
       {
         skillLevel: defenseSkill.level,
-        statModifier: defender.system.getSkillStatModifier(defenseSkill),
+        statModifier: defender.system.getSkillStatModifier(defenseSkill) + (defender.system.luck?.total || 0),
         skillName: defenseSkill.name,
         actor: defender
       }
@@ -509,6 +510,9 @@ export class dccworldActor extends Actor {
     });
 
     ui.notifications.info(`${this.name} reached Level ${newLevel}! +${hpPerLevel} HP, +${staminaPerLevel} Stamina, +${manaPerLevel} Mana`);
+
+    // Every level grants 3 stat increase points to spend (see grantStatIncreases/promptStatIncrease).
+    await this.grantStatIncreases(3);
   }
 
   /**
@@ -644,6 +648,61 @@ export class dccworldActor extends Actor {
   }
 
   /**
+   * Award character-level XP (see Rules/Character Leveling.md) for defeating a threat or
+   * overcoming a challenge. Distinct from Failure XP - this is what attributes.xp.value
+   * tracks toward the 300*level threshold. Does not auto-level; the Level Up button stays
+   * a deliberate, separate action once enough XP is banked.
+   * @param {number} amount - Amount of XP to award
+   */
+  async addXP(amount) {
+    if (this.type !== 'character') return;
+
+    const currentXP = this.system.attributes.xp.value || 0;
+    const newXP = currentXP + amount;
+
+    await this.update({ 'system.attributes.xp.value': newXP });
+    ui.notifications.info(`${this.name} gains ${amount} XP! (${newXP}/${this.system.attributes.xp.max})`);
+
+    if (newXP >= this.system.attributes.xp.max) {
+      ui.notifications.info(`${this.name} has enough XP to level up!`);
+    }
+  }
+
+  /**
+   * GM-facing prompt to award XP to this character.
+   */
+  async promptAwardXP() {
+    if (this.type !== 'character') return;
+
+    new Dialog({
+      title: `Award XP to ${this.name}`,
+      content: `
+        <form>
+          <div class="form-group">
+            <label>XP Amount:</label>
+            <input type="number" name="amount" value="50" autofocus />
+          </div>
+        </form>
+      `,
+      buttons: {
+        award: {
+          icon: '<i class="fas fa-star"></i>',
+          label: "Award",
+          callback: async (html) => {
+            const amount = parseInt(html[0].querySelector('input[name="amount"]').value) || 0;
+            if (amount > 0) await this.addXP(amount);
+          }
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: "Cancel"
+        }
+      },
+      default: "award"
+    }).render(true);
+  }
+
+  /**
    * Roll a spell check for this actor
    * @param {string} itemId - The ID of the spell item to roll
    * @param {Object} options - Additional options for the roll
@@ -664,10 +723,11 @@ export class dccworldActor extends Actor {
     }
 
     const diceCount = spell.system.diceCount || 1;
-    let statModifier = 0;
+    // LUK applies to every roll, cast stat modifier on top of that if the spell has one.
+    let statModifier = this.system.luck?.total || 0;
 
     if (spell.system.castStat && this.system.abilities[spell.system.castStat]) {
-      statModifier = this.system.abilities[spell.system.castStat].mod || 0;
+      statModifier += this.system.abilities[spell.system.castStat].mod || 0;
     }
 
     const rollResult = await rollSkillCheck({
@@ -686,7 +746,10 @@ export class dccworldActor extends Actor {
 
     // Send to chat unless explicitly disabled
     if (options.sendToChat !== false) {
-      await sendSkillRollToChat(rollResult, options.chatOptions);
+      await sendSkillRollToChat(rollResult, {
+        ...options.chatOptions,
+        offensiveSpell: spell.system.offensive ? { id: spell.id, name: spell.name } : null
+      });
     }
 
     // Check for spell improvement (all 6s)
@@ -727,6 +790,15 @@ export class dccworldActor extends Actor {
       },
       default: "improve"
     }).render(true);
+  }
+
+  /**
+   * Regenerate missing HP/Stamina/Mana at the start of this character's turn.
+   * See Rules/Resources/{Health,Stamina,Mana} Points.md.
+   * @returns {Promise<Array|null>} Regen results per resource
+   */
+  async regenResources() {
+    return rollResourceRegen(this);
   }
 
   /**

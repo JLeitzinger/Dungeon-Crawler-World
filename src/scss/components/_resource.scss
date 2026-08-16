@@ -249,6 +249,32 @@
   }
 }
 
+// Start of turn regen button
+.resource-regen {
+  margin: 10px 0;
+
+  .regen-button {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(0, 247, 255, 0.1) 0%, rgba(0, 179, 217, 0.1) 100%);
+    border: 1px solid $c-cyan;
+    color: $c-cyan;
+    padding: 10px;
+    font-family: $font-secondary;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: $border-radius-tech;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(0, 247, 255, 0.2) 0%, rgba(0, 179, 217, 0.2) 100%);
+      box-shadow: $glow-cyan;
+    }
+  }
+}
+
 // Ability score containers
 .abilities {
   gap: 8px;

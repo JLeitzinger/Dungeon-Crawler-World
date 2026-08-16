@@ -1,14 +1,14 @@
-Every skill check you roll according to the [[Core Rules]] is able to lead to a new skill or an improvement.
+Every skill check you roll according to the [[Core Rules]] is able to lead to a skill improvement.
+
+Skills are not invented during play — they come from your race, class, equipment, and feats (see [[Skill Acquisition]]). [[Do Something]] is the one skill every crawler starts with.
 
 For skill rolls (excluding damage):
 - If you roll the [[Do Something]] skill
-	- rolling all 6s will result in a new skill related to what you were trying to do when you rolled it.
-- If you roll a sklil other than that
-	- roll all 6s result in the player choosing to:
-		- improve the skill by one level
-		- add a new skill related to what you were trying to do at the time
+	- rolling all 6s grants 2 bonus XP instead of a new skill.
+- If you roll a skill other than that
+	- rolling all 6s improves that skill by one level.
 
 ## Skill Levels
-- New skills start at level 1
-- You cannot level the [[Do Something]] skill normally
+- Skills are acquired at whatever level your race/class/item/feat grants them (typically 1-3)
+- You cannot level the [[Do Something]] skill
 - For every level in a skill, you roll an additional d6 on checks using that skill
