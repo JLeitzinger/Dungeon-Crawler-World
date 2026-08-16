@@ -1,5 +1,6 @@
 import { rollSkillCheck, contestedRoll, sendSkillRollToChat, sendContestedRollToChat, rollResourceRegen } from '../helpers/dice.mjs';
 import { openLootboxTier } from '../helpers/lootbox.mjs';
+import { grantAchievement } from '../helpers/achievements.mjs';
 
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
@@ -726,6 +727,16 @@ export class dccworldActor extends Actor {
    */
   async openLootboxTier(tier, count = 1) {
     return openLootboxTier(this, tier, count);
+  }
+
+  /**
+   * Log an achievement and grant its reward (if any) - see module/helpers/achievements.mjs.
+   * Called by the "Grant Achievement" macro (module/helpers/macros.mjs).
+   * @param {Item} achievementItem - A world Item of type 'achievement'
+   * @returns {Promise<Object|null>} The logged achievement entry
+   */
+  async grantAchievement(achievementItem) {
+    return grantAchievement(this, achievementItem);
   }
 
   /**

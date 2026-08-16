@@ -1,0 +1,46 @@
+<ol class='items-list achievements-list'>
+  <li class='item flexrow items-header'>
+    <div class='item-name'>{{localize 'Name'}}</div>
+    <div class='achievement-reward-header'>Reward</div>
+    <div class='achievement-date-header'>Earned</div>
+    {{#if @root.isGM}}<div class='item-controls'></div>{{/if}}
+  </li>
+  {{#each system.achievements as |achievement idx|}}
+    <li class='item flexrow achievement-entry'>
+      <div class='item-name'>
+        <div class='item-image'>
+          <img
+            src='{{#if achievement.img}}{{achievement.img}}{{else}}icons/skills/trades/academics-merit-award-diploma-gold.webp{{/if}}'
+            title='{{achievement.name}}'
+            width='24'
+            height='24'
+          />
+        </div>
+        <div class='item-details'>
+          <h4>{{achievement.name}}</h4>
+          {{#if achievement.description}}
+            <div class='item-description'>{{achievement.description}}</div>
+          {{/if}}
+        </div>
+      </div>
+      <div class='achievement-reward'>
+        {{#if achievement.rewardName}}{{achievement.rewardName}}{{else}}—{{/if}}
+      </div>
+      <div class='achievement-date'>{{achievement.dateReceived}}</div>
+      {{#if @root.isGM}}
+      <div class='item-controls'>
+        <a
+          class='item-control achievement-delete'
+          data-index='{{idx}}'
+          title='Remove Achievement'
+        >
+          <i class='fas fa-trash'></i>
+        </a>
+      </div>
+      {{/if}}
+    </li>
+  {{/each}}
+</ol>
+{{#unless system.achievements.length}}
+<p class="achievements-empty">No achievements earned yet. GMs can grant one via the "Grant Achievement" macro.</p>
+{{/unless}}

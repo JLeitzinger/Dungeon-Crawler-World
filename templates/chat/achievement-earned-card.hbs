@@ -1,0 +1,18 @@
+<div class="dcc-roll-card achievement-earned-card">
+  <div class="roll-card-header">
+    <div class="action-text">
+      <i class="fas fa-award"></i> <strong>{{actorName}}</strong> earned an achievement: <span class="achievement-name">{{achievementName}}</span>!
+    </div>
+  </div>
+
+  <div class="achievement-body">
+    {{#if description}}
+    <p class="achievement-description">{{description}}</p>
+    {{/if}}
+    {{#if rewardName}}
+    <div class="achievement-reward-line">
+      <i class="fas fa-gift"></i> Reward: <strong>{{rewardName}}</strong>
+    </div>
+    {{/if}}
+  </div>
+</div>

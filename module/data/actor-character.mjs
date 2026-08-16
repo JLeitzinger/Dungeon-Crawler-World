@@ -21,6 +21,17 @@ export default class dccworldCharacter extends dccworldActorBase {
       statIncreases: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
     });
 
+    // Log of achievements granted via the "Grant Achievement" macro (see
+    // module/helpers/achievements.mjs). Not embedded items - just a plain record of what
+    // was earned, when, and what reward (if any) came with it.
+    schema.achievements = new fields.ArrayField(new fields.SchemaField({
+      name: new fields.StringField({ required: true, blank: true }),
+      img: new fields.StringField({ required: true, blank: true }),
+      description: new fields.StringField({ required: true, blank: true }),
+      rewardName: new fields.StringField({ required: true, blank: true }),
+      dateReceived: new fields.StringField({ required: true, blank: true })
+    }), { required: true, initial: [] });
+
     // Character details
     schema.details = new fields.SchemaField({
       race: new fields.StringField({ required: true, blank: true }),

@@ -8,6 +8,7 @@ import { dccworldItemSheet } from './sheets/item-sheet.mjs';
 import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
 import { DCC_WORLD } from './helpers/config.mjs';
 import { initializeChatListeners } from './helpers/dice.mjs';
+import { grantAchievementMacro, ensureSystemMacros } from './helpers/macros.mjs';
 // Import DataModel classes
 import * as models from './data/_module.mjs';
 
@@ -22,6 +23,7 @@ Hooks.once('init', async function () {
     dccworldActor,
     dccworldItem,
     rollItemMacro,
+    grantAchievementMacro,
   };
 
   // Add custom constants for configuration.
@@ -65,7 +67,8 @@ Hooks.once('init', async function () {
     race: models.dccworldRace,
     weapon: models.dccworldWeapon,
     lootbox: models.dccworldLootbox,
-    god: models.dccworldGod
+    god: models.dccworldGod,
+    achievement: models.dccworldAchievement
   }
 
   // Active Effects are never copied to the Actor,
@@ -82,7 +85,7 @@ Hooks.once('init', async function () {
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('dungeon-crawler-world', dccworldItemSheet, {
     makeDefault: true,
-    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon', 'lootbox', 'god'],
+    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon', 'lootbox', 'god', 'achievement'],
     label: 'DCC_WORLD.SheetLabels.Item',
   });
 
@@ -139,6 +142,9 @@ Handlebars.registerHelper('gt', function (a, b) {
 Hooks.once('ready', function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
+
+  // Auto-create the "Grant Achievement" world macro for GMs if it doesn't exist yet.
+  ensureSystemMacros();
 });
 
 /* -------------------------------------------- */

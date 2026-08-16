@@ -499,6 +499,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Award XP (GM only)
     html.on('click', '.award-xp-button', this._onAwardXP.bind(this));
 
+    // Remove an achievement log entry (GM only - template only renders the control for GMs)
+    html.on('click', '.achievement-delete', this._onAchievementDelete.bind(this));
+
     // Regen HP/Stamina/Mana (start of turn)
     html.on('click', '.regen-button', this._onRegenResources.bind(this));
 
@@ -709,6 +712,19 @@ export class dccworldActorSheet extends ActorSheet {
   async _onAwardXP(event) {
     event.preventDefault();
     await this.actor.promptAwardXP();
+  }
+
+  /**
+   * Handle removing an achievement log entry
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onAchievementDelete(event) {
+    event.preventDefault();
+    const index = parseInt($(event.currentTarget).data('index'));
+    const achievements = foundry.utils.duplicate(this.actor.system.achievements || []);
+    achievements.splice(index, 1);
+    await this.actor.update({ 'system.achievements': achievements });
   }
 
   /**

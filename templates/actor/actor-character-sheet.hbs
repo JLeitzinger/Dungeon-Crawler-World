@@ -147,6 +147,7 @@
     <a class="item" data-tab="weapons">Weapons</a>
     <a class="item" data-tab="spells">Spells</a>
     <a class="item" data-tab="worship">Worship</a>
+    <a class="item" data-tab="achievements">Achievements</a>
     <a class="item" data-tab="effects">Effects</a>
   </nav>
 
@@ -219,6 +220,11 @@
     {{!-- Worship Tab --}}
     <div class="tab worship" data-group="primary" data-tab="worship">
       {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-worship.hbs"}}
+    </div>
+
+    {{!-- Achievements Tab --}}
+    <div class="tab achievements" data-group="primary" data-tab="achievements">
+      {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-achievements.hbs"}}
     </div>
 
     {{!-- Active Effects Tab --}}

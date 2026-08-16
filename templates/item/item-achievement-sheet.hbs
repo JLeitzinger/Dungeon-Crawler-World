@@ -1,0 +1,57 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <header class='sheet-header'>
+    <img
+      class='profile-img'
+      src='{{item.img}}'
+      data-edit='img'
+      title='{{item.name}}'
+    />
+    <div class='header-fields'>
+      <h1 class='charname'><input
+          name='name'
+          type='text'
+          value='{{item.name}}'
+          placeholder='Name'
+        /></h1>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Reward UUID</label>
+          <input
+            type='text'
+            name='system.rewardUuid'
+            value='{{system.rewardUuid}}'
+            placeholder='Item UUID (usually a lootbox) - blank for no reward'
+            data-dtype='String'
+          />
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>Reward Quantity</label>
+          <input
+            type='text'
+            name='system.rewardQuantity'
+            value='{{system.rewardQuantity}}'
+            data-dtype='Number'
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class='sheet-tabs tabs' data-group='primary'>
+    <a class='item' data-tab='description'>Description</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class='sheet-body'>
+    <div class='tab' data-group='primary' data-tab='description'>
+      {{editor
+        enrichedDescription
+        target='system.description'
+        engine='prosemirror'
+        button=true
+        editable=editable
+      }}
+    </div>
+  </section>
+</form>
