@@ -28,6 +28,7 @@ export default class dccworldItem extends dccworldItemBase {
     // regen-boost item, though none exist yet).
     schema.restoreResource = new fields.StringField({
       required: true,
+      blank: true,
       initial: "",
       choices: ["", "hp", "stamina", "mana"]
     });
