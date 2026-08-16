@@ -67,8 +67,9 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
 **CRITICAL: Always test changes in Foundry VTT before committing!** This catches errors during system initialization that could break the system for users.
 
 ### Local Foundry VTT Installation
-- **Path**: `/home/elaboratejohnny/FoundryVTT/`
+- **Path**: `/home/elaboratejohnny/foundry/` (app in `app/`, data in `data/`)
 - This is a local installation for testing system changes
+- **Always pass `--dataPath`** when starting it — without it, Foundry falls back to its OS-default data directory (empty, unlicensed) instead of the populated one
 
 ### Testing Workflow
 
@@ -76,7 +77,7 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
 
 1. **Start Foundry VTT and monitor output:**
    ```bash
-   cd /home/elaboratejohnny/FoundryVTT && node resources/app/main.js
+   cd /home/elaboratejohnny/foundry && node app/main.js --dataPath="/home/elaboratejohnny/foundry/data"
    ```
 
 2. **Access the game in the browser:**
@@ -127,7 +128,7 @@ The system uses SCSS for styling. Source files are in `src/scss/` and compile to
 ### Quick Test Command
 ```bash
 # Start Foundry VTT from the installation directory
-cd /home/elaboratejohnny/FoundryVTT && node resources/app/main.js
+cd /home/elaboratejohnny/foundry && node app/main.js --dataPath="/home/elaboratejohnny/foundry/data"
 ```
 
 Once running, access at **http://localhost:30000** and log in as **Gamemaster** (no password).
