@@ -2,9 +2,12 @@
  * Achievement granting logic - see module/helpers/macros.mjs for the GM-facing "Grant
  * Achievement" macro that drives this. Achievements are world Items (type "achievement",
  * not compendium content - these are campaign-specific, GM-authored recognitions).
- * Granting one logs an entry on the receiving character's system.achievements and,
- * if the achievement has a rewardUuid set, creates that item on the character too
- * (rewards are usually a lootbox, but any Item UUID works).
+ * Granting one logs an entry on the receiving character's system.achievements and, based
+ * on rewardType, creates a reward item on the character too:
+ *   - "lootbox": builds a lootbox of rewardTier directly (no pre-authored lootbox Item
+ *     needs to exist anywhere - a lootbox only needs a tier to be opened).
+ *   - "item": creates whatever Item rewardUuid points to.
+ *   - "none": no reward.
  */
 
 /**
@@ -19,13 +22,24 @@ export async function grantAchievement(actor, achievementItem) {
     return null;
   }
 
-  const rewardUuid = achievementItem.system?.rewardUuid;
-  const rewardQuantity = achievementItem.system?.rewardQuantity || 1;
+  const system = achievementItem.system || {};
+  const rewardType = system.rewardType || 'none';
+  const rewardQuantity = system.rewardQuantity || 1;
   let rewardName = '';
 
-  if (rewardUuid) {
+  if (rewardType === 'lootbox' && system.rewardTier) {
+    const tier = system.rewardTier;
+    const tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
+    const lootboxData = {
+      name: `${tierLabel} Lootbox`,
+      type: 'lootbox',
+      system: { description: '', tier, quantity: rewardQuantity }
+    };
+    await Item.createDocuments([lootboxData], { parent: actor });
+    rewardName = rewardQuantity > 1 ? `${tierLabel} Lootbox x${rewardQuantity}` : `${tierLabel} Lootbox`;
+  } else if (rewardType === 'item' && system.rewardUuid) {
     try {
-      const rewardDoc = await fromUuid(rewardUuid);
+      const rewardDoc = await fromUuid(system.rewardUuid);
       if (rewardDoc) {
         const rewardData = rewardDoc.toObject();
         delete rewardData._id;
@@ -37,11 +51,11 @@ export async function grantAchievement(actor, achievementItem) {
         await Item.createDocuments([rewardData], { parent: actor });
         rewardName = rewardQuantity > 1 ? `${rewardDoc.name} x${rewardQuantity}` : rewardDoc.name;
       } else {
-        console.warn(`DCC World: Achievement reward "${rewardUuid}" not found.`);
-        ui.notifications.warn(`Achievement reward not found (${rewardUuid}) - achievement granted without it.`);
+        console.warn(`DCC World: Achievement reward "${system.rewardUuid}" not found.`);
+        ui.notifications.warn(`Achievement reward not found (${system.rewardUuid}) - achievement granted without it.`);
       }
     } catch (error) {
-      console.warn(`DCC World: Error granting achievement reward "${rewardUuid}":`, error);
+      console.warn(`DCC World: Error granting achievement reward "${system.rewardUuid}":`, error);
     }
   }
 
@@ -49,7 +63,7 @@ export async function grantAchievement(actor, achievementItem) {
   const entry = {
     name: achievementItem.name,
     img: achievementItem.img || '',
-    description: achievementItem.system?.description || '',
+    description: system.description || '',
     rewardName,
     dateReceived: new Date().toLocaleDateString()
   };

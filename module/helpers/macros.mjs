@@ -4,21 +4,18 @@
  * Macro document for GMs so it doesn't need to be built by hand.
  */
 
+const DEFAULT_ACHIEVEMENT_IMG = 'icons/skills/trades/academics-merit-award-diploma-gold.webp';
+
 /**
  * GM-facing macro for handing out an achievement to one or more player characters.
  * Achievements are authored as world Items of type "achievement" (Items directory, not a
- * compendium - these are campaign-specific homebrew, unlike the shared DCW-Content packs)
- * with a description and an optional reward item UUID (usually a lootbox).
+ * compendium - these are campaign-specific homebrew, unlike the shared DCW-Content packs).
+ * The dialog can grant an existing achievement or create a new one inline - new ones are
+ * saved as world Items so they show up as "existing" the next time this runs.
  */
 export async function grantAchievementMacro() {
   if (!game.user.isGM) {
     ui.notifications.warn('Only the GM can grant achievements.');
-    return;
-  }
-
-  const achievements = game.items.filter(i => i.type === 'achievement');
-  if (achievements.length === 0) {
-    ui.notifications.warn('No Achievement items found. Create one in the Items directory first (type: Achievement).');
     return;
   }
 
@@ -28,9 +25,14 @@ export async function grantAchievementMacro() {
     return;
   }
 
-  const achievementOptions = achievements
-    .map(a => `<option value="${a.id}">${a.name}</option>`)
+  const achievements = game.items.filter(i => i.type === 'achievement');
+  const tierOptions = CONFIG.DCC_WORLD.lootboxTiers
+    .map(t => `<option value="${t}">${t.charAt(0).toUpperCase() + t.slice(1)}</option>`)
     .join('');
+  const achievementOptions = [
+    '<option value="__new__">+ Create New Achievement</option>',
+    ...achievements.map(a => `<option value="${a.id}">${a.name}</option>`)
+  ].join('');
   const targetCheckboxes = targets
     .map(a => `<label class="achv-target-label"><input type="checkbox" class="achv-target" value="${a.id}" /> ${a.name}</label>`)
     .join('<br/>');
@@ -41,8 +43,42 @@ export async function grantAchievementMacro() {
       <form>
         <div class="form-group">
           <label>Achievement:</label>
-          <select name="achievementId" autofocus>${achievementOptions}</select>
+          <select name="achievementId" id="achv-select" autofocus>${achievementOptions}</select>
         </div>
+
+        <div id="achv-new-fields">
+          <div class="form-group">
+            <label>Name:</label>
+            <input type="text" name="newName" placeholder="Achievement name" />
+          </div>
+          <div class="form-group">
+            <label>Description:</label>
+            <textarea name="newDescription" rows="2" placeholder="What did they do?"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Reward:</label>
+            <select name="rewardType" id="achv-reward-type">
+              <option value="none">No Reward</option>
+              <option value="lootbox" selected>Lootbox</option>
+              <option value="item">Specific Item (UUID)</option>
+            </select>
+          </div>
+          <div class="form-group" id="achv-reward-tier-group">
+            <label>Lootbox Tier:</label>
+            <select name="rewardTier">${tierOptions}</select>
+          </div>
+          <div class="form-group" id="achv-reward-uuid-group" style="display:none;">
+            <label>Item UUID:</label>
+            <input type="text" name="rewardUuid" placeholder="Item UUID" />
+          </div>
+          <div class="form-group">
+            <label>Reward Quantity:</label>
+            <input type="number" name="rewardQuantity" value="1" min="1" />
+          </div>
+        </div>
+
+        <hr/>
+
         <div class="form-group">
           <label><input type="checkbox" id="achv-select-all" /> All Players</label>
         </div>
@@ -54,6 +90,24 @@ export async function grantAchievementMacro() {
         document.getElementById('achv-select-all').addEventListener('change', (e) => {
           document.querySelectorAll('.achv-target').forEach(cb => cb.checked = e.target.checked);
         });
+
+        const achvSelect = document.getElementById('achv-select');
+        const newFields = document.getElementById('achv-new-fields');
+        function toggleNewFields() {
+          newFields.style.display = achvSelect.value === '__new__' ? '' : 'none';
+        }
+        achvSelect.addEventListener('change', toggleNewFields);
+        toggleNewFields();
+
+        const rewardTypeSelect = document.getElementById('achv-reward-type');
+        const tierGroup = document.getElementById('achv-reward-tier-group');
+        const uuidGroup = document.getElementById('achv-reward-uuid-group');
+        function toggleRewardFields() {
+          tierGroup.style.display = rewardTypeSelect.value === 'lootbox' ? '' : 'none';
+          uuidGroup.style.display = rewardTypeSelect.value === 'item' ? '' : 'none';
+        }
+        rewardTypeSelect.addEventListener('change', toggleRewardFields);
+        toggleRewardFields();
       </script>
     `,
     buttons: {
@@ -62,8 +116,31 @@ export async function grantAchievementMacro() {
         label: 'Grant',
         callback: async (html) => {
           const form = html[0].querySelector('form');
-          const achievementId = form.querySelector('select[name="achievementId"]').value;
-          const achievementItem = game.items.get(achievementId);
+          let achievementItem;
+
+          const achievementId = form.querySelector('#achv-select').value;
+          if (achievementId === '__new__') {
+            const name = form.querySelector('[name="newName"]').value.trim();
+            if (!name) {
+              ui.notifications.warn('Enter a name for the new achievement.');
+              return;
+            }
+
+            const rewardType = form.querySelector('[name="rewardType"]').value;
+            const system = {
+              description: form.querySelector('[name="newDescription"]').value,
+              rewardType,
+              rewardTier: rewardType === 'lootbox' ? form.querySelector('[name="rewardTier"]').value : 'bronze',
+              rewardUuid: rewardType === 'item' ? form.querySelector('[name="rewardUuid"]').value.trim() : '',
+              rewardQuantity: parseInt(form.querySelector('[name="rewardQuantity"]').value) || 1
+            };
+
+            achievementItem = await Item.create({ name, type: 'achievement', img: DEFAULT_ACHIEVEMENT_IMG, system });
+            ui.notifications.info(`Created achievement "${name}".`);
+          } else {
+            achievementItem = game.items.get(achievementId);
+          }
+
           if (!achievementItem) {
             ui.notifications.error('Achievement not found.');
             return;
@@ -106,7 +183,7 @@ export async function ensureSystemMacros() {
   await Macro.create({
     name: 'Grant Achievement',
     type: 'script',
-    img: 'icons/skills/trades/academics-merit-award-diploma-gold.webp',
+    img: DEFAULT_ACHIEVEMENT_IMG,
     command: 'game.dungeoncrawlerworld.grantAchievementMacro();',
     flags: { 'dungeon-crawler-world': { systemMacro: 'grant-achievement' } }
   });

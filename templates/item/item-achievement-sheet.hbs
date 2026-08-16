@@ -13,14 +13,33 @@
           value='{{item.name}}'
           placeholder='Name'
         /></h1>
-      <div class='grid grid-2col'>
+      <div class='grid grid-4col'>
         <div class='resource'>
-          <label class='resource-label'>Reward UUID</label>
+          <label class='resource-label'>Reward Type</label>
+          <select name='system.rewardType' data-dtype='String'>
+            <option value='none' {{#if (eq system.rewardType 'none')}}selected{{/if}}>No Reward</option>
+            <option value='lootbox' {{#if (eq system.rewardType 'lootbox')}}selected{{/if}}>Lootbox</option>
+            <option value='item' {{#if (eq system.rewardType 'item')}}selected{{/if}}>Specific Item (UUID)</option>
+          </select>
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>Lootbox Tier</label>
+          <select name='system.rewardTier' data-dtype='String'>
+            <option value='bronze' {{#if (eq system.rewardTier 'bronze')}}selected{{/if}}>Bronze</option>
+            <option value='silver' {{#if (eq system.rewardTier 'silver')}}selected{{/if}}>Silver</option>
+            <option value='gold' {{#if (eq system.rewardTier 'gold')}}selected{{/if}}>Gold</option>
+            <option value='platinum' {{#if (eq system.rewardTier 'platinum')}}selected{{/if}}>Platinum</option>
+            <option value='legendary' {{#if (eq system.rewardTier 'legendary')}}selected{{/if}}>Legendary</option>
+            <option value='celestial' {{#if (eq system.rewardTier 'celestial')}}selected{{/if}}>Celestial</option>
+          </select>
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>Reward Item UUID</label>
           <input
             type='text'
             name='system.rewardUuid'
             value='{{system.rewardUuid}}'
-            placeholder='Item UUID (usually a lootbox) - blank for no reward'
+            placeholder='Only used when Reward Type = Item'
             data-dtype='String'
           />
         </div>
