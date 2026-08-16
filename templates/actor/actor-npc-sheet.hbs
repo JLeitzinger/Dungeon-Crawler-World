@@ -47,13 +47,49 @@
   {{!-- Sheet Tab Navigation --}}
   <nav class="sheet-tabs tabs" data-group="primary">
     {{!-- Default tab is specified in actor-sheet.mjs --}}
+    <a class="item" data-tab="skills">Skills</a>
+    <a class="item" data-tab="features">Features</a>
     <a class="item" data-tab="description">Description</a>
     <a class="item" data-tab="items">Items</a>
+    <a class="item" data-tab="weapons">Weapons</a>
     <a class="item" data-tab="effects">Effects</a>
   </nav>
 
   {{!-- Sheet Body --}}
   <section class="sheet-body">
+
+    {{!-- Skills Tab --}}
+    <div class="tab skills" data-group="primary" data-tab="skills">
+      {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-skills.hbs"}}
+    </div>
+
+    {{!-- Owned Features Tab (with ability score block - NPCs are authored as direct stat
+    blocks, so abilities are set here rather than derived from race/class items) --}}
+    <div class="tab features" data-group="primary" data-tab="features">
+      <section class="grid grid-3col">
+        <aside class="sidebar">
+          <div class="abilities flexcol">
+            {{#each system.abilities as |ability key|}}
+            <div class="ability flexrow flex-group-center">
+              <label for="system.abilities.{{key}}.value" class="resource-label rollable flexlarge align-left" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
+              <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
+              <span class="ability-mod rollable" data-roll="d20+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+            </div>
+            {{/each}}
+
+            <div class="ability flexrow flex-group-center luck" title="Added directly to every roll - no formula, no dice pool. Only moves via item/feature grants.">
+              <label for="system.luck.value" class="resource-label flexlarge align-left">LUK</label>
+              <input type="text" name="system.luck.value" value="{{system.luck.value}}" data-dtype="Number"/>
+              <span class="ability-mod">{{numberFormat system.luck.total decimals=0 sign=true}}</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="main grid-span-2">
+          {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-features.hbs"}}
+        </section>
+      </section>
+    </div>
 
     {{!-- Biography Tab --}}
     <div class="tab biography" data-group="primary" data-tab="description">
@@ -64,6 +100,11 @@
     {{!-- Owned Items Tab --}}
     <div class="tab items" data-group="primary" data-tab="items">
        {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-items.hbs"}}
+    </div>
+
+    {{!-- Owned Weapons Tab --}}
+    <div class="tab weapons" data-group="primary" data-tab="weapons">
+      {{> "systems/dungeon-crawler-world/templates/actor/parts/actor-weapons.hbs"}}
     </div>
 
     {{!-- Active Effects Tab --}}

@@ -87,9 +87,9 @@ export class dccworldActor extends Actor {
    * @returns {Promise<Object>} The roll result
    */
   async rollSkill(skillUuid, options = {}) {
-    // Only characters have skills
-    if (this.type !== 'character') {
-      ui.notifications.warn("Only characters can use skill checks.");
+    // Only characters and NPCs have skills
+    if (!['character', 'npc'].includes(this.type)) {
+      ui.notifications.warn("Only characters and NPCs can use skill checks.");
       return null;
     }
 
@@ -133,9 +133,11 @@ export class dccworldActor extends Actor {
       ? options.customEffort
       : (equippedWeaponEffort > 0 ? equippedWeaponEffort * rollLevel : (skill.effort || 0));
 
-    // Check if character has enough stamina
-    if (effortCost > 0 && this.system.stamina.value < effortCost) {
-      ui.notifications.warn(`Not enough stamina! Need ${effortCost}, have ${this.system.stamina.value}.`);
+    // Check if the actor has enough of its effort resource (Stamina for characters, Power for NPCs)
+    const { field: effortField, pool: effortPool } = this.system.effortResource;
+    const effortLabel = effortField === 'stamina' ? 'Stamina' : 'Power';
+    if (effortCost > 0 && effortPool.value < effortCost) {
+      ui.notifications.warn(`Not enough ${effortLabel.toLowerCase()}! Need ${effortCost}, have ${effortPool.value}.`);
       return null;
     }
 
@@ -154,13 +156,11 @@ export class dccworldActor extends Actor {
       improvementDice
     });
 
-    // Deduct stamina after successful roll
+    // Deduct the effort resource after a successful roll
     if (effortCost > 0) {
-      const newStamina = Math.max(0, this.system.stamina.value - effortCost);
-      await this.update({ 'system.stamina.value': newStamina });
-      if (effortCost > 0) {
-        ui.notifications.info(`-${effortCost} Stamina (${newStamina}/${this.system.stamina.max})`);
-      }
+      const newValue = Math.max(0, effortPool.value - effortCost);
+      await this.update({ [`system.${effortField}.value`]: newValue });
+      ui.notifications.info(`-${effortCost} ${effortLabel} (${newValue}/${effortPool.max})`);
     }
 
     // Send to chat unless explicitly disabled
@@ -188,8 +188,9 @@ export class dccworldActor extends Actor {
    * @returns {Promise<Object>} The contest result
    */
   async rollContested(attackSkillUuid, defender, defenseSkillUuid, options = {}) {
-    if (this.type !== 'character' || defender.type !== 'character') {
-      ui.notifications.warn("Only characters can use contested rolls.");
+    const canRollSkills = ['character', 'npc'].includes(this.type) && ['character', 'npc'].includes(defender.type);
+    if (!canRollSkills) {
+      ui.notifications.warn("Only characters and NPCs can use contested rolls.");
       return null;
     }
 
@@ -626,6 +627,12 @@ export class dccworldActor extends Actor {
    * @returns {Promise<Object>} The roll result
    */
   async rollSpell(itemId, options = {}) {
+    // Only characters have mana - NPCs don't cast spells (see NPC system fix scope notes).
+    if (this.type !== 'character') {
+      ui.notifications.warn("Only characters can cast spells.");
+      return null;
+    }
+
     const spell = this.items.get(itemId);
     if (!spell) {
       ui.notifications.error(`Spell "${itemId}" not found.`);
@@ -800,6 +807,7 @@ export class dccworldActor extends Actor {
     }
 
     // Show dialog to select skill and level
+    const effortLabel = this.system.effortResource.field === 'stamina' ? 'Stamina' : 'Power';
     return new Promise((resolve) => {
       new Dialog({
         title: `Attack with ${weapon.name}`,
@@ -821,7 +829,7 @@ export class dccworldActor extends Actor {
             <div class="form-group">
               <p><strong>Weapon:</strong> ${weapon.name} (${weapon.system.rarity})</p>
               <p><strong>Total Equipped Weapon Effort:</strong> <span id="weapon-effort">${skillEffortMap[availableSkills[0]?.uuid] || 0}</span></p>
-              <p><strong>Stamina Cost:</strong> <span id="stamina-cost">${(skillEffortMap[availableSkills[0]?.uuid] || 0) * (availableSkills[0]?.maxLevel || 1)}</span></p>
+              <p><strong>${effortLabel} Cost:</strong> <span id="stamina-cost">${(skillEffortMap[availableSkills[0]?.uuid] || 0) * (availableSkills[0]?.maxLevel || 1)}</span></p>
               <p class="notes">Cost = Total Equipped Weapon Effort × Skill Level</p>
             </div>
           </form>
