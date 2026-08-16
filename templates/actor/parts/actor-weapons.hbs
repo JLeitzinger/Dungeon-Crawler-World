@@ -4,16 +4,7 @@
     <div class='item-rarity'>Rarity</div>
     <div class='item-effort'>Effort</div>
     <div class='item-formula'>Damage</div>
-    <div class='item-controls'>
-      <a
-        class='item-control item-create'
-        title='{{localize "DOCUMENT.Create" type='Weapon'}}'
-        data-type='weapon'
-      >
-        <i class='fas fa-plus'></i>
-        {{localize 'DOCUMENT.New' type='weapon'}}
-      </a>
-    </div>
+    <div class='item-controls'></div>
   </li>
   {{#each weapons as |weapon id|}}
     <li class='item flexrow {{#if weapon.system.equipped}}equipped{{/if}}' data-item-id='{{weapon._id}}'>

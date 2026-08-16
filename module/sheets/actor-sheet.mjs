@@ -400,9 +400,6 @@ export class dccworldActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
-    // Add Inventory Item
-    html.on('click', '.item-create', this._onItemCreate.bind(this));
-
     // Delete Inventory Item
     html.on('click', '.item-delete', async (ev) => {
       const button = $(ev.currentTarget);
@@ -488,33 +485,6 @@ export class dccworldActorSheet extends ActorSheet {
         li.addEventListener('dragstart', handler, false);
       });
     }
-  }
-
-  /**
-   * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onItemCreate(event) {
-    event.preventDefault();
-    const header = event.currentTarget;
-    // Get the type of item to create.
-    const type = header.dataset.type;
-    // Grab any data associated with this control.
-    const data = duplicate(header.dataset);
-    // Initialize a default name.
-    const name = `New ${type.capitalize()}`;
-    // Prepare the item object.
-    const itemData = {
-      name: name,
-      type: type,
-      system: data,
-    };
-    // Remove the type from the dataset since it's in the itemData.type prop.
-    delete itemData.system['type'];
-
-    // Finally, create the item!
-    return await Item.create(itemData, { parent: this.actor });
   }
 
   /**

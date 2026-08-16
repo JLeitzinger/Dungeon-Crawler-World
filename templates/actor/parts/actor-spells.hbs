@@ -4,17 +4,6 @@
       <div class='item-name'>
         {{localize 'DCC_WORLD.Item.Spell.SpellLVL' level=spellLevel}}
       </div>
-      <div class='item-controls'>
-        <a
-          class='item-control item-create'
-          title='{{localize "DOCUMENT.Create" type='Spell'}}'
-          data-type='spell'
-          data-spell-level='{{spellLevel}}'
-        >
-          <i class='fas fa-plus'></i>
-          {{localize 'DCC_WORLD.Item.Spell.AddLVL' level=spellLevel}}
-        </a>
-      </div>
     </li>
     {{#each spells as |item id|}}
       <li class='item flexrow' data-item-id='{{item._id}}'>
