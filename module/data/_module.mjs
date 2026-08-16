@@ -13,3 +13,4 @@ export {default as dccworldClass} from "./item-class.mjs";
 export {default as dccworldRace} from "./item-race.mjs";
 export {default as dccworldWeapon} from "./item-weapon.mjs";
 export {default as dccworldLootbox} from "./item-lootbox.mjs";
+export {default as dccworldGod} from "./item-god.mjs";

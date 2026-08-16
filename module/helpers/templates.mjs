@@ -12,6 +12,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/dungeon-crawler-world/templates/actor/parts/actor-weapons.hbs',
     'systems/dungeon-crawler-world/templates/actor/parts/actor-spells.hbs',
     'systems/dungeon-crawler-world/templates/actor/parts/actor-lootboxes.hbs',
+    'systems/dungeon-crawler-world/templates/actor/parts/actor-worship.hbs',
     'systems/dungeon-crawler-world/templates/actor/parts/actor-effects.hbs',
     // Item partials
     'systems/dungeon-crawler-world/templates/item/parts/item-effects.hbs',

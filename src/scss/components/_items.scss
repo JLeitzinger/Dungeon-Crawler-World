@@ -981,3 +981,11 @@
   flex: 0 0 80px;
   text-align: center;
 }
+
+// Worship tab empty state
+.worship-empty {
+  font-size: 12px;
+  color: $c-faint;
+  font-style: italic;
+  margin: 8px 0 0;
+}

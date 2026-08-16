@@ -1824,6 +1824,12 @@
   flex: 0 0 80px;
   text-align: center;
 }
+.dungeon-crawler-world .worship-empty {
+  font-size: 12px;
+  color: #99aabb;
+  font-style: italic;
+  margin: 8px 0 0;
+}
 .dungeon-crawler-world .effects .item {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(0, 247, 255, 0.15);

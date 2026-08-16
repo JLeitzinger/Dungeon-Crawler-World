@@ -123,6 +123,7 @@ export class dccworldActorSheet extends ActorSheet {
     const skillItems = [];
     const weapons = [];
     const lootboxItems = [];
+    const gods = [];
     const spells = {
       0: [],
       1: [],
@@ -165,6 +166,10 @@ export class dccworldActorSheet extends ActorSheet {
       else if (i.type === 'lootbox') {
         lootboxItems.push(i);
       }
+      // Append to worshipped gods.
+      else if (i.type === 'god') {
+        gods.push(i);
+      }
     }
 
     // Aggregate lootboxes by tier, weakest to strongest, summing quantity across however
@@ -187,6 +192,7 @@ export class dccworldActorSheet extends ActorSheet {
     context.skillItems = skillItems;
     context.spells = spells;
     context.lootboxes = lootboxes;
+    context.gods = gods;
 
     // Add aggregated skills from system
     context.skills = context.system.aggregatedSkills || {};
