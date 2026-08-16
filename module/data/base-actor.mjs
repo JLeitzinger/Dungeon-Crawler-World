@@ -87,8 +87,8 @@ export default class dccworldActorBase extends dccworldDataModel {
 
     // Second pass: add bonuses from grantedSkills on all items
     for (const item of items) {
-      // Weapons only grant skills when equipped
-      if (item.type === 'weapon' && !item.system?.equipped) {
+      // Weapons and armor only grant skills when equipped
+      if (['weapon', 'armor'].includes(item.type) && !item.system?.equipped) {
         continue;
       }
 
@@ -180,9 +180,9 @@ export default class dccworldActorBase extends dccworldDataModel {
 
   /**
    * Aggregate LUK from all items on the actor into `this.luck.total`.
-   * Weapons only contribute their luckBonus while equipped (matching grantedSkills);
-   * every other item type (race, class, features, spells, skills, gear) contributes
-   * unconditionally whenever owned.
+   * Weapons and armor only contribute their luckBonus while equipped (matching
+   * grantedSkills); every other item type (race, class, features, spells, skills, gear)
+   * contributes unconditionally whenever owned.
    * @private
    */
   _aggregateLuck() {
@@ -190,7 +190,7 @@ export default class dccworldActorBase extends dccworldDataModel {
     let total = this.luck.value;
 
     for (const item of items) {
-      if (item.type === 'weapon' && !item.system?.equipped) continue;
+      if (['weapon', 'armor'].includes(item.type) && !item.system?.equipped) continue;
       total += item.system?.luckBonus || 0;
     }
 

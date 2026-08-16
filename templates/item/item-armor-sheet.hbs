@@ -1,0 +1,146 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <header class='sheet-header'>
+    <img
+      class='profile-img'
+      src='{{item.img}}'
+      data-edit='img'
+      title='{{item.name}}'
+    />
+    <div class='header-fields'>
+      <h1 class='charname'><input
+          name='name'
+          type='text'
+          value='{{item.name}}'
+          placeholder='Armor Name'
+        /></h1>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Quantity</label>
+          <input
+            type='text'
+            name='system.quantity'
+            value='{{system.quantity}}'
+            data-dtype='Number'
+          />
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>Weight</label>
+          <input
+            type='text'
+            name='system.weight'
+            value='{{system.weight}}'
+            data-dtype='Number'
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{! Sheet Tab Navigation }}
+  <nav class='sheet-tabs tabs' data-group='primary'>
+    <a class='item' data-tab='description'>Description</a>
+    <a class='item' data-tab='attributes'>Attributes</a>
+    <a class='item' data-tab='skills'>Skills</a>
+  </nav>
+
+  {{! Sheet Body }}
+  <section class='sheet-body'>
+
+    {{! Description Tab }}
+    <div class='tab' data-group='primary' data-tab='description'>
+      {{editor
+        enrichedDescription
+        target='system.description'
+        engine='prosemirror'
+        button=true
+        editable=editable
+      }}
+    </div>
+
+    {{! Attributes Tab }}
+    <div class='tab attributes' data-group='primary' data-tab='attributes'>
+      <h3>Armor Properties</h3>
+      <div class='grid grid-2col'>
+        <div class='resource'>
+          <label class='resource-label'>Rarity</label>
+          <select name='system.rarity' data-dtype='String'>
+            <option value='common' {{#if (eq system.rarity 'common')}}selected{{/if}}>Common</option>
+            <option value='uncommon' {{#if (eq system.rarity 'uncommon')}}selected{{/if}}>Uncommon</option>
+            <option value='rare' {{#if (eq system.rarity 'rare')}}selected{{/if}}>Rare</option>
+            <option value='legendary' {{#if (eq system.rarity 'legendary')}}selected{{/if}}>Legendary</option>
+            <option value='mythic' {{#if (eq system.rarity 'mythic')}}selected{{/if}}>Mythic</option>
+            <option value='celestial' {{#if (eq system.rarity 'celestial')}}selected{{/if}}>Celestial</option>
+          </select>
+        </div>
+
+        <div class='resource'>
+          <label class='resource-label'>Effort (Stamina Cost)</label>
+          <input
+            type='text'
+            name='system.effort'
+            value='{{system.effort}}'
+            data-dtype='Number'
+          />
+        </div>
+
+        <div class='resource grid-span-2'>
+          <label class='resource-label'>Damage Reduction</label>
+          <input
+            type='text'
+            name='system.damageReduction'
+            value='{{system.damageReduction}}'
+            data-dtype='Number'
+          />
+          <p class='notes'>Flat damage subtracted from any hit while this armor is equipped - applies passively, regardless of whether Block or Dodge was rolled to defend.</p>
+        </div>
+      </div>
+
+      <div class='grid grid-2col'>
+        <div class='resource grid-span-2'>
+          <label class='resource-label'>Luck Bonus</label>
+          <input
+            type='text'
+            name='system.luckBonus'
+            value='{{system.luckBonus}}'
+            data-dtype='Number'
+            placeholder='0'
+          />
+          <p class='notes'>Flat LUK added to every roll while this armor is equipped. Keep to -2/+2 unless this is a rare/mythic item.</p>
+        </div>
+      </div>
+    </div>
+
+    {{! Skills Tab }}
+    <div class='tab skills' data-group='primary' data-tab='skills'>
+      <div class='granted-skills'>
+        <h3>Granted Skills</h3>
+        <p class='notes'>This armor grants the following combat skills (typically Block or Dodge) to characters who equip it.</p>
+        <ol class='granted-skills-list'>
+          {{#each system.grantedSkills}}
+          <li class='granted-skill flexrow' data-index='{{@index}}'>
+            <div class='skill-info'>
+              <input
+                type='text'
+                name='system.grantedSkills.{{@index}}.skillUuid'
+                value='{{skillUuid}}'
+                placeholder='Skill UUID'
+                data-dtype='String'
+              />
+              <input
+                type='number'
+                name='system.grantedSkills.{{@index}}.level'
+                value='{{level}}'
+                data-dtype='Number'
+                min='0'
+                title='Level granted'
+              />
+            </div>
+            <a class='granted-skill-delete' title='Remove Skill'><i class='fas fa-trash'></i></a>
+          </li>
+          {{/each}}
+        </ol>
+        <a class='granted-skill-add'><i class='fas fa-plus'></i> Add Skill</a>
+      </div>
+    </div>
+  </section>
+</form>

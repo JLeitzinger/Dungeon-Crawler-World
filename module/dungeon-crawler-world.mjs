@@ -66,6 +66,7 @@ Hooks.once('init', async function () {
     class: models.dccworldClass,
     race: models.dccworldRace,
     weapon: models.dccworldWeapon,
+    armor: models.dccworldArmor,
     lootbox: models.dccworldLootbox,
     god: models.dccworldGod,
     achievement: models.dccworldAchievement
@@ -85,7 +86,7 @@ Hooks.once('init', async function () {
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('dungeon-crawler-world', dccworldItemSheet, {
     makeDefault: true,
-    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon', 'lootbox', 'god', 'achievement'],
+    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon', 'armor', 'lootbox', 'god', 'achievement'],
     label: 'DCC_WORLD.SheetLabels.Item',
   });
 

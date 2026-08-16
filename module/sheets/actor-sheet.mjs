@@ -122,6 +122,7 @@ export class dccworldActorSheet extends ActorSheet {
     const features = [];
     const skillItems = [];
     const weapons = [];
+    const armor = [];
     const lootboxItems = [];
     const gods = [];
     const spells = {
@@ -147,6 +148,10 @@ export class dccworldActorSheet extends ActorSheet {
       // Append to weapons
       else if (i.type === 'weapon') {
         weapons.push(i);
+      }
+      // Append to armor
+      else if (i.type === 'armor') {
+        armor.push(i);
       }
       // Append to features (including those aggregated from race)
       else if (i.type === 'feature') {
@@ -188,6 +193,7 @@ export class dccworldActorSheet extends ActorSheet {
     // Assign and return
     context.gear = gear;
     context.weapons = weapons;
+    context.armor = armor;
     context.features = features;
     context.skillItems = skillItems;
     context.spells = spells;
@@ -471,6 +477,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Weapon equip toggle
     html.on('click', '.weapon-equip-toggle', this._onWeaponEquipToggle.bind(this));
 
+    // Armor equip toggle
+    html.on('click', '.armor-equip-toggle', this._onArmorEquipToggle.bind(this));
+
     // Lootbox opening
     html.on('click', '.lootbox-open-one', this._onLootboxOpenOne.bind(this));
     html.on('click', '.lootbox-open-all', this._onLootboxOpenAll.bind(this));
@@ -636,6 +645,29 @@ export class dccworldActorSheet extends ActorSheet {
         ui.notifications.info(`${weapon.name} equipped`);
       } else {
         ui.notifications.info(`${weapon.name} unequipped`);
+      }
+    }
+  }
+
+  /**
+   * Handle armor equip/unequip toggle
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onArmorEquipToggle(event) {
+    event.preventDefault();
+    const button = $(event.currentTarget);
+    const itemId = button.closest('.item').data('itemId');
+    const armor = this.actor.items.get(itemId);
+
+    if (armor && armor.type === 'armor') {
+      const newEquippedState = !armor.system.equipped;
+      await armor.update({ 'system.equipped': newEquippedState });
+
+      if (newEquippedState) {
+        ui.notifications.info(`${armor.name} equipped`);
+      } else {
+        ui.notifications.info(`${armor.name} unequipped`);
       }
     }
   }

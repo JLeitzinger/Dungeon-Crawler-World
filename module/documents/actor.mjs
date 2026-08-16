@@ -109,29 +109,30 @@ export class dccworldActor extends Actor {
     const rollLevel = options.customLevel ? Math.min(options.customLevel, skill.level) : skill.level;
     const isMaxLevel = rollLevel === skill.level;
 
-    // Calculate effort cost from equipped weapons that grant this skill
-    let equippedWeaponEffort = 0;
-    const equippedWeapons = this.items.filter(i =>
-      i.type === 'weapon' && i.system?.equipped === true
+    // Calculate effort cost from equipped weapons/armor that grant this skill (weapons for
+    // attack skills, armor/shields for Block/Dodge - same "effort" field, same lookup).
+    let equippedItemEffort = 0;
+    const equippedGear = this.items.filter(i =>
+      ['weapon', 'armor'].includes(i.type) && i.system?.equipped === true
     );
 
-    for (const weapon of equippedWeapons) {
-      const grantedSkills = weapon.system?.grantedSkills || [];
-      // Check if this weapon grants the skill being rolled (compare by skill name)
+    for (const gear of equippedGear) {
+      const grantedSkills = gear.system?.grantedSkills || [];
+      // Check if this item grants the skill being rolled (compare by skill name)
       for (const gs of grantedSkills) {
         const grantedSkill = this.system.getSkill(gs.skillUuid);
         if (grantedSkill && grantedSkill.name === skill.name) {
-          equippedWeaponEffort += (weapon.system?.effort || 0);
-          break; // Only count this weapon once per skill
+          equippedItemEffort += (gear.system?.effort || 0);
+          break; // Only count this item once per skill
         }
       }
     }
 
-    // Total effort cost = sum of equipped weapon efforts × number of dice rolled
-    // Use customEffort if explicitly provided, otherwise calculate from weapons or use skill effort
+    // Total effort cost = sum of equipped item efforts × number of dice rolled
+    // Use customEffort if explicitly provided, otherwise calculate from equipped gear or use skill effort
     const effortCost = options.customEffort !== undefined
       ? options.customEffort
-      : (equippedWeaponEffort > 0 ? equippedWeaponEffort * rollLevel : (skill.effort || 0));
+      : (equippedItemEffort > 0 ? equippedItemEffort * rollLevel : (skill.effort || 0));
 
     // Check if the actor has enough of its effort resource (Stamina for characters, Power for NPCs)
     const { field: effortField, pool: effortPool } = this.system.effortResource;
@@ -254,17 +255,24 @@ export class dccworldActor extends Actor {
   }
 
   /**
-   * Apply damage to this actor
-   * @param {number} amount - Amount of damage to apply
+   * Apply damage to this actor. Any equipped armor's damageReduction is subtracted first -
+   * passively, regardless of whether Block or Dodge was rolled to defend (see item-armor.mjs).
+   * @param {number} amount - Amount of damage to apply, before armor reduction
    * @returns {Promise<Actor>} Updated actor
    */
   async applyDamage(amount) {
+    const armorDR = this.items
+      .filter(i => i.type === 'armor' && i.system?.equipped)
+      .reduce((sum, i) => sum + (i.system?.damageReduction || 0), 0);
+    const reduced = Math.max(0, amount - armorDR);
+
     const currentHP = this.system.hp.value;
-    const newHP = Math.max(0, currentHP - amount);
+    const newHP = Math.max(0, currentHP - reduced);
 
     await this.update({ 'system.hp.value': newHP });
 
-    ui.notifications.info(`${this.name} takes ${amount} damage! (${newHP}/${this.system.hp.max} HP)`);
+    const drNote = armorDR > 0 ? ` (${amount} - ${armorDR} armor)` : '';
+    ui.notifications.info(`${this.name} takes ${reduced} damage${drNote}! (${newHP}/${this.system.hp.max} HP)`);
 
     return this;
   }

@@ -12,6 +12,7 @@ export {default as dccworldSkill} from "./item-skill.mjs";
 export {default as dccworldClass} from "./item-class.mjs";
 export {default as dccworldRace} from "./item-race.mjs";
 export {default as dccworldWeapon} from "./item-weapon.mjs";
+export {default as dccworldArmor} from "./item-armor.mjs";
 export {default as dccworldLootbox} from "./item-lootbox.mjs";
 export {default as dccworldGod} from "./item-god.mjs";
 export {default as dccworldAchievement} from "./item-achievement.mjs";
