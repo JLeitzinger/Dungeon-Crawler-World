@@ -64,6 +64,23 @@ export default class dccworldCharacter extends dccworldActorBase {
     // as a non-persisted property for template access.
     // Ability scores and luck are defined on dccworldActorBase (shared with dccworldNPC).
 
+    // Tracked state for consumable items (see Actor#useItem in documents/actor.mjs and
+    // rollResourceRegen in helpers/dice.mjs).
+    schema.consumables = new fields.SchemaField({
+      // Set true by drinking any potion (an item with regenBoostUses > 0); cleared at the
+      // start of the next Regen roll. Drinking a second potion while this is still true
+      // still works, but applies the Poisoned status effect as a penalty.
+      potionOnCooldown: new fields.BooleanField({ required: true, initial: false }),
+      // One entry per active "+amount to resource regen" boost. Multiple can coexist
+      // (different resources, or several overlapping potions of the same resource) -
+      // rollResourceRegen sums matching entries and decrements usesRemaining each Regen.
+      regenBoosts: new fields.ArrayField(new fields.SchemaField({
+        resource: new fields.StringField({ required: true, choices: ["hp", "stamina", "mana"] }),
+        amount: new fields.NumberField({ ...requiredInteger, min: 0 }),
+        usesRemaining: new fields.NumberField({ ...requiredInteger, min: 0 })
+      }), { required: true, initial: [] })
+    });
+
     return schema;
   }
 

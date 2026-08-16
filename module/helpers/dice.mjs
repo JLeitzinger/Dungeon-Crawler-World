@@ -343,10 +343,22 @@ export async function rollResourceRegen(actor) {
     { key: 'mana', label: 'Mana', abilityKey: 'int' }
   ];
 
+  // Active potion regen boosts (see Actor#useItem in documents/actor.mjs). Every boost
+  // decrements one use per Regen regardless of whether that resource was already full -
+  // "lasts N regens" is a flat count, not tied to whether it happened to matter.
+  const activeBoosts = actor.system.consumables?.regenBoosts || [];
+  const boostFor = (key) => activeBoosts
+    .filter(b => b.resource === key)
+    .reduce((sum, b) => sum + b.amount, 0);
+  const remainingBoosts = activeBoosts
+    .map(b => ({ ...b, usesRemaining: b.usesRemaining - 1 }))
+    .filter(b => b.usesRemaining > 0);
+
   const results = [];
   for (const { key, label, abilityKey } of resources) {
     const resource = actor.system[key];
     const missing = resource.max - resource.value;
+    const boost = boostFor(key);
 
     if (missing <= 0) {
       results.push({ key, label, roll: null, gained: 0, newValue: resource.value, max: resource.max });
@@ -355,15 +367,20 @@ export async function rollResourceRegen(actor) {
 
     const abilityMod = Math.max(0, actor.system.abilities[abilityKey]?.mod || 0);
     const roll = await new Roll('1d6').evaluate();
-    const gained = Math.min(missing, Math.max(0, roll.total + abilityMod + luck));
+    const gained = Math.min(missing, Math.max(0, roll.total + abilityMod + luck + boost));
 
-    results.push({ key, label, roll, abilityMod, gained, newValue: resource.value + gained, max: resource.max });
+    results.push({ key, label, roll, abilityMod, boost, gained, newValue: resource.value + gained, max: resource.max });
   }
 
   await actor.update({
     'system.hp.value': results.find(r => r.key === 'hp').newValue,
     'system.stamina.value': results.find(r => r.key === 'stamina').newValue,
-    'system.mana.value': results.find(r => r.key === 'mana').newValue
+    'system.mana.value': results.find(r => r.key === 'mana').newValue,
+    // Reaching a Regen roll is this system's stand-in for "a round has passed" (no real
+    // round tracker - combat is card-based and AI-narrated), so this is where the potion
+    // cooldown clears.
+    'system.consumables.potionOnCooldown': false,
+    'system.consumables.regenBoosts': remainingBoosts
   });
 
   const rows = results.map(r => {
@@ -374,6 +391,7 @@ export async function rollResourceRegen(actor) {
     const parts = [`${dieResult}`];
     if (r.abilityMod) parts.push(`+${r.abilityMod}`);
     if (luck) parts.push(`${luck >= 0 ? '+' : ''}${luck}`);
+    if (r.boost) parts.push(`+${r.boost} (potion)`);
     return `<div class="regen-row">
       <span class="regen-label">${r.label}</span>
       <span class="regen-detail">${parts.join(' ')} = <strong>+${r.gained}</strong> (${r.newValue}/${r.max})</span>

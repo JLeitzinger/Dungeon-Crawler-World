@@ -70,6 +70,11 @@
           {{#if system.hp.temp}}
           <div class="resource-temp">+{{system.hp.temp}} temp</div>
           {{/if}}
+          {{#each system.consumables.regenBoosts as |boost|}}
+          {{#if (eq boost.resource "hp")}}
+          <div class="resource-temp regen-boost" title="Potion regen boost">+{{boost.amount}} regen ({{boost.usesRemaining}} left)</div>
+          {{/if}}
+          {{/each}}
         </div>
 
         <div class="resource flex-group-center">
@@ -79,6 +84,11 @@
           <span> / </span>
           <span class="max">{{system.stamina.max}}</span>
           </div>
+          {{#each system.consumables.regenBoosts as |boost|}}
+          {{#if (eq boost.resource "stamina")}}
+          <div class="resource-temp regen-boost" title="Potion regen boost">+{{boost.amount}} regen ({{boost.usesRemaining}} left)</div>
+          {{/if}}
+          {{/each}}
         </div>
 
         <div class="resource flex-group-center">
@@ -88,6 +98,11 @@
           <span> / </span>
           <span class="max">{{system.mana.max}}</span>
           </div>
+          {{#each system.consumables.regenBoosts as |boost|}}
+          {{#if (eq boost.resource "mana")}}
+          <div class="resource-temp regen-boost" title="Potion regen boost">+{{boost.amount}} regen ({{boost.usesRemaining}} left)</div>
+          {{/if}}
+          {{/each}}
         </div>
 
         <div class="resource flex-group-center">

@@ -20,7 +20,7 @@
       "thumbnail": "systems/dungeon-crawler-world/assets/anvil-impact.png"
     }
   ],
-  "version": "0.34.0",
+  "version": "0.35.0",
   "compatibility": {
     "minimum": 13,
     "verified": "13"

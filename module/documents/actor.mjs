@@ -890,4 +890,77 @@ export class dccworldActor extends Actor {
     });
   }
 
+  /**
+   * Use a consumable item (potion, bandage, etc.) - restores a resource, optionally applies
+   * a temporary regen boost, and consumes one from the item's quantity (deleting it at 0).
+   *
+   * Potions (items with `regenBoostUses > 0`) have an implicit cooldown: drinking one sets
+   * `system.consumables.potionOnCooldown`, cleared at the start of this character's next
+   * Regen roll (see rollResourceRegen in helpers/dice.mjs) - this system has no round
+   * tracker to hook a real "1 round" cooldown to (combat is card-based and AI-narrated, see
+   * dungeon-crawler-world.mjs), so "since your last Regen" stands in for "this round".
+   * Drinking another potion before that cooldown clears still works, but applies the
+   * "poison" status effect as a penalty (see Rules/Status Effects/Poisoned.md).
+   * @param {string} itemId - The ID of the consumable item to use
+   * @returns {Promise<{restored: number, boosted: boolean, poisoned: boolean}|null>}
+   */
+  async useItem(itemId) {
+    const item = this.items.get(itemId);
+    if (!item || item.type !== 'item' || !item.system.consumable) {
+      ui.notifications.error(`"${item?.name ?? itemId}" is not a usable item.`);
+      return null;
+    }
+
+    const isPotion = item.system.regenBoostUses > 0;
+    let poisoned = false;
+
+    if (isPotion && this.system.consumables?.potionOnCooldown) {
+      poisoned = true;
+      await this.toggleStatusEffect('poison', { active: true });
+    }
+
+    const updates = {};
+    let restored = 0;
+
+    if (item.system.restoreResource && item.system.restoreAmount > 0) {
+      const resource = this.system[item.system.restoreResource];
+      restored = Math.min(item.system.restoreAmount, resource.max - resource.value);
+      if (restored > 0) updates[`system.${item.system.restoreResource}.value`] = resource.value + restored;
+    }
+
+    if (item.system.regenBoostAmount > 0 && item.system.regenBoostUses > 0) {
+      const regenBoosts = foundry.utils.deepClone(this.system.consumables?.regenBoosts || []);
+      regenBoosts.push({
+        resource: item.system.restoreResource || 'hp',
+        amount: item.system.regenBoostAmount,
+        usesRemaining: item.system.regenBoostUses
+      });
+      updates['system.consumables.regenBoosts'] = regenBoosts;
+    }
+
+    if (isPotion) updates['system.consumables.potionOnCooldown'] = true;
+
+    if (Object.keys(updates).length > 0) await this.update(updates);
+
+    const newQuantity = item.system.quantity - 1;
+    if (newQuantity > 0) await item.update({ 'system.quantity': newQuantity });
+    else await item.delete();
+
+    const lines = [`<strong>${this.name}</strong> uses <strong>${item.name}</strong>.`];
+    if (restored > 0) lines.push(`+${restored} ${item.system.restoreResource.toUpperCase()}`);
+    if (item.system.regenBoostAmount > 0) {
+      const resourceLabel = (item.system.restoreResource || 'hp').toUpperCase();
+      lines.push(`Regen boosted: +${item.system.regenBoostAmount} ${resourceLabel} for the next ${item.system.regenBoostUses} regen(s)`);
+    }
+    if (poisoned) lines.push(`<span style="color:#8b5cf6">Drank before the cooldown cleared - Poisoned!</span>`);
+
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: `<div class="dcc-world-roll">${lines.join('<br>')}</div>`
+    });
+
+    return { restored, boosted: item.system.regenBoostAmount > 0, poisoned };
+  }
+
 }

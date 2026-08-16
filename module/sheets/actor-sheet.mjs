@@ -462,6 +462,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Spell rolls
     html.on('click', '.spell-roll', this._onSpellRoll.bind(this));
 
+    // Use a consumable item
+    html.on('click', '.use-item', this._onUseItem.bind(this));
+
     // Weapon rolls
     html.on('click', '.weapon-roll', this._onWeaponRoll.bind(this));
 
@@ -585,6 +588,19 @@ export class dccworldActorSheet extends ActorSheet {
     const itemId = $(event.currentTarget).closest('.skill').data('itemId');
     if (itemId) {
       await this.actor.rollSpell(itemId);
+    }
+  }
+
+  /**
+   * Handle using a consumable item
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onUseItem(event) {
+    event.preventDefault();
+    const itemId = $(event.currentTarget).closest('.item').data('itemId');
+    if (itemId) {
+      await this.actor.useItem(itemId);
     }
   }
 
