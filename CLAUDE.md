@@ -47,7 +47,7 @@ This is a Foundry VTT game system called "Dungeon Crawler World" built on the dc
 3. Use the generator and packing scripts to build compendia
 4. Test by installing the module in Foundry
 
-**For content authoring guidelines**, refer to the DCW-Content repository's README and the "Item Type Design Guidelines" section below.
+**For content authoring guidelines**, refer to the DCW-Content repository's README and the "Item Type Design Guidelines" section in DCW-Content/CLAUDE.md.
 
 ## Development Commands
 
@@ -190,14 +190,13 @@ This system uses Foundry's **DataModel** pattern (not template.json-based dynami
 The `dccworldCharacter` data model (module/data/actor-character.mjs) implements complex `prepareDerivedData()` logic:
 
 1. **Ability Scores**: Finds race/class items, applies racial ability bonuses, calculates modifiers
-2. **Derived Resources**:
-   - HP = baseHP (from class) + (hpPerLevel × (level - 1)) + racial HP bonus
-   - Stamina = 10 + (staminaPerLevel × (level - 1)) + racial stamina bonus
-   - Mana = 10 + (manaPerLevel × (level - 1)) + racial mana bonus
+2. **Derived Resources**: HP/Stamina/Mana max = base + sum of **locked-in per-level gains** + racial bonus. Per-level gains are locked in by `Actor#levelUp()` (module/documents/actor.mjs) using that moment's rate (class values, or CON/INT modifier as a fallback if no class item is equipped) and stored in `{hp,stamina,mana}.gainedByLevel`. This means a later ability score change (e.g. spending a stat increase into CON) does **not** retroactively change HP/Stamina/Mana already gained at earlier levels — only future level-ups use the new rate. Any levels not yet locked (character predates this tracking, or was leveled by editing the Level field by hand instead of the sheet's Level Up button) fall back to computing that gap at today's rate — see `dccworldCharacter#_sumLockedResource()`.
 3. **Resource Scaling**: Class items define `hpPerLevel`, `staminaPerLevel`, `manaPerLevel`
 4. **XP Progression**: XP to next level = 300 × current level
 
 Race and class items are found via `this.parent.items.find()` and their data is applied during character data preparation.
+
+**Leveling up**: Use the Level Up button (↑) next to the Level field on the character sheet, which calls `actor.levelUp()` — this both increments the level and locks in that level's resource gain. Editing the Level number field directly changes the level without locking in a gain for that level (it'll be backfilled at *today's* rate the next time `levelUp()` runs).
 
 ### Configuration
 

@@ -460,6 +460,9 @@ export class dccworldActorSheet extends ActorSheet {
     // Stat increases
     html.on('click', '.stat-increase-button', this._onStatIncrease.bind(this));
 
+    // Level up
+    html.on('click', '.level-up-button', this._onLevelUp.bind(this));
+
     // Header collapse toggle
     html.on('click', '.header-collapse-toggle', this._onHeaderCollapseToggle.bind(this));
 
@@ -651,6 +654,16 @@ export class dccworldActorSheet extends ActorSheet {
   async _onStatIncrease(event) {
     event.preventDefault();
     await this.actor.promptStatIncrease();
+  }
+
+  /**
+   * Handle leveling up the character
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onLevelUp(event) {
+    event.preventDefault();
+    await this.actor.levelUp();
   }
 
   /**

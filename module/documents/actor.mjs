@@ -470,6 +470,48 @@ export class dccworldActor extends Actor {
   }
 
   /**
+   * Level up this character by one level, locking in this level's HP/Stamina/Mana
+   * gain using today's rates (class values, or CON/INT modifier if no class is
+   * equipped). Once locked in, a later ability score change won't retroactively
+   * alter the amount gained at this or any earlier level.
+   *
+   * Any earlier levels that predate this tracking (or were reached by editing the
+   * Level field by hand) are backfilled at today's rates the first time this runs,
+   * so they stop drifting with future stat changes too.
+   */
+  async levelUp() {
+    if (this.type !== 'character') return;
+
+    const currentLevel = this.system.attributes.level.value;
+    const newLevel = currentLevel + 1;
+    const { hpPerLevel, staminaPerLevel, manaPerLevel } = this.system.currentResourceRates;
+
+    const hpGains = (this.system.hp.gainedByLevel || []).slice(0, currentLevel - 1);
+    const staminaGains = (this.system.stamina.gainedByLevel || []).slice(0, currentLevel - 1);
+    const manaGains = (this.system.mana.gainedByLevel || []).slice(0, currentLevel - 1);
+
+    while (hpGains.length < currentLevel - 1) hpGains.push(hpPerLevel);
+    while (staminaGains.length < currentLevel - 1) staminaGains.push(staminaPerLevel);
+    while (manaGains.length < currentLevel - 1) manaGains.push(manaPerLevel);
+
+    hpGains.push(hpPerLevel);
+    staminaGains.push(staminaPerLevel);
+    manaGains.push(manaPerLevel);
+
+    await this.update({
+      'system.attributes.level.value': newLevel,
+      'system.hp.gainedByLevel': hpGains,
+      'system.stamina.gainedByLevel': staminaGains,
+      'system.mana.gainedByLevel': manaGains,
+      'system.hp.value': this.system.hp.value + hpPerLevel,
+      'system.stamina.value': this.system.stamina.value + staminaPerLevel,
+      'system.mana.value': this.system.mana.value + manaPerLevel,
+    });
+
+    ui.notifications.info(`${this.name} reached Level ${newLevel}! +${hpPerLevel} HP, +${staminaPerLevel} Stamina, +${manaPerLevel} Mana`);
+  }
+
+  /**
    * Prompt to increase a stat
    */
   async promptStatIncrease() {

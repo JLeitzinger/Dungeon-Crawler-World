@@ -29,18 +29,23 @@ export default class dccworldCharacter extends dccworldActorBase {
     });
 
     // Derived stats - HP, Stamina, Mana
+    // `gainedByLevel` records the amount gained at each level-up (index 0 = level 1->2, etc.),
+    // locked in via Actor#levelUp() so later stat changes don't retroactively alter past gains.
     schema.hp = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 }),
       max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 }),
-      temp: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 })
+      temp: new fields.NumberField({ ...requiredInteger, initial: 0, min: 0 }),
+      gainedByLevel: new fields.ArrayField(new fields.NumberField({ ...requiredInteger, min: 0 }), { required: true, initial: [] })
     });
     schema.stamina = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 }),
-      max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 })
+      max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 }),
+      gainedByLevel: new fields.ArrayField(new fields.NumberField({ ...requiredInteger, min: 0 }), { required: true, initial: [] })
     });
     schema.mana = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 }),
-      max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 })
+      max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 0 }),
+      gainedByLevel: new fields.ArrayField(new fields.NumberField({ ...requiredInteger, min: 0 }), { required: true, initial: [] })
     });
 
     // Iterate over ability names and create a new SchemaField for each.
@@ -107,10 +112,12 @@ export default class dccworldCharacter extends dccworldActorBase {
       manaPerLevel = classItem.system.manaPerLevel || manaPerLevel;
     }
 
-    // Calculate max resources
-    this.hp.max = baseHP + (hpPerLevel * (level - 1));
-    this.stamina.max = 10 + (staminaPerLevel * (level - 1));
-    this.mana.max = 10 + (manaPerLevel * (level - 1));
+    // Calculate max resources. Gains already locked in via levelUp() are summed as-is;
+    // any levels not yet locked (character predates this tracking, or was leveled by
+    // hand instead of the Level Up button) fall back to today's per-level rate.
+    this.hp.max = baseHP + this._sumLockedResource(this.hp.gainedByLevel, level - 1, hpPerLevel);
+    this.stamina.max = 10 + this._sumLockedResource(this.stamina.gainedByLevel, level - 1, staminaPerLevel);
+    this.mana.max = 10 + this._sumLockedResource(this.mana.gainedByLevel, level - 1, manaPerLevel);
 
     // Apply racial resource bonuses
     if (raceItem?.system?.bonuses) {
@@ -118,6 +125,10 @@ export default class dccworldCharacter extends dccworldActorBase {
       this.stamina.max += raceItem.system.bonuses.stamina || 0;
       this.mana.max += raceItem.system.bonuses.mana || 0;
     }
+
+    // Expose today's per-level rates so Actor#levelUp() can lock in a new level's
+    // gain using the same formula/precedence (class values, falling back to CON/INT mod).
+    this.currentResourceRates = { hpPerLevel, staminaPerLevel, manaPerLevel };
 
     // XP to next level: 300 * current level
     this.attributes.xp.max = 300 * level;
@@ -130,6 +141,23 @@ export default class dccworldCharacter extends dccworldActorBase {
     // Store references for easy access in templates
     this.classItem = classItem;
     this.raceItem = raceItem;
+  }
+
+  /**
+   * Sum resource gains already locked in via levelUp(), padding any levels not yet
+   * locked with today's per-level rate. Locked entries beyond the current level
+   * (e.g. after a manual level-down) are ignored.
+   * @param {number[]} gainedByLevel - Locked-in gain for each level already reached
+   * @param {number} levelsGained - Number of level-ups the character has had (level - 1)
+   * @param {number} currentPerLevel - Today's per-level rate, used for any un-locked levels
+   * @returns {number} Total gain to add to the base resource value
+   * @private
+   */
+  _sumLockedResource(gainedByLevel, levelsGained, currentPerLevel) {
+    const locked = (gainedByLevel || []).slice(0, levelsGained);
+    const lockedSum = locked.reduce((sum, gain) => sum + gain, 0);
+    const missingLevels = Math.max(0, levelsGained - locked.length);
+    return lockedSum + (missingLevels * currentPerLevel);
   }
 
   /**
