@@ -334,7 +334,10 @@ export class dccworldActor extends Actor {
   }
 
   /**
-   * Show dialog to choose between improving skill or creating new one
+   * Show dialog to confirm improving a skill that already has an owned skill item.
+   * Skills only ever improve or get materialized from a grant (see _createSkillItemDialog) -
+   * there's no "invent a new skill" path here; new skills only ever come from race/class/
+   * item/feat grants (see Rules/Skills/Skill Acquisition.md).
    * @param {Object} skill - The skill that can be improved
    * @private
    */
@@ -343,17 +346,7 @@ export class dccworldActor extends Actor {
       title: "⚡ Skill Mastery!",
       content: `
         <p>You rolled all 6s with <strong>${skill.name} (Level ${skill.level})</strong>!</p>
-        <p>Choose how to improve:</p>
-        <div class="skill-improvement-options">
-          <div class="option">
-            <h4>📈 Improve ${skill.name}</h4>
-            <p>Increase skill item to Level ${skill.sources[0].level + 1}</p>
-          </div>
-          <div class="option">
-            <h4>✨ Learn New Skill</h4>
-            <p>Create a new related skill at Level 1</p>
-          </div>
-        </div>
+        <p>Improve ${skill.name} to Level ${skill.sources[0].level + 1}?</p>
       `,
       buttons: {
         improve: {
@@ -372,101 +365,12 @@ export class dccworldActor extends Actor {
             ui.notifications.info(`⚡ ${skill.name} improved to Level ${newLevel}!`);
           }
         },
-        newSkill: {
-          icon: '<i class="fas fa-plus"></i>',
-          label: "New Skill",
-          callback: async () => {
-            // Show create new skill dialog
-            this._createNewSkillDialog(skill);
-          }
-        },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
           label: "Decide Later"
         }
       },
       default: "improve"
-    }).render(true);
-  }
-
-  /**
-   * Show dialog to create a new skill related to an existing one
-   * @param {Object} parentSkill - The parent aggregated skill object
-   * @private
-   */
-  async _createNewSkillDialog(parentSkill) {
-    new Dialog({
-      title: `Create Skill Related to ${parentSkill.name}`,
-      content: `
-        <p>Create a new skill branching from <strong>${parentSkill.name}</strong>.</p>
-        <form>
-          <div class="form-group">
-            <label>New Skill Name:</label>
-            <input type="text" name="skillName" placeholder="e.g., Sword Fighting, Dodge" autofocus />
-          </div>
-          <div class="form-group">
-            <label>Category:</label>
-            <select name="category">
-              <option value="${parentSkill.category}" selected>${parentSkill.category}</option>
-              <option value="combat">Combat</option>
-              <option value="magic">Magic</option>
-              <option value="utility">Utility</option>
-              <option value="general">General</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Related Stat:</label>
-            <select name="relatedStat">
-              ${parentSkill.relatedStat ? `<option value="${parentSkill.relatedStat}" selected>${parentSkill.relatedStat.toUpperCase()}</option>` : ''}
-              <option value="">None</option>
-              <option value="str">STR</option>
-              <option value="dex">DEX</option>
-              <option value="con">CON</option>
-              <option value="int">INT</option>
-              <option value="wis">WIS</option>
-              <option value="cha">CHA</option>
-            </select>
-          </div>
-        </form>
-      `,
-      buttons: {
-        create: {
-          icon: '<i class="fas fa-star"></i>',
-          label: "Create Skill",
-          callback: async (html) => {
-            const formData = new FormData(html[0].querySelector('form'));
-            const skillName = formData.get('skillName')?.trim();
-            const category = formData.get('category');
-            const relatedStat = formData.get('relatedStat') || null;
-
-            if (!skillName) {
-              ui.notifications.warn("Skill name is required.");
-              return;
-            }
-
-            // Create new skill item at level 1
-            const skillItemData = {
-              name: skillName,
-              type: 'skill',
-              system: {
-                level: 1,
-                category,
-                relatedStat,
-                effort: 0,
-                description: ''
-              }
-            };
-
-            await Item.create(skillItemData, { parent: this });
-            ui.notifications.info(`⚡ New skill learned: ${skillName}!`);
-          }
-        },
-        cancel: {
-          icon: '<i class="fas fa-times"></i>',
-          label: "Cancel"
-        }
-      },
-      default: "create"
     }).render(true);
   }
 
