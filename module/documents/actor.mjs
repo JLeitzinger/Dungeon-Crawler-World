@@ -1,4 +1,5 @@
 import { rollSkillCheck, contestedRoll, sendSkillRollToChat, sendContestedRollToChat, rollResourceRegen } from '../helpers/dice.mjs';
+import { openLootboxTier } from '../helpers/lootbox.mjs';
 
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
@@ -714,6 +715,17 @@ export class dccworldActor extends Actor {
    */
   async regenResources() {
     return rollResourceRegen(this);
+  }
+
+  /**
+   * Open lootboxes of a given tier, pulling random loot from the Items & Equipment and
+   * Weapons compendium packs (see module/helpers/lootbox.mjs).
+   * @param {string} tier - One of CONFIG.DCC_WORLD.lootboxTiers
+   * @param {number} count - How many to open; clamped to how many are actually owned.
+   * @returns {Promise<Array|null>} The looted results
+   */
+  async openLootboxTier(tier, count = 1) {
+    return openLootboxTier(this, tier, count);
   }
 
   /**

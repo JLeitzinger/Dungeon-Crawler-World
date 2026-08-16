@@ -1,0 +1,99 @@
+// Lootboxes section (Items tab, character sheet)
+.lootboxes-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  border-radius: $border-radius-tech;
+
+  .section-label {
+    font-family: $font-secondary;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: $c-cyan;
+    margin-bottom: 8px;
+
+    i {
+      margin-right: 6px;
+    }
+  }
+
+  .lootboxes-empty {
+    font-size: 12px;
+    color: $c-faint;
+    font-style: italic;
+    margin: 0;
+  }
+}
+
+.lootboxes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lootbox-row {
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid;
+  border-radius: 3px;
+  border-left-color: var(--lootbox-tier-color, #{$c-faint});
+
+  &[data-tier="bronze"] { --lootbox-tier-color: #CD7F32; }
+  &[data-tier="silver"] { --lootbox-tier-color: #D7D9DB; }
+  &[data-tier="gold"] { --lootbox-tier-color: #FFD700; }
+  &[data-tier="platinum"] { --lootbox-tier-color: #E5E4E2; }
+  &[data-tier="legendary"] { --lootbox-tier-color: #{$c-magenta}; }
+  &[data-tier="celestial"] { --lootbox-tier-color: #{$c-bright}; }
+
+  .lootbox-tier {
+    flex: 1 0 90px;
+    font-family: $font-secondary;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+    color: var(--lootbox-tier-color, #{$c-faint});
+  }
+
+  .lootbox-count {
+    flex: 0 0 40px;
+    font-family: $font-mono;
+    color: $c-white;
+  }
+
+  .lootbox-controls {
+    display: flex;
+    gap: 6px;
+
+    a {
+      padding: 4px 10px;
+      background: rgba(0, 247, 255, 0.1);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      border-radius: 4px;
+      color: $c-cyan;
+      font-family: $font-secondary;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all $transition-fast;
+      white-space: nowrap;
+
+      i {
+        margin-right: 4px;
+      }
+
+      &:hover {
+        background: rgba(0, 247, 255, 0.2);
+        box-shadow: $glow-cyan;
+        color: $c-white;
+      }
+    }
+  }
+}

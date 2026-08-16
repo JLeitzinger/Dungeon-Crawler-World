@@ -63,7 +63,8 @@ Hooks.once('init', async function () {
     skill: models.dccworldSkill,
     class: models.dccworldClass,
     race: models.dccworldRace,
-    weapon: models.dccworldWeapon
+    weapon: models.dccworldWeapon,
+    lootbox: models.dccworldLootbox
   }
 
   // Active Effects are never copied to the Actor,
@@ -80,7 +81,7 @@ Hooks.once('init', async function () {
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('dungeon-crawler-world', dccworldItemSheet, {
     makeDefault: true,
-    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon'],
+    types: ['item', 'feature', 'spell', 'skill', 'class', 'race', 'weapon', 'lootbox'],
     label: 'DCC_WORLD.SheetLabels.Item',
   });
 

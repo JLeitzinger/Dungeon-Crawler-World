@@ -10,6 +10,14 @@ export default class dccworldItem extends dccworldItemBase {
     schema.quantity = new fields.NumberField({ ...requiredInteger, initial: 1, min: 1 });
     schema.weight = new fields.NumberField({ required: true, nullable: false, initial: 0, min: 0 });
 
+    // Rarity field - same choices as weapons. Drives lootbox loot tables (see
+    // module/helpers/lootbox.mjs); items without an explicit rarity default to common.
+    schema.rarity = new fields.StringField({
+      required: true,
+      initial: "common",
+      choices: ["common", "uncommon", "rare", "legendary", "mythic", "celestial"]
+    });
+
     return schema;
   }
 }

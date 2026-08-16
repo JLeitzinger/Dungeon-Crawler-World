@@ -458,3 +458,62 @@
     }
   }
 }
+
+// Lootbox open card
+.lootbox-open-card {
+  .lootbox-tier {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: 700;
+
+    &.lootbox-tier-bronze { color: #CD7F32; }
+    &.lootbox-tier-silver { color: #D7D9DB; }
+    &.lootbox-tier-gold { color: #FFD700; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); }
+    &.lootbox-tier-platinum { color: #E5E4E2; text-shadow: 0 0 8px rgba(0, 247, 255, 0.4); }
+    &.lootbox-tier-legendary { color: $c-magenta; text-shadow: $glow-magenta; }
+    &.lootbox-tier-celestial {
+      color: $c-white;
+      text-shadow: 0 0 10px rgba(0, 247, 255, 0.6), 0 0 10px rgba(255, 0, 255, 0.6);
+    }
+  }
+
+  .loot-results {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .loot-result-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    font-size: 13px;
+
+    img {
+      border: none;
+      border-radius: 3px;
+    }
+
+    .loot-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .rarity-common { color: #778899; }
+    .rarity-uncommon { color: #00ff88; }
+    .rarity-rare { color: #00f7ff; }
+    .rarity-legendary { color: #ff00ff; }
+    .rarity-mythic { color: #ff6600; }
+    .rarity-celestial { color: #ffd700; }
+
+    [class^="rarity-"] {
+      text-transform: capitalize;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  }
+}

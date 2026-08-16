@@ -1,0 +1,17 @@
+<div class="dcc-roll-card lootbox-open-card">
+  <div class="roll-card-header">
+    <div class="action-text">
+      <strong>{{actorName}}</strong> opens {{count}} <span class="lootbox-tier lootbox-tier-{{tier}}">{{tierLabel}}</span> lootbox{{#if plural}}es{{/if}}!
+    </div>
+  </div>
+
+  <div class="loot-results">
+    {{#each results}}
+    <div class="loot-result-item">
+      <img src="{{this.img}}" width="24" height="24" />
+      <span class="loot-name">{{this.name}}</span>
+      <span class="rarity-{{this.rarity}}">{{this.rarity}}</span>
+    </div>
+    {{/each}}
+  </div>
+</div>

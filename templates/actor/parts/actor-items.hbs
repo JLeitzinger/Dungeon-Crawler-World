@@ -1,6 +1,9 @@
+{{> "systems/dungeon-crawler-world/templates/actor/parts/actor-lootboxes.hbs"}}
+
 <ol class='items-list'>
   <li class='item flexrow items-header'>
     <div class='item-name'>{{localize 'Name'}}</div>
+    <div class='item-rarity'>Rarity</div>
     <div class='item-controls'></div>
   </li>
   {{#each gear as |item id|}}
@@ -17,6 +20,9 @@
           </a>
         </div>
         <h4>{{item.name}}</h4>
+      </div>
+      <div class='item-rarity item-prop'>
+        <span class='rarity-{{item.system.rarity}}'>{{item.system.rarity}}</span>
       </div>
       <div class='item-controls'>
         <a

@@ -2010,6 +2010,104 @@
   height: 20px;
   object-fit: contain;
 }
+.dungeon-crawler-world .lootboxes-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 247, 255, 0.2);
+  border-radius: 2px;
+}
+.dungeon-crawler-world .lootboxes-section .section-label {
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #00f7ff;
+  margin-bottom: 8px;
+}
+.dungeon-crawler-world .lootboxes-section .section-label i {
+  margin-right: 6px;
+}
+.dungeon-crawler-world .lootboxes-section .lootboxes-empty {
+  font-size: 12px;
+  color: #99aabb;
+  font-style: italic;
+  margin: 0;
+}
+.dungeon-crawler-world .lootboxes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dungeon-crawler-world .lootbox-row {
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid;
+  border-radius: 3px;
+  border-left-color: var(--lootbox-tier-color, #99aabb);
+}
+.dungeon-crawler-world .lootbox-row[data-tier=bronze] {
+  --lootbox-tier-color: #CD7F32;
+}
+.dungeon-crawler-world .lootbox-row[data-tier=silver] {
+  --lootbox-tier-color: #D7D9DB;
+}
+.dungeon-crawler-world .lootbox-row[data-tier=gold] {
+  --lootbox-tier-color: #FFD700;
+}
+.dungeon-crawler-world .lootbox-row[data-tier=platinum] {
+  --lootbox-tier-color: #E5E4E2;
+}
+.dungeon-crawler-world .lootbox-row[data-tier=legendary] {
+  --lootbox-tier-color: #ff00ff;
+}
+.dungeon-crawler-world .lootbox-row[data-tier=celestial] {
+  --lootbox-tier-color: #ffffff;
+}
+.dungeon-crawler-world .lootbox-row .lootbox-tier {
+  flex: 1 0 90px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 13px;
+  color: var(--lootbox-tier-color, #99aabb);
+}
+.dungeon-crawler-world .lootbox-row .lootbox-count {
+  flex: 0 0 40px;
+  font-family: "Courier New", monospace;
+  color: #f0f0f5;
+}
+.dungeon-crawler-world .lootbox-row .lootbox-controls {
+  display: flex;
+  gap: 6px;
+}
+.dungeon-crawler-world .lootbox-row .lootbox-controls a {
+  padding: 4px 10px;
+  background: rgba(0, 247, 255, 0.1);
+  border: 1px solid rgba(0, 247, 255, 0.3);
+  border-radius: 4px;
+  color: #00f7ff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.dungeon-crawler-world .lootbox-row .lootbox-controls a i {
+  margin-right: 4px;
+}
+.dungeon-crawler-world .lootbox-row .lootbox-controls a:hover {
+  background: rgba(0, 247, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 247, 255, 0.5), 0 0 20px rgba(0, 247, 255, 0.3);
+  color: #f0f0f5;
+}
 
 /* Global chat card styles (not scoped to .dungeon-crawler-world) */
 .dcc-roll-card {
@@ -2395,4 +2493,78 @@
 .damage-roll-card .formula-section .formula-text {
   font-family: monospace;
   color: #ff6600;
+}
+
+.lootbox-open-card .lootbox-tier {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+.lootbox-open-card .lootbox-tier.lootbox-tier-bronze {
+  color: #CD7F32;
+}
+.lootbox-open-card .lootbox-tier.lootbox-tier-silver {
+  color: #D7D9DB;
+}
+.lootbox-open-card .lootbox-tier.lootbox-tier-gold {
+  color: #FFD700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+.lootbox-open-card .lootbox-tier.lootbox-tier-platinum {
+  color: #E5E4E2;
+  text-shadow: 0 0 8px rgba(0, 247, 255, 0.4);
+}
+.lootbox-open-card .lootbox-tier.lootbox-tier-legendary {
+  color: #ff00ff;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.3);
+}
+.lootbox-open-card .lootbox-tier.lootbox-tier-celestial {
+  color: #f0f0f5;
+  text-shadow: 0 0 10px rgba(0, 247, 255, 0.6), 0 0 10px rgba(255, 0, 255, 0.6);
+}
+.lootbox-open-card .loot-results {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lootbox-open-card .loot-result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  font-size: 13px;
+}
+.lootbox-open-card .loot-result-item img {
+  border: none;
+  border-radius: 3px;
+}
+.lootbox-open-card .loot-result-item .loot-name {
+  flex: 1;
+  font-weight: 500;
+}
+.lootbox-open-card .loot-result-item .rarity-common {
+  color: #778899;
+}
+.lootbox-open-card .loot-result-item .rarity-uncommon {
+  color: #00ff88;
+}
+.lootbox-open-card .loot-result-item .rarity-rare {
+  color: #00f7ff;
+}
+.lootbox-open-card .loot-result-item .rarity-legendary {
+  color: #ff00ff;
+}
+.lootbox-open-card .loot-result-item .rarity-mythic {
+  color: #ff6600;
+}
+.lootbox-open-card .loot-result-item .rarity-celestial {
+  color: #ffd700;
+}
+.lootbox-open-card .loot-result-item [class^=rarity-] {
+  text-transform: capitalize;
+  font-size: 11px;
+  font-weight: 600;
 }

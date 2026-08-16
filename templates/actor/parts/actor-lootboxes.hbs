@@ -1,0 +1,26 @@
+<div class="lootboxes-section">
+  <div class="section-label">
+    <i class="fas fa-box-open"></i> Lootboxes
+  </div>
+
+  {{#if lootboxes.length}}
+  <ol class="lootboxes-list">
+    {{#each lootboxes}}
+    <li class="lootbox-row flexrow" data-tier="{{this.tier}}">
+      <div class="lootbox-tier lootbox-tier-{{this.tier}}">{{this.tierLabel}}</div>
+      <div class="lootbox-count">x{{this.count}}</div>
+      <div class="lootbox-controls">
+        <a class="lootbox-open-one" data-tier="{{this.tier}}" title="Open 1 {{this.tierLabel}} lootbox">
+          <i class="fas fa-box-open"></i> Open 1
+        </a>
+        <a class="lootbox-open-all" data-tier="{{this.tier}}" title="Open all {{this.count}} {{this.tierLabel}} lootboxes">
+          <i class="fas fa-boxes"></i> Open All
+        </a>
+      </div>
+    </li>
+    {{/each}}
+  </ol>
+  {{else}}
+  <p class="lootboxes-empty">No lootboxes owned. Drag one in from a compendium to get started.</p>
+  {{/if}}
+</div>

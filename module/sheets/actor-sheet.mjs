@@ -122,6 +122,7 @@ export class dccworldActorSheet extends ActorSheet {
     const features = [];
     const skillItems = [];
     const weapons = [];
+    const lootboxItems = [];
     const spells = {
       0: [],
       1: [],
@@ -160,7 +161,24 @@ export class dccworldActorSheet extends ActorSheet {
           spells[i.system.spellLevel].push(i);
         }
       }
+      // Append to lootboxes.
+      else if (i.type === 'lootbox') {
+        lootboxItems.push(i);
+      }
     }
+
+    // Aggregate lootboxes by tier, weakest to strongest, summing quantity across however
+    // many separate item documents of that tier the actor owns (dragging the same lootbox
+    // in twice creates two documents rather than merging into one).
+    const lootboxes = CONFIG.DCC_WORLD.lootboxTiers
+      .map(tier => ({
+        tier,
+        tierLabel: tier.charAt(0).toUpperCase() + tier.slice(1),
+        count: lootboxItems
+          .filter(i => i.system.tier === tier)
+          .reduce((sum, i) => sum + (i.system.quantity || 0), 0)
+      }))
+      .filter(entry => entry.count > 0);
 
     // Assign and return
     context.gear = gear;
@@ -168,6 +186,7 @@ export class dccworldActorSheet extends ActorSheet {
     context.features = features;
     context.skillItems = skillItems;
     context.spells = spells;
+    context.lootboxes = lootboxes;
 
     // Add aggregated skills from system
     context.skills = context.system.aggregatedSkills || {};
@@ -443,6 +462,10 @@ export class dccworldActorSheet extends ActorSheet {
     // Weapon equip toggle
     html.on('click', '.weapon-equip-toggle', this._onWeaponEquipToggle.bind(this));
 
+    // Lootbox opening
+    html.on('click', '.lootbox-open-one', this._onLootboxOpenOne.bind(this));
+    html.on('click', '.lootbox-open-all', this._onLootboxOpenAll.bind(this));
+
     // Skill category filters
     html.on('click', '.skill-filter', this._onSkillFilter.bind(this));
 
@@ -590,6 +613,29 @@ export class dccworldActorSheet extends ActorSheet {
         ui.notifications.info(`${weapon.name} unequipped`);
       }
     }
+  }
+
+  /**
+   * Handle opening a single lootbox of a given tier
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onLootboxOpenOne(event) {
+    event.preventDefault();
+    const tier = $(event.currentTarget).data('tier');
+    await this.actor.openLootboxTier(tier, 1);
+  }
+
+  /**
+   * Handle opening every owned lootbox of a given tier at once
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onLootboxOpenAll(event) {
+    event.preventDefault();
+    const tier = $(event.currentTarget).data('tier');
+    // openLootboxTier clamps to however many are actually owned.
+    await this.actor.openLootboxTier(tier, Infinity);
   }
 
   /**
