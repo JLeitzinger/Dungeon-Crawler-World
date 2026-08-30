@@ -29,20 +29,9 @@ Hooks.once('init', async function () {
   // Add custom constants for configuration.
   CONFIG.DCC_WORLD = DCC_WORLD;
 
-  // Load skills manifest for skill metadata lookups
-  try {
-    const manifestResponse = await fetch('systems/dungeon-crawler-world/data/skills-manifest.json');
-    if (manifestResponse.ok) {
-      CONFIG.DCC_WORLD.skillsManifest = await manifestResponse.json();
-      console.log('DCC World: Skills manifest loaded successfully');
-    } else {
-      console.warn('DCC World: Could not load skills manifest');
-      CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
-    }
-  } catch (error) {
-    console.error('DCC World: Error loading skills manifest:', error);
-    CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
-  }
+  // Populated for real once the DCW-Content skills compendium is available - see the 'ready'
+  // hook below. Placeholder here so any lookup that runs before then degrades gracefully.
+  CONFIG.DCC_WORLD.skillsManifest = { skills: {} };
 
   // No CONFIG.Combat.initiative formula: initiative is card-based (see Rules/Combat/Initiative.md)
   // and run by the AI narrating turn order rather than through Foundry's numeric Combat Tracker.
@@ -140,12 +129,57 @@ Handlebars.registerHelper('gt', function (a, b) {
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
-Hooks.once('ready', function () {
+/**
+ * Build CONFIG.DCC_WORLD.skillsManifest from the DCW-Content skills compendium (pack id
+ * `dcw-content.skills`) rather than fetching a static JSON file - the system previously fetched
+ * `systems/dungeon-crawler-world/data/skills-manifest.json`, a path that never existed (that
+ * manifest is authoring-only source data that lives in, and never ships out of, the separate
+ * DCW-Content repo/module - see its build-release.mjs `excludePatterns`). That 404 was silently
+ * swallowed, so this always resolved to `{skills: {}}`, and every skill known only via a
+ * `grantedSkills` reference (never owned as its own Skill item - true of every NPC's
+ * weapon/armor-granted combat skill) fell back to the placeholder branch in
+ * `_aggregateSkills` (base-actor.mjs) that hardcodes `category: 'general'`. Reading the live
+ * compendium instead is correct regardless of whether DCW-Content ships a `data/` folder, since
+ * the pack itself is exactly the skill metadata this needs.
+ */
+async function loadSkillsManifest() {
+  const pack = game.packs.get('dcw-content.skills');
+  if (!pack) {
+    console.warn('DCC World: dcw-content.skills compendium not found - install/enable the DCW-Content module for correct skill categories (combat-skill damage rolls in particular depend on this).');
+    return;
+  }
+
+  const index = await pack.getIndex({ fields: ['system.category', 'system.relatedStat', 'system.effort', 'system.description'] });
+  const skills = {};
+  for (const entry of index) {
+    const category = entry.system?.category || 'general';
+    (skills[category] ??= []).push({
+      name: entry.name,
+      category,
+      relatedStat: entry.system?.relatedStat ?? null,
+      effort: entry.system?.effort || 0,
+      description: entry.system?.description || '',
+      uuid: entry.uuid
+    });
+  }
+
+  CONFIG.DCC_WORLD.skillsManifest = { skills };
+  console.log(`DCC World: Skills manifest loaded from compendium (${index.size} skills)`);
+}
+
+Hooks.once('ready', async function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
 
   // Auto-create the "Grant Achievement" world macro for GMs if it doesn't exist yet.
   ensureSystemMacros();
+
+  // Load skill metadata (category/relatedStat/effort) from the DCW-Content skills compendium.
+  // This is what lets _aggregateSkills (base-actor.mjs) correctly categorize a skill that's only
+  // granted by an equipped item and never owned outright as its own Skill item - the case for
+  // every NPC's weapon/armor-granted combat skill, since monsters have no skill items of their
+  // own to read category off of directly.
+  await loadSkillsManifest();
 });
 
 /* -------------------------------------------- */
