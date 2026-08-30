@@ -40,6 +40,16 @@ export class dccworldActorSheet extends ActorSheet {
 
   /** @override */
   async getData() {
+    // Unlinked tokens' synthetic actors (see TokenDocument#actor / ActorDelta.applyDelta in
+    // Foundry core) are constructed via a path that never calls prepareData() - confirmed by
+    // instrumenting the NPC data model directly: derived fields (aggregatedSkills, xp, ability
+    // .mod/.label) stayed permanently uncalculated on a placed token's actor even after
+    // opening its sheet, while the same actor opened from the Actors directory computed them
+    // correctly. Forcing a fresh prepareData() here - cheap, pure JS, no I/O - guarantees this
+    // sheet always shows current derived data regardless of how the underlying actor instance
+    // was constructed (world, compendium, or token).
+    this.actor.prepareData();
+
     // Retrieve the data structure from the base sheet. You can inspect or log
     // the context variable to see the structure, but some key properties for
     // sheets are the actor object, the data object, whether or not it's
