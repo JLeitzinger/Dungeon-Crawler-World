@@ -427,6 +427,16 @@ export class dccworldActorSheet extends ActorSheet {
       }
     }
 
+    // Restore spell level (cast-at) dropdown selections
+    if (this._spellLevelSelections) {
+      for (const [itemId, level] of Object.entries(this._spellLevelSelections)) {
+        const dropdown = html.find(`.spell-level-select[data-item-id="${itemId}"]`);
+        if (dropdown.length) {
+          dropdown.val(level);
+        }
+      }
+    }
+
     // Render the item sheet for viewing/editing prior to the editable check.
     html.on('click', '.item-edit', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
@@ -510,6 +520,28 @@ export class dccworldActorSheet extends ActorSheet {
 
       // Save the selection
       this._skillLevelSelections[skillUuid] = selectedLevel;
+    });
+
+    // Spell level (cast-at) dropdown changes - save selection and update the mana cost shown
+    html.on('change', '.spell-level-select', (ev) => {
+      const dropdown = $(ev.currentTarget);
+      const itemId = dropdown.data('item-id');
+      const selectedLevel = parseInt(dropdown.val());
+      const maxLevel = parseInt(dropdown.data('max-level'));
+      const baseProwess = parseInt(dropdown.data('prowess')) || 0;
+
+      if (!this._spellLevelSelections) {
+        this._spellLevelSelections = {};
+      }
+      this._spellLevelSelections[itemId] = selectedLevel;
+
+      const costSpan = dropdown.closest('.skill-info').find('.prowess-cost');
+      if (costSpan.length) {
+        const scaledCost = selectedLevel === maxLevel
+          ? baseProwess
+          : (baseProwess > 0 ? Math.max(1, Math.round(baseProwess * selectedLevel / maxLevel)) : 0);
+        costSpan.text(`${scaledCost} mana`);
+      }
     });
 
     // Stat increases
@@ -604,9 +636,20 @@ export class dccworldActorSheet extends ActorSheet {
    */
   async _onSpellRoll(event) {
     event.preventDefault();
-    const itemId = $(event.currentTarget).closest('.skill').data('itemId');
+    const spellElement = $(event.currentTarget).closest('.skill');
+    const itemId = spellElement.data('itemId');
+
     if (itemId) {
-      await this.actor.rollSpell(itemId);
+      // Get the selected level from the dropdown
+      const levelSelect = spellElement.find('.spell-level-select');
+      const selectedLevel = levelSelect.length ? parseInt(levelSelect.val()) : null;
+
+      // Cast with custom level if selected
+      if (selectedLevel) {
+        await this.actor.rollSpell(itemId, { customLevel: selectedLevel });
+      } else {
+        await this.actor.rollSpell(itemId);
+      }
     }
   }
 

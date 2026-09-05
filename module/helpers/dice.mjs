@@ -218,6 +218,8 @@ export async function sendContestedRollToChat(contestResult, options = {}) {
  * @param {Actor} actor - The actor rolling damage
  * @param {string} weaponId - The ID of the weapon to roll damage for
  * @param {Object} options - Additional options
+ * @param {number} options.level - Dice count the attack was rolled at; scales up the damage
+ *   dice on top of the weapon's own base (see dccworldWeapon#getDamageFormula)
  */
 export async function rollWeaponDamage(actor, weaponId, options = {}) {
   const weapon = actor.items.get(weaponId);
@@ -227,8 +229,9 @@ export async function rollWeaponDamage(actor, weaponId, options = {}) {
     return null;
   }
 
-  // Get the damage formula
-  const formula = weapon.system.formula;
+  // Get the damage formula, scaled by the dice count the attack was rolled at
+  const { level, ...chatOptions } = options;
+  const formula = weapon.system.getDamageFormula(level || 0);
   if (!formula) {
     ui.notifications.warn(`${weapon.name} has no damage formula!`);
     return null;
@@ -244,7 +247,7 @@ export async function rollWeaponDamage(actor, weaponId, options = {}) {
     sourceName: weapon.name,
     total: roll.total,
     formula: formula,
-    showFormula: options.showFormula !== false
+    showFormula: chatOptions.showFormula !== false
   };
 
   // Render the template
@@ -259,7 +262,7 @@ export async function rollWeaponDamage(actor, weaponId, options = {}) {
     content,
     sound: CONFIG.sounds.dice,
     rolls: [roll],
-    ...options
+    ...chatOptions
   };
 
   return ChatMessage.create(chatData);
@@ -271,6 +274,8 @@ export async function rollWeaponDamage(actor, weaponId, options = {}) {
  * @param {Actor} actor - The actor rolling damage
  * @param {string} spellId - The ID of the spell to roll damage for
  * @param {Object} options - Additional options
+ * @param {number} options.level - Dice count the spell was cast at; scales up the damage
+ *   dice on top of the spell's own base (see dccworldSpell#getDamageFormula)
  */
 export async function rollSpellDamage(actor, spellId, options = {}) {
   const spell = actor.items.get(spellId);
@@ -285,8 +290,9 @@ export async function rollSpellDamage(actor, spellId, options = {}) {
     return null;
   }
 
-  // Get the damage formula
-  const formula = spell.system.formula;
+  // Get the damage formula, scaled by the dice count the spell was cast at
+  const { level, ...chatOptions } = options;
+  const formula = spell.system.getDamageFormula(level || 0);
   if (!formula) {
     ui.notifications.warn(`${spell.name} has no damage formula!`);
     return null;
@@ -302,7 +308,7 @@ export async function rollSpellDamage(actor, spellId, options = {}) {
     sourceName: spell.name,
     total: roll.total,
     formula: formula,
-    showFormula: options.showFormula !== false
+    showFormula: chatOptions.showFormula !== false
   };
 
   // Render the template
@@ -317,7 +323,7 @@ export async function rollSpellDamage(actor, spellId, options = {}) {
     content,
     sound: CONFIG.sounds.dice,
     rolls: [roll],
-    ...options
+    ...chatOptions
   };
 
   return ChatMessage.create(chatData);
@@ -430,6 +436,7 @@ export function initializeChatListeners() {
       const button = $(event.currentTarget);
       const actorId = button.data('actor-id');
       const weaponId = button.data('weapon-id');
+      const level = parseInt(button.data('level')) || 0;
 
       // Get the actor
       const actor = game.actors.get(actorId);
@@ -438,8 +445,8 @@ export function initializeChatListeners() {
         return;
       }
 
-      // Roll the damage
-      await rollWeaponDamage(actor, weaponId);
+      // Roll the damage, scaled by the dice count the attack was rolled at
+      await rollWeaponDamage(actor, weaponId, { level });
     });
 
     // Add click handler for offensive spell damage roll buttons
@@ -448,6 +455,7 @@ export function initializeChatListeners() {
       const button = $(event.currentTarget);
       const actorId = button.data('actor-id');
       const spellId = button.data('spell-id');
+      const level = parseInt(button.data('level')) || 0;
 
       // Get the actor
       const actor = game.actors.get(actorId);
@@ -456,8 +464,8 @@ export function initializeChatListeners() {
         return;
       }
 
-      // Roll the damage
-      await rollSpellDamage(actor, spellId);
+      // Roll the damage, scaled by the dice count the spell was cast at
+      await rollSpellDamage(actor, spellId, { level });
     });
   });
 }

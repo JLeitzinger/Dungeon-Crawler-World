@@ -26,7 +26,7 @@
           <span class="weapon-effort">{{effort}} effort</span>
           {{/if}}
         </div>
-        <button class="damage-roll-button" data-actor-id="{{../actorId}}" data-weapon-id="{{id}}" data-weapon-name="{{name}}">
+        <button class="damage-roll-button" data-actor-id="{{../actorId}}" data-weapon-id="{{id}}" data-weapon-name="{{name}}" data-level="{{../skillLevel}}">
           <i class="fas fa-dice-d20"></i> Damage
         </button>
       </div>
@@ -38,7 +38,7 @@
   {{!-- Offensive spell damage button --}}
   {{#if offensiveSpell}}
   <div class="spell-damage-section">
-    <button class="spell-damage-roll-button" data-actor-id="{{actorId}}" data-spell-id="{{offensiveSpell.id}}" data-spell-name="{{offensiveSpell.name}}">
+    <button class="spell-damage-roll-button" data-actor-id="{{actorId}}" data-spell-id="{{offensiveSpell.id}}" data-spell-name="{{offensiveSpell.name}}" data-level="{{skillLevel}}">
       <i class="fas fa-dice-d20"></i> Damage
     </button>
   </div>

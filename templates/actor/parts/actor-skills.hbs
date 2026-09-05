@@ -42,7 +42,7 @@
         <div class="skill-roll-level">
           <select class="skill-level-select" data-skill-uuid="{{skill.uuid}}" data-max-level="{{skill.level}}">
             {{#each (range 1 (add skill.level 1))}}
-              <option value="{{this}}" {{#if (eq this ../skill.level)}}selected{{/if}}>{{this}}d6</option>
+              <option value="{{this}}" {{#if (eq this skill.level)}}selected{{/if}}>{{this}}d6</option>
             {{/each}}
           </select>
         </div>
@@ -91,6 +91,14 @@
         </div>
 
         <div class="skill-info flexrow">
+          <div class="skill-roll-level">
+            <select class="spell-level-select" data-item-id="{{item._id}}" data-max-level="{{item.system.diceCount}}" data-prowess="{{item.system.prowess}}">
+              {{#each (range 1 (add item.system.diceCount 1))}}
+                <option value="{{this}}" {{#if (eq this item.system.diceCount)}}selected{{/if}}>{{this}}d6</option>
+              {{/each}}
+            </select>
+          </div>
+
           <div class="skill-level">
             <span class="level-value">{{spellLevel}}</span>
             <span class="dice-pool">({{item.system.diceCount}}d6{{#if item.system.castStat}}+{{lookup (lookup @root.system.abilities item.system.castStat) 'mod'}}{{/if}})</span>

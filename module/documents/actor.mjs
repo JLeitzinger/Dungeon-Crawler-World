@@ -632,6 +632,7 @@ export class dccworldActor extends Actor {
    * Roll a spell check for this actor
    * @param {string} itemId - The ID of the spell item to roll
    * @param {Object} options - Additional options for the roll
+   * @param {number} options.customLevel - Optional lower level to cast at (must be <= the spell's diceCount)
    * @returns {Promise<Object>} The roll result
    */
   async rollSpell(itemId, options = {}) {
@@ -647,14 +648,26 @@ export class dccworldActor extends Actor {
       return null;
     }
 
+    const diceCount = spell.system.diceCount || 1;
+
+    // Determine the level to cast at - same "roll at a lower level" pattern as Actor#rollSkill.
+    const rollLevel = options.customLevel ? Math.min(options.customLevel, diceCount) : diceCount;
+    const isMaxLevel = rollLevel === diceCount;
+
+    // Mana cost scales proportionally with the level cast at (mirrors how a weapon's effort
+    // cost scales with the skill level rolled) - casting at the full diceCount always costs
+    // exactly the authored prowess value; a lower level costs proportionally less.
+    const basePowerCost = spell.system.prowess || 0;
+    const prowessCost = isMaxLevel
+      ? basePowerCost
+      : (basePowerCost > 0 ? Math.max(1, Math.round(basePowerCost * rollLevel / diceCount)) : 0);
+
     // Check if character has enough mana
-    const prowessCost = spell.system.prowess || 0;
     if (prowessCost > 0 && this.system.mana.value < prowessCost) {
       ui.notifications.warn(`Not enough mana! Need ${prowessCost}, have ${this.system.mana.value}.`);
       return null;
     }
 
-    const diceCount = spell.system.diceCount || 1;
     // LUK applies to every roll, cast stat modifier on top of that if the spell has one.
     let statModifier = this.system.luck?.total || 0;
 
@@ -663,7 +676,7 @@ export class dccworldActor extends Actor {
     }
 
     const rollResult = await rollSkillCheck({
-      skillLevel: diceCount,
+      skillLevel: rollLevel,
       statModifier,
       skillName: spell.name,
       actor: this
@@ -684,8 +697,8 @@ export class dccworldActor extends Actor {
       });
     }
 
-    // Check for spell improvement (all 6s)
-    if (rollResult.allSixes && options.checkImprovement !== false) {
+    // Check for spell improvement (all 6s) - only if cast at max level
+    if (rollResult.allSixes && isMaxLevel && options.checkImprovement !== false) {
       await this._promptSpellImprovement(spell);
     }
 

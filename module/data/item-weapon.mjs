@@ -85,4 +85,17 @@ export default class dccworldWeapon extends dccworldItemBase {
     const roll = this.roll;
     this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
   }
+
+  /**
+   * Damage formula for an actual damage roll, scaled by the dice count the attack was rolled
+   * at (Actor#rollSkill's chosen level) - a stronger hit-roll pool hits harder, not just more
+   * reliably. The weapon's own diceNum is a floor: it never rolls fewer dice than its base.
+   * @param {number} rolledLevel - The dice count the attack skill was rolled at
+   * @returns {string} Roll formula, e.g. "3d8+@str.mod+ceil(@lvl/2)"
+   */
+  getDamageFormula(rolledLevel = 0) {
+    const roll = this.roll;
+    const diceNum = Math.max(roll.diceNum, rolledLevel);
+    return `${diceNum}${roll.diceSize}${roll.diceBonus}`;
+  }
 }

@@ -35,6 +35,24 @@ export default class dccworldSpell extends dccworldItemBase {
 
   prepareDerivedData() {
     const roll = this.roll;
-    this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
+    // Mirrors a weapon's damage scaling (item-weapon.mjs bakes "+ceil(@lvl/2)" into its
+    // authored diceBonus per-item) - added here in code instead so it applies uniformly to
+    // every spell without requiring each content entry to author its own level term.
+    const levelScaling = this.offensive ? "+ceil(@lvl/2)" : "";
+    this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}${levelScaling}`;
+  }
+
+  /**
+   * Damage formula for an actual damage roll, scaled by the dice count the spell was cast at
+   * (Actor#rollSpell's chosen level) - mirrors dccworldWeapon#getDamageFormula. The spell's
+   * own diceNum is a floor: it never rolls fewer damage dice than its base.
+   * @param {number} rolledLevel - The dice count the spell was cast at
+   * @returns {string} Roll formula, e.g. "3d8+@int.mod+ceil(@lvl/2)"
+   */
+  getDamageFormula(rolledLevel = 0) {
+    const roll = this.roll;
+    const diceNum = Math.max(roll.diceNum, rolledLevel);
+    const levelScaling = this.offensive ? "+ceil(@lvl/2)" : "";
+    return `${diceNum}${roll.diceSize}${roll.diceBonus}${levelScaling}`;
   }
 }
