@@ -74,6 +74,11 @@ export async function contestedRoll(attacker, defender) {
  * @param {Object} options - Chat message options
  * @param {boolean} options.leveledUp - Whether the skill leveled up from this roll
  * @param {number} options.effortCost - Stamina cost for the roll
+ * @param {boolean} options.isDefensiveSkill - True if this skill is granted by equipped armor
+ *   (e.g. Block/Dodge) - purely defensive, never gets its own damage roll (see Actor#rollSkill
+ *   and Rules/Combat/Attack.md: damage only follows a *won* attack roll, not a defense roll).
+ * @param {string[]} options.attackWeaponIds - IDs of equipped weapons that actually grant the
+ *   skill being rolled - only these get a "Roll Damage" button, not every equipped weapon.
  */
 export async function sendSkillRollToChat(rollResult, options = {}) {
   const {
@@ -91,10 +96,17 @@ export async function sendSkillRollToChat(rollResult, options = {}) {
   // Get the skill to determine category - use getSkill method
   const skill = actor.system.getSkill ? actor.system.getSkill(skillName) : null;
   const skillCategory = skill?.category || 'general';
+  // Block/Dodge are the two fixed defensive combat skills in this system (see DCW-Content's
+  // Armor design guidelines) - always defensive regardless of how the character has them
+  // (equipped armor, race, class, ...), unlike options.isDefensiveSkill which only catches the
+  // equipped-armor case.
+  const isDefensiveSkill = options.isDefensiveSkill || ['Block', 'Dodge'].includes(skillName);
 
   // Determine action verb based on skill category
   let actionVerb = 'uses';
-  if (skillCategory === 'combat') {
+  if (isDefensiveSkill) {
+    actionVerb = 'defends with';
+  } else if (skillCategory === 'combat') {
     actionVerb = 'attacks with';
   } else if (skillCategory === 'magic') {
     actionVerb = 'casts';
@@ -102,11 +114,15 @@ export async function sendSkillRollToChat(rollResult, options = {}) {
     actionVerb = 'performs';
   }
 
-  // Get equipped weapons - only show for combat skills
+  // Get equipped weapons that actually grant this skill - a damage roll only ever follows a
+  // won attack roll (see Rules/Combat/Attack.md), so a defensive skill like Block/Dodge (granted
+  // by armor, not a weapon) must never show a "Roll Damage" button, even if the actor also has
+  // a weapon equipped.
+  const attackWeaponIds = options.attackWeaponIds || [];
   let equippedWeapons = [];
-  if (skillCategory === 'combat') {
+  if (!isDefensiveSkill && attackWeaponIds.length) {
     equippedWeapons = actor.items?.filter(i =>
-      i.type === 'weapon' && i.system?.equipped === true
+      i.type === 'weapon' && attackWeaponIds.includes(i.id)
     ).map(w => ({
       id: w.id,
       name: w.name,

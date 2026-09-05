@@ -111,10 +111,15 @@ export class dccworldActor extends Actor {
 
     // Calculate effort cost from equipped weapons/armor that grant this skill (weapons for
     // attack skills, armor/shields for Block/Dodge - same "effort" field, same lookup).
+    // Also track *which* gear type grants it - a weapon-granted skill is an attack (can roll
+    // weapon damage on a hit, see Rules/Combat/Attack.md), an armor-granted skill like Block/
+    // Dodge is purely defensive and should never surface a damage roll of its own.
     let equippedItemEffort = 0;
+    let isDefensiveSkill = false;
     const equippedGear = this.items.filter(i =>
       ['weapon', 'armor'].includes(i.type) && i.system?.equipped === true
     );
+    const attackWeapons = [];
 
     for (const gear of equippedGear) {
       const grantedSkills = gear.system?.grantedSkills || [];
@@ -123,6 +128,8 @@ export class dccworldActor extends Actor {
         const grantedSkill = this.system.getSkill(gs.skillUuid);
         if (grantedSkill && grantedSkill.name === skill.name) {
           equippedItemEffort += (gear.system?.effort || 0);
+          if (gear.type === 'weapon') attackWeapons.push(gear);
+          if (gear.type === 'armor') isDefensiveSkill = true;
           break; // Only count this item once per skill
         }
       }
@@ -168,7 +175,9 @@ export class dccworldActor extends Actor {
     if (options.sendToChat !== false) {
       await sendSkillRollToChat(rollResult, {
         ...options.chatOptions,
-        effortCost
+        effortCost,
+        isDefensiveSkill,
+        attackWeaponIds: attackWeapons.map(w => w.id)
       });
     }
 
