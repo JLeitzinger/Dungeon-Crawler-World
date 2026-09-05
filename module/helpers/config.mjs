@@ -42,15 +42,22 @@ DCC_WORLD.itemRarities = ['common', 'uncommon', 'rare', 'legendary', 'mythic', '
 /**
  * Relative odds of pulling each item rarity from a given lootbox tier. Values are weights,
  * not percentages - they're normalized against whatever rarities actually have matching
- * loot available (see module/helpers/lootbox.mjs#rollLootRarity). Higher tiers shift weight
- * toward rarer loot and drop the floor out from under common/uncommon results.
+ * loot available (see module/helpers/lootbox.mjs#rollLootRarity).
+ *
+ * Each tier is a 3-rarity window (worst/mid/best) at an 80/15/5 split, and the window
+ * slides one rarity higher per tier: bronze starts at common, silver at uncommon, gold at
+ * rare, platinum at legendary. Platinum's window (legendary/mythic/celestial) is the last
+ * one that fits - there's no rarity past celestial to slide into - so legendary and
+ * celestial tier boxes instead narrow the window from the bottom: legendary drops down to
+ * a 2-rarity mythic/celestial split (95/5), and celestial collapses to a guaranteed
+ * celestial pull.
  * @type {Object<string, Object<string, number>>}
  */
 DCC_WORLD.lootboxRarityWeights = {
-  bronze:    { common: 60, uncommon: 30, rare: 8,  legendary: 2,  mythic: 0,  celestial: 0 },
-  silver:    { common: 40, uncommon: 35, rare: 18, legendary: 6,  mythic: 1,  celestial: 0 },
-  gold:      { common: 20, uncommon: 30, rare: 30, legendary: 15, mythic: 4,  celestial: 1 },
-  platinum:  { common: 5,  uncommon: 15, rare: 30, legendary: 30, mythic: 15, celestial: 5 },
-  legendary: { common: 0,  uncommon: 5,  rare: 15, legendary: 35, mythic: 30, celestial: 15 },
-  celestial: { common: 0,  uncommon: 0,  rare: 5,  legendary: 20, mythic: 35, celestial: 40 },
+  bronze:    { common: 80, uncommon: 15, rare: 5,   legendary: 0,  mythic: 0,  celestial: 0 },
+  silver:    { common: 0,  uncommon: 80, rare: 15,  legendary: 5,  mythic: 0,  celestial: 0 },
+  gold:      { common: 0,  uncommon: 0,  rare: 80,  legendary: 15, mythic: 5,  celestial: 0 },
+  platinum:  { common: 0,  uncommon: 0,  rare: 0,   legendary: 80, mythic: 15, celestial: 5 },
+  legendary: { common: 0,  uncommon: 0,  rare: 0,   legendary: 0,  mythic: 95, celestial: 5 },
+  celestial: { common: 0,  uncommon: 0,  rare: 0,   legendary: 0,  mythic: 0,  celestial: 100 },
 };
