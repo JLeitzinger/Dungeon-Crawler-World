@@ -151,6 +151,13 @@ export default class dccworldCharacter extends dccworldActorBase {
       this.mana.max += raceItem.system.bonuses.mana || 0;
     }
 
+    // Flat ability-mod bonus, recomputed live every prepareDerivedData() (unlike the per-level
+    // gains above, which lock in at levelUp() time) - so it tracks the current CON/INT score
+    // immediately, including temporary buffs/debuffs, rather than only affecting future levels.
+    this.hp.max += conMod;
+    this.stamina.max += conMod;
+    this.mana.max += intMod;
+
     // Expose today's per-level rates so Actor#levelUp() can lock in a new level's
     // gain using the same formula/precedence (class values, falling back to CON/INT mod).
     this.currentResourceRates = { hpPerLevel, staminaPerLevel, manaPerLevel };
